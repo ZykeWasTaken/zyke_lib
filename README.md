@@ -1,3 +1,3 @@
-### This resources is required for all my newer scripts.
+### Information
 
-### It is simply a collection of functions that are used.
+This script is a dependency for all my newer resources, or scripts that have been updated after this resource was created.
