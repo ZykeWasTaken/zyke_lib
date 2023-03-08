@@ -40,7 +40,7 @@ function Functions.Draw3DText(coords, text, scale)
     local onScreen,_x,_y=World3dToScreen2d(coords.x, coords.y, coords.z)
     local px,py,pz=table.unpack(GetGameplayCamCoords())
 
-    SetTextScale(scale, scale)
+    SetTextScale(scale or 0.4, scale or 0.4)
     SetTextFont(4)
     SetTextProportional(1)
     SetTextColour(255, 255, 255, 255)
@@ -48,6 +48,21 @@ function Functions.Draw3DText(coords, text, scale)
     SetTextCentre(1)
     AddTextComponentString(text)
     DrawText(_x,_y)
+end
+
+-- The talk message top left
+function Functions.HelpNoti(msg, thisFrame, beep, duration)
+    AddTextEntry('helpNotification', msg)
+
+    if thisFrame then
+        DisplayHelpTextThisFrame('helpNotification', false)
+    else
+        if beep == nil then
+            beep = true
+        end
+        BeginTextCommandDisplayHelp('helpNotification')
+        EndTextCommandDisplayHelp(0, false, beep, duration or -1)
+    end
 end
 
 function Fetch()

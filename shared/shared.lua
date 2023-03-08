@@ -11,3 +11,9 @@ function Functions.CopyTable(tbl)
     end
     return copy
 end
+
+function Functions.Debug(msg, enabled)
+    if (enabled == true) then
+        print("^4[Debug]: ^7" .. msg)
+    end
+end
