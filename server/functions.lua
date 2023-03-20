@@ -135,6 +135,20 @@ function Functions.GetPlayersOnJob(job, onDuty)
     end
 end
 
+function Functions.EnoughWorkers(job, required)
+    local players = Functions.GetPlayersOnJob(job, true)
+
+    if (players ~= nil) then
+        if (#players >= required) then
+            return true
+        else
+            return false
+        end
+    else
+        return false
+    end
+end
+
 function Functions.CreateUseableItem(item, passed)
     if (Config.Framework == "QBCore") then
         QBCore.Functions.CreateUseableItem(item, passed)
@@ -205,6 +219,14 @@ function Functions.GetSource(player)
         return player.PlayerData.source
     elseif (Config.Framework == "ESX") then
         return player.source
+    end
+end
+
+function Functions.GetItem(item)
+    if (Config.Framework == "QBCore") then
+        return QBCore.Shared.Items[item]
+    elseif (Config.Framework == "ESX") then
+        return ESX.GetItem(item)
     end
 end
 
