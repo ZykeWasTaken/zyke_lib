@@ -5,12 +5,14 @@ author "Zyke#0001"
 
 client_scripts {
     "client/framework.lua",
-    "client/client.lua",
+    "client/functions.lua",
+    "client/events.lua",
 }
 
 server_scripts {
     "server/framework.lua",
-    "server/server.lua",
+    "server/functions.lua",
+    "server/events.lua",
 }
 
 shared_scripts {
