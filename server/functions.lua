@@ -206,6 +206,7 @@ function Functions.AddMoney(player, moneyType, amount, details)
         player.Functions.AddMoney(moneyType, amount, details)
     elseif (Config.Framework == "ESX") then
         moneyType = moneyType == "cash" and "money" or moneyType -- ESX uses "money" instead of "cash", so we're converting it here
+        moneyType = moneyType == "dirty_cash" and "black_money" or moneyType -- ESX uses "black_money" instead of "dirty_cash", so we're converting it here
         player.addAccountMoney(moneyType, amount, details)
     end
 end
@@ -226,7 +227,7 @@ function Functions.GetItem(item)
     if (Config.Framework == "QBCore") then
         return QBCore.Shared.Items[item]
     elseif (Config.Framework == "ESX") then
-        return ESX.GetItem(item)
+        return ESX.Items[item]
     end
 end
 
