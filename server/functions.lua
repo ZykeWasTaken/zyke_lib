@@ -230,6 +230,18 @@ function Functions.GetItem(item)
     end
 end
 
+function Functions.HasPermission(source, permission)
+    if (type(source) == "table") then
+        source = Functions.GetSource(source)
+    end
+
+    if (Config.Framework == "QBCore") then
+        return QBCore.Functions.HasPermission(source, permission)
+    elseif (Config.Framework == "ESX") then
+        return IsPlayerAceAllowed(source, permission)
+    end
+end
+
 function Fetch()
     return Functions
 end
