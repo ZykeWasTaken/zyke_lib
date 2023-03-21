@@ -16,3 +16,7 @@ elseif (Config.Framework == "ESX") then
         TriggerEvent("zyke_lib:InventoryUpdated")
     end)
 end
+
+RegisterNetEvent("zyke_lib:Notify", function(msg, type, length)
+    Functions.Notify(msg, type, length)
+end)
