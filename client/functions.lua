@@ -69,9 +69,22 @@ function Functions.HasItem(item, amount)
     amount = amount or 1
 
     if (Config.Framework == "QBCore") then
-        return QBCore.Functions.HasItem(item, amount)
+        local formatted = Functions.FormatItems(item, amount)
+        
+        return QBCore.Functions.HasItem(formatted)
     elseif (Config.Framework == "ESX") then
-        return ESX.SearchInventory(item, amount)
+        local formatted = Functions.FormatItems(item, amount)
+        local hasItems = true
+
+        for itemIdx, itemData in pairs(formatted) do
+            local hasItem = ESX.SearchInventory(itemData.name, itemData.count)
+
+            if not hasItem or hasItem == 0 then
+                hasItems = false
+            end
+        end
+
+        return hasItems
     end
 end
 
@@ -110,6 +123,108 @@ function Functions.Callback(name, cb, ...)
         QBCore.Functions.TriggerCallback(name, cb, ...)
     elseif (Config.Framework == "ESX") then
         ESX.TriggerServerCallback(name, cb, ...)
+    end
+end
+
+function Functions.GetPlayerData()
+    if (Config.Framework == "QBCore") then
+        return QBCore.Functions.GetPlayerData()
+    elseif (Config.Framework == "ESX") then
+        return ESX.GetPlayerData() -- Not tested (Not in use for any active releases yet)
+    end
+end
+
+function Functions.GetIdentifier()
+    if (Config.Framework == "QBCore") then
+        return Functions.GetPlayerData().citizenid
+    elseif (Config.Framework == "ESX") then
+        return Functions.GetPlayerData().identifier -- Not tested (Not in use for any active releases yet)
+    end
+end
+
+function Functions.OpenInventory(type, invId, other)
+    type = type or "stash"
+    if (Config.Framework == "QBCore") then
+        TriggerServerEvent("inventory:server:OpenInventory", type, invId, {
+            maxweight = other?.maxweight or 4000,
+            slots = other?.slots or 20,
+        })
+        TriggerEvent("inventory:client:SetCurrentStash", invId)
+    elseif (Config.Framework == "ESX") then
+        -- TriggerEvent("esx_inventoryhud:openStashInventory", invId) -- Not tested (Not in use for any active releases yet)
+    end
+end
+
+function Functions.GetJob()
+    if (Config.Framework == "QBCore") then
+        local job = {}
+
+        if (Functions.GetPlayerData().job == nil) then
+            return nil
+        end
+
+        -- This is to ensure my scripts align with whatever system you're using
+        -- By default this will work, but if you have a different system, you can change it here
+        job.name = Functions.GetPlayerData()?.job?.name or ""
+        job.label = Functions.GetPlayerData()?.job?.label or ""
+        job.grade = Functions.GetPlayerData()?.job?.grade or 0
+        job.grade_label = Functions.GetPlayerData()?.job?.grade_label or ""
+        job.grade_name = Functions.GetPlayerData()?.job?.grade_name or ""
+
+        return job
+    elseif (Config.Framework == "ESX") then
+        -- return Functions.GetPlayerData()?.job -- Not tested (Not in use for any active releases yet)
+        local job = {}
+
+        if (Functions.GetPlayerData().job == nil) then
+            return nil
+        end
+
+        job.name = Functions.GetPlayerData()?.job?.name or ""
+        job.label = Functions.GetPlayerData()?.job?.label or ""
+        job.grade = Functions.GetPlayerData()?.job?.grade or 0
+        job.grade_label = Functions.GetPlayerData()?.job?.grade_label or ""
+        job.grade_name = Functions.GetPlayerData()?.job?.grade_name or ""
+
+        return job
+    end
+end
+
+-- Same as above, but for gangs
+function Functions.GetGang()
+    if (Config.Framework == "QBCore") then
+        local gang = {}
+
+        if (Functions.GetPlayerData().gang == nil) then
+            return nil
+        end
+
+        gang.name = Functions.GetPlayerData()?.gang?.name or ""
+        gang.label = Functions.GetPlayerData()?.gang?.label or ""
+        gang.grade = Functions.GetPlayerData()?.gang?.grade or 0
+        gang.grade_label = Functions.GetPlayerData()?.gang?.grade_label or ""
+        gang.grade_name = Functions.GetPlayerData()?.gang?.grade_name or ""
+
+        return gang
+    elseif (Config.Framework == "ESX") then
+        return nil -- ESX doesn't have a gang system, so this will always return nil, change this if you're running one
+    end
+end
+
+function Functions.HasLoadedFramework()
+    if (Config.Framework == "QBCore") then
+        return QBCore ~= nil
+    elseif (Config.Framework == "ESX") then
+        return ESX ~= nil
+    end
+end
+
+-- Not used atm
+function Functions.GetPlayerInventory()
+    if (Config.Framework == "QBCore") then
+        return Functions.GetPlayerData().items
+    elseif (Config.Framework == "ESX") then
+        return Functions.GetPlayerData().inventory -- Not tested (Not in use for any active releases yet)
     end
 end
 

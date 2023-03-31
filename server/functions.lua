@@ -51,65 +51,96 @@ function Functions.Log(passed)
     PerformHttpRequest(webhook, function(err, text, headers) end, 'POST', json.encode(payload), { ['Content-Type'] = 'application/json' })
 end
 
--- Framework is set in config.lua file
--- If you're running a default framework, you probably won't need to change this
--- However, if you are running some modified files you might want to tinker with this in order to make it work
--- If you can't get it to work for your specific server, our Discord is open for support: https://discord.gg/zykeresources
-function Functions.HasItem(player, passed)
-    if (passed.item == nil) or (passed.amount == nil) then return false end -- Make sure the passed arguments are valid to continue
-
+function Functions.HasItem(player, item, amount)
     if (type(player) ~= "table") then
         player = Functions.GetPlayer(player)
     end
 
+    if (not player) then return false, Functions.Debug("Player not found (CRITICAL!)") end
+
     if (Config.Framework == "QBCore") then
-        local item = player.Functions.GetItemByName(passed.item)
+        local source = Functions.GetSource(player)
+        local formatted = Functions.FormatItems(item, amount)
 
-        if ((item?.amount or 0) >= passed.amount) then
-            return true
-        else
-            return false
-        end
+        local hasItem = QBCore.Functions.HasItem(source, formatted)
+        return hasItem
     elseif (Config.Framework == "ESX") then
-        local item = player.getInventoryItem(passed.item)
+        local formatted = Functions.FormatItems(item, amount)
+        local hasItems = true
 
-        if ((item?.count or 0) >= passed.amount) then
-            return true
-        else
-            return false
+        for itemIdx, itemData in pairs(formatted) do
+            local hasItem = player.getInventoryItem(itemData.name)
+
+            if ((hasItem?.count or 0) < itemData.count) then
+                hasItems = false
+            end
         end
+
+        return hasItems
     end
 end
 
-function Functions.AddItem(player, passed)
-    if (passed.item == nil) then return end
-
-    local amount = passed.amount or 1
-
+function Functions.GetPlayerItemByName(player, item)
     if (type(player) ~= "table") then
         player = Functions.GetPlayer(player)
     end
 
     if (Config.Framework == "QBCore") then
-        player.Functions.AddItem(passed.item, amount)
+        return player.Functions.GetItemByName(item)
     elseif (Config.Framework == "ESX") then
-        player.addInventoryItem(passed.item, amount)
+        return player.getInventoryItem(item) -- Not tested (HAS TO BE CHECKED AND ADDED)
     end
 end
 
-function Functions.RemoveItem(player, passed)
-    if (passed.item == nil) then return false end
-
-    local amount = passed.amount or 1
-
+function Functions.RemoveItem(player, item, amount)
     if (type(player) ~= "table") then
         player = Functions.GetPlayer(player)
     end
 
+    if (not player) then return false, Functions.Debug("Player not found (CRITICAL!)") end
+    
     if (Config.Framework == "QBCore") then
-        player.Functions.RemoveItem(passed.item, amount)
+        local formatted = Functions.FormatItems(item, amount)
+
+        for _item, _amount in pairs(formatted) do
+            player.Functions.RemoveItem(_item, _amount)
+        end
+
+        return true
     elseif (Config.Framework == "ESX") then
-        player.removeInventoryItem(passed.item, amount)
+        local formatted = Functions.FormatItems(item, amount)
+
+        for itemIdx, itemData in pairs(formatted) do
+            player.removeInventoryItem(itemData.name, itemData.count)
+        end
+
+        return true
+    end
+end
+
+function Functions.AddItem(player, item, amount)
+    if (type(player) ~= "table") then
+        player = Functions.GetPlayer(player)
+    end
+
+    if (not player) then return false, Functions.Debug("Player not found (CRITICAL!)") end
+    
+    if (Config.Framework == "QBCore") then
+        local formatted = Functions.FormatItems(item, amount)
+
+        for _item, _amount in pairs(formatted) do
+            player.Functions.AddItem(_item, _amount)
+        end
+
+        return true
+    elseif (Config.Framework == "ESX") then
+        local formatted = Functions.FormatItems(item, amount)
+
+        for itemIdx, itemData in pairs(formatted) do
+            player.addInventoryItem(itemData.name, itemData.count)
+        end
+
+        return true
     end
 end
 
@@ -191,9 +222,9 @@ function Functions.GetIdentifier(player)
     end
 
     if (Config.Framework == "QBCore") then
-        return player.PlayerData.citizenid
+        return player?.PlayerData?.citizenid
     elseif (Config.Framework == "ESX") then
-        return player.identifier
+        return player?.identifier
     end
 end
 
@@ -240,6 +271,64 @@ function Functions.HasPermission(source, permission)
         return QBCore.Functions.HasPermission(source, permission)
     elseif (Config.Framework == "ESX") then
         return IsPlayerAceAllowed(source, permission)
+    end
+end
+
+-- Not tested and not active for any release yet, was temporarily tested for QB
+function Functions.GetPlayerInventory(player)
+    if (type(player) ~= "table") then
+        player = Functions.GetPlayer(player)
+    end
+
+    if (Config.Framework == "QBCore") then
+        return player.PlayerData.items
+    elseif (Config.Framework == "ESX") then
+        return player.inventory
+    end
+end
+
+function Functions.GetInventory(invId)
+    if (Config.Framework == "QBCore") then
+        -- For some reason you can only retrieve this by a client callback, so I copied the code from the inventory
+        -- If anyone knows of a better way, please feel free to make a pull request or let me know
+        local items = {}
+        local result = MySQL.scalar.await('SELECT items FROM stashitems WHERE stash = ?', {invId})
+        if not result then return items end
+    
+        local stashItems = json.decode(result)
+        if not stashItems then return items end
+    
+        for _, item in pairs(stashItems) do
+            local itemInfo = QBCore.Shared.Items[item.name:lower()]
+            if itemInfo then
+                items[item.slot] = {
+                    name = itemInfo["name"],
+                    amount = tonumber(item.amount),
+                    info = item.info or "",
+                    label = itemInfo["label"],
+                    description = itemInfo["description"] or "",
+                    weight = itemInfo["weight"],
+                    type = itemInfo["type"],
+                    unique = itemInfo["unique"],
+                    useable = itemInfo["useable"],
+                    image = itemInfo["image"],
+                    slot = item.slot,
+                }
+            end
+        end
+
+        return items
+    elseif (Config.Framework == "ESX") then
+        return ESX.GetInventory(invId) -- Not tested (Not in use for any active releases yet)
+    end
+end
+
+function Functions.OpenInventory(invId, type)
+    type = type or "stash"
+    if (Config.Framework == "QBCore") then
+        TriggerEvent("inventory:server:OpenInventory", type, invId)
+    elseif (Config.Framework == "ESX") then
+        -- return ESX.GetInventory(invId) -- Not tested (Not in use for any active releases yet)
     end
 end
 
