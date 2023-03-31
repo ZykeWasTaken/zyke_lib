@@ -80,6 +80,7 @@ function Functions.HasItem(player, item, amount)
     end
 end
 
+-- Not used
 function Functions.GetPlayerItemByName(player, item)
     if (type(player) ~= "table") then
         player = Functions.GetPlayer(player)
@@ -88,7 +89,7 @@ function Functions.GetPlayerItemByName(player, item)
     if (Config.Framework == "QBCore") then
         return player.Functions.GetItemByName(item)
     elseif (Config.Framework == "ESX") then
-        return player.getInventoryItem(item) -- Not tested (HAS TO BE CHECKED AND ADDED)
+        return player.getInventoryItem(item)
     end
 end
 
