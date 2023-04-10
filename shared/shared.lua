@@ -81,4 +81,3 @@ end
 function Functions.GetWeaponType()
     return Config.WeaponType
 end
-    
