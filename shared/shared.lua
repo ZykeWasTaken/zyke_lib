@@ -77,3 +77,8 @@ end
 function Functions.GetFramework()
     return Config.Framework
 end
+
+function Functions.GetWeaponType()
+    return Config.WeaponType
+end
+    
