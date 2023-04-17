@@ -6,4 +6,6 @@ elseif (Config.Fraemwork == "ESX") then
 
     -- ESX = nil
     -- TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+elseif (Config.Framework == "QBOX") then
+    QBCore = exports["qbx-core"]:GetCoreObject()
 end
