@@ -10,4 +10,3 @@ elseif (Config.Fraemwork == "ESX") then
 elseif (Config.Framework == "QBox") then
     QBCore = exports["qbx-core"]:GetCoreObject()
 end
-end
