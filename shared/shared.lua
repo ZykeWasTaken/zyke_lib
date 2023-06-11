@@ -74,6 +74,40 @@ function Functions.FormatItems(item, amount)
     return formatted
 end
 
+-- Add for offline characters
+function Functions.FormatCharacterDetails(character, online)
+    local formatted = {}
+
+    if (Config.Framework == "QBCore") then
+        if (not character?.PlayerData) then
+            return {}
+        end
+
+        formatted.identifier = character.PlayerData.citizenid
+        formatted.firstname = character.PlayerData.charinfo.firstname
+        formatted.lastname = character.PlayerData.charinfo.lastname
+        formatted.dateofbirth = character.PlayerData.charinfo.birthdate
+        formatted.phonenumber = character.PlayerData.charinfo.phone
+        formatted.nationality = character.PlayerData.charinfo.nationality
+        formatted.backstory = character.PlayerData.charinfo.backstory
+        formatted.cash = character.PlayerData.money["cash"] or 0
+        formatted.bank = character.PlayerData.money["bank"] or 0
+        formatted.dirty_cash = character.PlayerData.money["dirty_cash"] or 0
+        formatted.online = online or false
+    elseif (Config.Framework == "ESX") then
+    end
+
+    return formatted
+end
+
+function Functions.GetItem(item)
+    if (Config.Framework == "QBCore") then
+        return QBCore.Shared.Items[item]
+    elseif (Config.Framework == "ESX") then
+        return ESX.Items[item]
+    end
+end
+
 function Functions.GetFramework()
     return Config.Framework
 end
