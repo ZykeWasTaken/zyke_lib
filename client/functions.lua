@@ -40,7 +40,7 @@ function Functions.Draw3DText(coords, text, scale)
     local onScreen,_x,_y=World3dToScreen2d(coords.x, coords.y, coords.z)
     local px,py,pz=table.unpack(GetGameplayCamCoords())
 
-    SetTextScale(scale or 0.4, scale or 0.4)
+    SetTextScale(scale or 0.3, scale or 0.3)
     SetTextFont(4)
     SetTextProportional(1)
     SetTextColour(255, 255, 255, 255)
@@ -97,6 +97,9 @@ function Functions.Notify(msg, type, length)
 end
 
 function Functions.ProgressBar(name, label, duration, useWhileDead, canCancel, disableControls, animation, prop, propTwo, onFinish, onCancel)
+    canCancel = canCancel or false -- QB requires this to have a set value
+    disableControls = disableControls or {} -- QB requires this to have a set value
+
     if (Config.Framework == "QBCore") then
         QBCore.Functions.Progressbar(name, label, duration, useWhileDead, canCancel, disableControls, animation, prop, propTwo, onFinish, onCancel)
     elseif (Config.Framework == "ESX") then
@@ -225,6 +228,31 @@ function Functions.GetPlayerInventory()
         return Functions.GetPlayerData().items
     elseif (Config.Framework == "ESX") then
         return Functions.GetPlayerData().inventory -- Not tested (Not in use for any active releases yet)
+    end
+end
+
+function Functions.GetClosestPlayer()
+    if (Config.Framework == "QBCore") then
+        return QBCore.Functions.GetClosestPlayer()
+    elseif (Config.Framework == "ESX") then
+        return ESX.GetClosestPlayer() -- Not tested (Not in use for any active releases yet)
+    end
+end
+
+function Functions.IsPlayerDead()
+    local ped = PlayerPedId()
+    if (Config.Framework == "QBCore") then
+        return Functions.GetPlayerData().metadata["isdead"] or Functions.GetPlayerData().metadata["inlaststand"]
+    elseif (Config.Framework == "ESX") then
+        return IsEntityDead(ped) -- Not tested (Not in use for any active releases yet)
+    end
+end
+
+function Functions.GetPlayers()
+    if (Config.Framework == "QBCore") then
+        return QBCore.Functions.GetPlayers()
+    elseif (Config.Framework == "ESX") then
+        return ESX.GetPlayers() -- Not tested (Not in use for any active releases yet)
     end
 end
 

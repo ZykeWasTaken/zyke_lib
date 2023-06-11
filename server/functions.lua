@@ -1,54 +1,117 @@
 -- This is free to change, you can see all values used if you want to change it in any way
 -- Keep in mind, we will not provide support for any changes made to the snippet below
+local logQueue = {}
+local inLoop = false
+local handlers = {} -- Caches handler data in order to prevent constant looping and easy access, could not find any way to natively do this in QBCore so I made my own solution
 function Functions.Log(passed)
     if (type(passed) ~= "table") then return end -- Make sure the passed argument is a table to continue
     if (passed.logsEnabled == false) or (passed.logsEnabled == nil) then return end -- Make sure logs are enabled in that resource to continue
 
-    -- Bot
-    local username = "Zyke Resources' Logs"
-    local avatarUrl = "https://cdn.discordapp.com/attachments/1048900415967744031/1081685770898784506/zyke.jpg"
-    local webhook = passed.webhook or "" -- Insert a fallback webhook here, meaning if the resource doesn't have a webhook set, it will use this one instead
+    table.insert(logQueue, passed)
+    CreateThread(function()
+        SendLog()
+    end)
+end
 
-    -- Message
-    local scriptName = passed.scriptName or "Unknown Script"
-    local identifier = passed.identifier or "Unknown Identifier"
-    local message = passed.message or "Empty Message"
-    local action = passed.action or "Unknown Action"
+-- Send queued logs
+function SendLog()
+    if (inLoop) then return end
+    local function send(passed)
+        -- Bot
+        local username = "Zyke Resources' Logs"
+        local avatarUrl = "https://cdn.discordapp.com/attachments/1048900415967744031/1081685770898784506/zyke.jpg"
+        local webhook = passed.webhook or "" -- Insert a fallback webhook here, meaning if the resource doesn't have a webhook set, it will use this one instead
 
-    local field1 = {
-        ["name"] = "Basic Information",
-        ["value"] = "Script: " .. scriptName .. "\nIdentifier: " .. identifier .. "\nAction: " .. action,
-    }
+        -- Message
+        local scriptName = passed.scriptName or "Unknown Script"
+        local identifier = passed.identifier or ""
+        local message = passed.message or "Empty Message"
+        local action = passed.action or "Unknown Action"
+        local handler = handlers[passed?.handler] or handlers[Functions.GetIdentifier(passed?.handler)] or "server"
+        local handlerMsg = "None"
 
-    local field2 = {
-        ["name"] = "Message",
-        ["value"] = message,
-    }
+        if (handler ~= "server") then
+            handlerMsg = (("<@" .. handler?.discord .. ">") or "unknown") .. " | " .. (handler?.identifier or "unknown") .. " | " .. (handler?.firstname or "unknown") .. " " .. (handler?.lastname or "unknown")
+        else
+            handlerMsg = "Server"
+        end
 
-    local field3 = passed.rawData and {
-        ["name"] = "Raw Data",
-        ["value"] = json.encode(passed.rawData, {indent = true}),
-    } or nil
+        local getFileName = function()
+            local uniqueNumber = tostring(math.random(100000000, 999999999))
+            local path = "/logs/" .. scriptName .. "/" .. action .. "/"
+            local name = uniqueNumber .. ".json"
 
-    local embeds = {
-        {
-            ["type"] = "rich",
-            ["fields"] = {field1, field2, field3},
-            ["color"] = "3447003", -- https://gist.github.com/thomasbnt/b6f455e2c7d743b796917fa3c205f812
-            ["footer"]=  {
-                ["icon_url"] = "https://cdn.discordapp.com/attachments/1048900415967744031/1081687600080879647/toppng.com-browser-history-clock-icon-vector-white-541x541.png",
-                ["text"] = "Sent: " .. os.date(),
-            },
+            return path, name
+        end
+
+        local filePath, fileName = getFileName()
+
+        local basicInformationStr = ""
+        basicInformationStr = basicInformationStr .. "Script: " .. scriptName .. "\n"
+        basicInformationStr = basicInformationStr .. ((identifier ~= nil and identifier ~= "") and "Identifier: " .. identifier .. "\n" or "")
+        basicInformationStr = basicInformationStr .. "Action: " .. action .. "\n"
+        basicInformationStr = basicInformationStr .. "Handler: " .. handlerMsg
+
+        local field1 = {
+            ["name"] = "Basic Information",
+            ["value"] = basicInformationStr,
         }
-    }
 
-    local payload = {
-        embeds = embeds,
-        username = username,
-        avatar_url = avatarUrl,
-    }
+        local field2 = {
+            ["name"] = "Message",
+            ["value"] = message,
+        }
 
-    PerformHttpRequest(webhook, function(err, text, headers) end, 'POST', json.encode(payload), { ['Content-Type'] = 'application/json' })
+        local field3 = passed.rawData and Config.ExtensiveLogs == true and {
+            ["name"] = "Raw Data",
+            -- ["value"] = json.encode(passed.rawData, {indent = true}),
+            ["value"] = GetCurrentResourceName() .. filePath .. fileName,
+        } or nil
+
+        local embeds = {
+            {
+                ["type"] = "rich",
+                ["fields"] = {field1, field2, field3},
+                ["color"] = "3447003", -- https://gist.github.com/thomasbnt/b6f455e2c7d743b796917fa3c205f812
+                ["footer"]=  {
+                    ["icon_url"] = "https://cdn.discordapp.com/attachments/1048900415967744031/1081687600080879647/toppng.com-browser-history-clock-icon-vector-white-541x541.png",
+                    ["text"] = "Sent: " .. os.date(),
+                },
+            }
+        }
+
+        local payload = {
+            embeds = embeds,
+            username = username,
+            avatar_url = avatarUrl,
+        }
+
+        if (Config.ExtensiveLogs == true) then
+            CreateExtensiveLog(filePath, fileName, passed.rawData)
+        end
+
+        PerformHttpRequest(webhook, function(err, text, headers) end, 'POST', json.encode(payload), { ['Content-Type'] = 'application/json' })
+    end
+
+    inLoop = true
+    while (#logQueue > 0) do
+        local log = logQueue[1]
+
+        Functions.Debug("Sending log: " .. log.action, Config.Debug)
+        send(log)
+        table.remove(logQueue, 1)
+        Wait(350) -- Prevents ratelimiting
+    end
+    inLoop = false
+end
+
+function CreateExtensiveLog(filePath, fileName, data)
+    local location = string.gsub(GetResourcePath(GetCurrentResourceName()), "^(.+\\)[^\\]+$", "%1") .. "/server" .. filePath
+
+    os.execute("mkdir " .. location:gsub("/", "\\"))
+    local file = io.open(location .. fileName, "w")
+    file:write(json.encode(data, {indent = true}))
+    file:close()
 end
 
 function Functions.HasItem(player, item, amount)
@@ -71,6 +134,7 @@ function Functions.HasItem(player, item, amount)
         for itemIdx, itemData in pairs(formatted) do
             local hasItem = player.getInventoryItem(itemData.name)
 
+            -- DEV (Make sure this works since there is a weird error)
             if ((hasItem?.count or 0) < itemData.count) then
                 hasItems = false
             end
@@ -99,7 +163,7 @@ function Functions.RemoveItem(player, item, amount)
     end
 
     if (not player) then return false, Functions.Debug("Player not found (CRITICAL!)") end
-    
+
     if (Config.Framework == "QBCore") then
         local formatted = Functions.FormatItems(item, amount)
 
@@ -125,7 +189,7 @@ function Functions.AddItem(player, item, amount)
     end
 
     if (not player) then return false, Functions.Debug("Player not found (CRITICAL!)") end
-    
+
     if (Config.Framework == "QBCore") then
         local formatted = Functions.FormatItems(item, amount)
 
@@ -148,18 +212,48 @@ end
 function Functions.GetPlayersOnJob(job, onDuty)
     if (Config.Framework == "QBCore") then
         if (onDuty == true) then
-            return QBCore.Functions.GetPlayersOnDuty(job)
+            if (type(job) == "string") then
+                return QBCore.Functions.GetPlayersOnDuty(job)
+            elseif (type(job) == "table") then
+                local players = {}
+
+                for _, v in pairs(job) do
+                    local jobPlayers = QBCore.Functions.GetPlayersOnDuty(v)
+
+                    for _, v2 in pairs(jobPlayers) do
+                        table.insert(players, v2)
+                    end
+                end
+
+                return players
+            end
+
+            return {}
         end
-    elseif (Config.Framework == "ESX") then
+    elseif (Config.Framework == "ESX") then -- Untested
         -- ESX doesn't have a default duty system, that's why we're not using it here
         -- If you do have it on your server, you can use the onDuty variable if it's needed in the script
-        local players = {}
+        if (type(job) == "string") then
+            local players = {}
 
-        for k, v in pairs(ESX.GetPlayers()) do
-            local xPlayer = ESX.GetPlayerFromId(v)
+            for k, v in pairs(ESX.GetPlayers()) do
+                local xPlayer = ESX.GetPlayerFromId(v)
 
-            if (xPlayer.job.name == job) then
-                table.insert(players, v)
+                if (xPlayer.job.name == job) then
+                    table.insert(players, v)
+                end
+            end
+        elseif (type(job) == "table") then
+            local players = {}
+
+            for k, v in pairs(ESX.GetPlayers()) do
+                local xPlayer = ESX.GetPlayerFromId(v)
+
+                for _, v2 in pairs(job) do
+                    if (xPlayer.job.name == v2) then
+                        table.insert(players, v)
+                    end
+                end
             end
         end
 
@@ -209,6 +303,25 @@ function Functions.GetPlayer(source)
     end
 end
 
+function Functions.GetPlayerDetails(identifier)
+    if (type(identifier) ~= "string") then
+        identifier = Functions.GetIdentifier(identifier)
+    end
+
+    local online = true
+    if (Config.Framework == "QBCore") then
+        local character = QBCore.Functions.GetPlayerByCitizenId(identifier)
+        if (not character) then
+            character = QBCore.Functions.GetOfflinePlayerByCitizenId(identifier)
+            online = false
+        end
+
+        return Functions.FormatCharacterDetails(character, online)
+    elseif (Config.Framework == "ESX") then
+        return ESX.GetPlayerFromIdentifier(identifier) -- Not tested (Not in use for any active releases yet)
+    end
+end
+
 function Functions.GetPlayerFromIdentifier(identifier)
     if (Config.Framework == "QBCore") then
         return QBCore.Functions.GetPlayerByCitizenId(identifier)
@@ -243,23 +356,49 @@ function Functions.AddMoney(player, moneyType, amount, details)
     end
 end
 
+function Functions.GetMoney(player, moneyType)
+    if (type(player) ~= "table") then
+        player = Functions.GetPlayer(player)
+    end
+
+    moneyType = moneyType == nil and "cash" or moneyType -- If no moneyType is given, we're using "cash" as default
+
+    if (Config.Framework == "QBCore") then
+        return player.PlayerData.money[moneyType]
+    elseif (Config.Framework == "ESX") then
+        moneyType = moneyType == "cash" and "money" or moneyType -- ESX uses "money" instead of "cash", so we're converting it here
+        moneyType = moneyType == "dirty_cash" and "black_money" or moneyType -- ESX uses "black_money" instead of "dirty_cash", so we're converting it here
+        return player.getAccount(moneyType).money -- Not tested (Not used for any releases)
+    end
+end
+
+function Functions.RemoveMoney(player, moneyType, amount, details)
+    if (type(player) ~= "table") then
+        player = Functions.GetPlayer(player)
+    end
+
+    if (Config.Framework == "QBCore") then
+        player.Functions.RemoveMoney(moneyType, amount, details)
+    elseif (Config.Framework == "ESX") then
+        moneyType = moneyType == "cash" and "money" or moneyType -- ESX uses "money" instead of "cash", so we're converting it here
+        moneyType = moneyType == "dirty_cash" and "black_money" or moneyType -- ESX uses "black_money" instead of "dirty_cash", so we're converting it here
+        player.removeAccountMoney(moneyType, amount, details) -- Not tested (Not used for any releases)
+    end
+end
+
 function Functions.GetSource(player)
     if (type(player) ~= "table") then
         player = Functions.GetPlayer(player)
+    end
+
+    if (not player) then -- Make sure that the player is online, not needed to fetch offline players in my case, so we return nil of not online
+        return nil, "playerOffline"
     end
 
     if (Config.Framework == "QBCore") then
         return player.PlayerData.source
     elseif (Config.Framework == "ESX") then
         return player.source
-    end
-end
-
-function Functions.GetItem(item)
-    if (Config.Framework == "QBCore") then
-        return QBCore.Shared.Items[item]
-    elseif (Config.Framework == "ESX") then
-        return ESX.Items[item]
     end
 end
 
@@ -332,6 +471,48 @@ function Functions.OpenInventory(invId, type)
         -- return ESX.GetInventory(invId) -- Not tested (Not in use for any active releases yet)
     end
 end
+
+function Functions.GetPlayers()
+    if (Config.Framework == "QBCore") then
+        return QBCore.Functions.GetPlayers()
+    elseif (Config.Framework == "ESX") then
+        return ESX.GetPlayers() -- Not tested (Not in use for any active releases yet)
+    end
+end
+
+local function insertIntoHandlers(player)
+    local identifier = Functions.GetIdentifier(player)
+    local source = Functions.GetSource(player)
+    local character = Functions.GetPlayerDetails(player)
+    local discord = "NOT FOUND"
+
+    for _, id in pairs(GetPlayerIdentifiers(source)) do
+        if string.find(id, "discord:") then
+            discord = id:gsub("discord:", "")
+            break
+        end
+    end
+
+    handlers[identifier] = {
+        firstname = character?.firstname,
+        lastname = character?.lastname,
+        identifier = identifier,
+        source = source,
+        discord = discord
+    }
+end
+
+AddEventHandler("zyke_lib:PlayerJoined", function(player)
+    insertIntoHandlers(player)
+end)
+
+AddEventHandler("onResourceStart", function(resource)
+    if (GetCurrentResourceName() ~= resource) then return end
+
+    for _, player in pairs(Functions.GetPlayers()) do
+        insertIntoHandlers(player)
+    end
+end)
 
 function Fetch()
     return Functions
