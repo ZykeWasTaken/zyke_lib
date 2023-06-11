@@ -9,4 +9,4 @@ Config.WeaponType = "item" -- "item" / "weapon", whether to remove and give the 
 -- Set to true to enable debug messages, recommended to always keep true since it doesn't spam the console
 -- It only gives relevant information such as critical errors
 Config.Debug = false
-Config.ExtensiveLogs = true -- NOTE THAT THIS FEATURE IS EXPERIMENTAL AND I BEAR NO CONSEQUENCES IF YOU USE IT!
+Config.ExtensiveLogs = false -- NOTE THAT THIS FEATURE IS EXPERIMENTAL AND I BEAR NO CONSEQUENCES IF YOU USE IT!
