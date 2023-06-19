@@ -8,7 +8,7 @@ function Functions.LoadModel(mdl)
         end
         return true
     else
-        print("This model does not exist: " .. orgMdl .. "(" .. mdl .. ")")
+        print("This model does not exist: " .. orgMdl .. " (" .. mdl .. ")")
         return false
     end
 end
