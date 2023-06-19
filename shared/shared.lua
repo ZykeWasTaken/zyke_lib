@@ -94,7 +94,26 @@ function Functions.FormatCharacterDetails(character, online)
         formatted.bank = character.PlayerData.money["bank"] or 0
         formatted.dirty_cash = character.PlayerData.money["dirty_cash"] or 0
         formatted.online = online or false
+        -- TODO: Match ESX (Future proofing)
     elseif (Config.Framework == "ESX") then
+        formatted.identifier = character.identifier
+        formatted.firstname = character.variables.firstName
+        formatted.lastname = character.variables.lastName
+        formatted.dateofbirth = character.variables.dateofbirth
+        formatted.phonenumber = character.variables.phoneNumber
+        formatted.backstory = nil -- By default there is none
+        formatted.cash = character.accounts.money
+        formatted.bank = character.accounts.bank
+        formatted.dirty_cash = character.accounts.black_money
+        formatted.online = online or false
+
+        -- Unused, future proofing
+        formatted.gender = character.variables.sex
+        formatted.height = character.variables.height
+        formatted.jobName = character.job.name
+        formatted.jobLabel = character.job.label
+        formatted.jobGrade = character.job.grade
+        formatted.salary = character.job.grade_salary
     end
 
     return formatted

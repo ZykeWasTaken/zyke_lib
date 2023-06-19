@@ -321,7 +321,9 @@ function Functions.GetPlayer(source)
 end
 
 function Functions.GetPlayerDetails(identifier)
-    if (type(identifier) ~= "string") then
+    if (tonumber(identifier) ~= nil) then -- Is a source, but set as string
+        identifier = Functions.GetIdentifier(tonumber(identifier))
+    elseif (type(identifier) ~= "string") then
         identifier = Functions.GetIdentifier(identifier)
     end
 
@@ -335,7 +337,31 @@ function Functions.GetPlayerDetails(identifier)
 
         return Functions.FormatCharacterDetails(character, online)
     elseif (Config.Framework == "ESX") then
-        return ESX.GetPlayerFromIdentifier(identifier) -- Not tested (Not in use for any active releases yet)
+        local character = ESX.GetPlayerFromIdentifier(identifier)
+
+        if (not character) then
+            character = Functions.GetOfflinePlayer(identifier)
+            online = false
+        end
+
+        return Functions.FormatCharacterDetails(character, online)
+    end
+end
+
+function Functions.GetOfflinePlayer(identifier)
+    if (type(identifier) ~= "string") then
+        identifier = Functions.GetIdentifier(identifier)
+    end
+
+    if (Config.Framework == "QBCore") then
+        return QBCore.Functions.GetOfflinePlayerByCitizenId(identifier)
+    elseif (Config.Framework == "ESX") then
+        local p = promise.new()
+        MySQL.Async.fetchAll("SELECT * FROM users WHERE identifier = @identifier", {["@identifier"] = identifier}, function(result)
+            p:resolve(result[1])
+        end)
+
+        return Citizen.Await(p)
     end
 end
 
