@@ -6,12 +6,11 @@ function Functions.LoadModel(mdl)
         while not HasModelLoaded(mdl) do
             Wait(10)
         end
+        return true
     else
         print("This model does not exist: " .. orgMdl .. "(" .. mdl .. ")")
         return false
     end
-
-    return true
 end
 
 function Functions.LoadAnim(anim)
@@ -133,7 +132,7 @@ function Functions.GetPlayerData()
     if (Config.Framework == "QBCore") then
         return QBCore.Functions.GetPlayerData()
     elseif (Config.Framework == "ESX") then
-        return ESX.GetPlayerData() -- Not tested (Not in use for any active releases yet)
+        return ESX.GetPlayerData() -- Not tested (Not in use for any active releases yet) (ERROR)
     end
 end
 
@@ -158,6 +157,7 @@ function Functions.OpenInventory(type, invId, other)
     end
 end
 
+-- DEV TODO: Re-write this to only fetch the PlayerData once, not sure why I would fetch it for each key
 function Functions.GetJob()
     if (Config.Framework == "QBCore") then
         local job = {}
@@ -253,6 +253,128 @@ function Functions.GetPlayers()
         return QBCore.Functions.GetPlayers()
     elseif (Config.Framework == "ESX") then
         return ESX.GetPlayers() -- Not tested (Not in use for any active releases yet)
+    end
+end
+
+--[[
+    veh = vehicle handler / entity id
+    mods = {
+        ["engine"] = 2,
+        ["suspension"] = 3,
+        -- etc
+    }
+]]
+function Functions.SetVehicleMods(veh, mods)
+    local _mods = {
+        ["engine"] = {idx = 11, max = 3},
+        ["brakes"] = {idx = 12, max = 2},
+        ["transmission"] = {idx = 13, max = 2},
+        ["suspension"] = {idx = 15, max = 3},
+        ["armor"] = {idx = 16, max = 4},
+        ["turbo"] = {idx = 18, max = 1},
+    }
+
+    local function GetLevel(name, value)
+        if (value > _mods[name].max) then
+            return _mods[name].max
+        elseif (value < 0) then
+            return 0
+        end
+
+        return value or 0
+    end
+
+    for name, level in pairs(mods) do
+        if (_mods[name]) then
+            local _level = GetLevel(name, level)
+            SetVehicleModKit(veh, 0)
+
+            if (name == "turbo") then
+                ToggleVehicleMod(veh, _mods[name].idx, _level)
+            else
+                SetVehicleMod(veh, _mods[name].idx, _level, false)
+            end
+        end
+    end
+end
+
+--[[
+    vehData = {
+        pos
+        model
+        heading
+        mods
+        plate
+        isNetwork
+        netMissionEntity
+    }
+    options = {
+        seat = -1, -- -1 = driver, 0 = passenger, 1 = back left, 2 = back right
+        engineOn = false, -- Default false, set to true to override
+        fuel = 100.0, -- Will default be 100.0, set to any other value to override
+        dirtLevel = 0.0, -- Will default be 0.0, set to any other value to override
+        owner = false, -- Default false (This is for qb-vehiclekeys), set to true to override´
+        colors = {1, 1}, -- Primary, secondary
+    }
+]]
+function Functions.SpawnVehicle(vehData, options)
+    local hasLoaded = Functions.LoadModel(vehData.model)
+
+    if (not hasLoaded) then return nil, {msg = "Could not load model", type = "error"} end
+
+    local veh = CreateVehicle(vehData.model, vehData.pos.x, vehData.pos.y, vehData.pos.z, vehData.pos.h or vehData.pos.w or vehData.heading or 0.0, vehData.isNetwork or true, vehData.netMissionEntity or false)
+    SetModelAsNoLongerNeeded(vehData.model)
+
+    if (vehData.plate) then
+        SetVehicleNumberPlateText(veh, vehData.plate)
+    end
+
+    if (vehData.mods) then
+        Functions.SetVehicleMods(veh, vehData.mods)
+    end
+
+    if (options and options.seat) then
+        SetPedIntoVehicle(PlayerPedId(), veh, options.seat)
+    end
+
+    if (options and options.colors) then
+        SetVehicleColours(veh, options.colors[1] or 0, options.colors[2] or 0)
+    end
+
+    SetVehicleFuelLevel(veh, options and options.fuel or 100.0)
+    SetVehicleDirtLevel(veh, options and options.dirtLevel or 0.0)
+    SetVehicleEngineOn(veh, options and options.engineOn or false, true, false)
+
+    if (Functions.GetFramework() == "QBCore") then
+        if (options and (options.owner == true)) then
+            TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(veh))
+        end
+    end
+
+    return veh, {msg = "Vehicle spawned", type = "success"}
+end
+
+function Functions.AddTargetEntity(entity, passed)
+    if (Config.Target == "qb-target") then
+        exports["qb-target"]:AddTargetEntity(entity, {
+            options = passed.options,
+            distance = passed.distance or 2.0
+        })
+    elseif (Config.Target == "ox_target") then
+        Functions.RemoveTargetEntity(entity) -- You need to remove and re-add the entity if you want to update the options
+        exports["ox_target"]:addLocalEntity(entity, passed.options)
+    else
+        Functions.Debug("You are using an unsupported target script, please use either qb-target, qtarget or ox_target. Alternatively you can add your own target script.", "error")
+    end
+end
+
+function Functions.RemoveTargetEntity(entity)
+    if (Config.Target == "qb-target") then
+        exports["qb-target"]:RemoveTargetEntity(entity)
+    elseif (Config.Target == "ox_target") then
+        exports["ox_target"]:removeLocalEntity(entity)
+    else
+        Functions.Debug("You are using an unsupported target script, please use either qb-target, qtarget or ox_target. Alternatively you can add your own target script.", "error")
     end
 end
 

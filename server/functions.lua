@@ -38,7 +38,7 @@ function SendLog()
 
         local getFileName = function()
             local uniqueNumber = tostring(math.random(100000000, 999999999))
-            local path = "/logs/" .. scriptName .. "/" .. action .. "/"
+            local path = "/server/logs/" .. scriptName .. "/" .. action .. "/"
             local name = uniqueNumber .. ".json"
 
             return path, name
@@ -51,6 +51,11 @@ function SendLog()
         basicInformationStr = basicInformationStr .. ((identifier ~= nil and identifier ~= "") and "Identifier: " .. identifier .. "\n" or "")
         basicInformationStr = basicInformationStr .. "Action: " .. action .. "\n"
         basicInformationStr = basicInformationStr .. "Handler: " .. handlerMsg
+
+        -- rawData additions
+        local rawData = passed.rawData
+        rawData.identifier = identifier
+        rawData.handler = handler
 
         local field1 = {
             ["name"] = "Basic Information",
@@ -87,7 +92,7 @@ function SendLog()
         }
 
         if (Config.ExtensiveLogs == true) then
-            CreateExtensiveLog(filePath, fileName, passed.rawData)
+            CreateExtensiveLog(filePath, fileName, rawData)
         end
 
         PerformHttpRequest(webhook, function(err, text, headers) end, 'POST', json.encode(payload), { ['Content-Type'] = 'application/json' })
@@ -106,10 +111,11 @@ function SendLog()
 end
 
 function CreateExtensiveLog(filePath, fileName, data)
-    local location = string.gsub(GetResourcePath(GetCurrentResourceName()), "^(.+\\)[^\\]+$", "%1") .. "/server" .. filePath
+    local location = string.gsub(GetResourcePath(GetCurrentResourceName()), "^(.+\\)[^\\]+$", "%1") .. filePath
 
     os.execute("mkdir " .. location:gsub("/", "\\"))
     local file = io.open(location .. fileName, "w")
+    -- if (not file) then return false end
     file:write(json.encode(data, {indent = true}))
     file:close()
 end
@@ -127,6 +133,14 @@ function Functions.HasItem(player, item, amount)
 
         local hasItem = QBCore.Functions.HasItem(source, formatted)
         return hasItem
+
+        -- If your inventory doesn't support multiple items in a table, use the code below instead (Examples are c8re inventory)
+        -- for name, _amount in pairs(formatted) do
+        --     local hasItem = QBCore.Functions.HasItem(source, name, _amount)
+
+        --     if (hasItem == false) then return false end
+        -- end
+        -- return true
     elseif (Config.Framework == "ESX") then
         local formatted = Functions.FormatItems(item, amount)
         local hasItems = true
@@ -292,14 +306,17 @@ function Functions.CreateCallback(name, passed)
 end
 
 function Functions.GetPlayer(source)
-    if (type(source) == "string") then
-        return Functions.GetPlayerFromIdentifier(source)
+    local _source = tonumber(source)
+    if (_source == nil) then _source = source end
+
+    if (type(_source) == "string") then
+        return Functions.GetPlayerFromIdentifier(_source)
     end
 
     if (Config.Framework == "QBCore") then
-        return QBCore.Functions.GetPlayer(source)
+        return QBCore.Functions.GetPlayer(_source)
     elseif (Config.Framework == "ESX") then
-        return ESX.GetPlayerFromId(source)
+        return ESX.GetPlayerFromId(_source) -- Error
     end
 end
 
@@ -331,7 +348,7 @@ function Functions.GetPlayerFromIdentifier(identifier)
 end
 
 function Functions.GetIdentifier(player)
-    if (type(player) ~= "table") then -- If you send in a source it'll fetch the player
+    if (type(player) ~= "table") then
         player = Functions.GetPlayer(player)
     end
 
@@ -391,7 +408,7 @@ function Functions.GetSource(player)
         player = Functions.GetPlayer(player)
     end
 
-    if (not player) then -- Make sure that the player is online, not needed to fetch offline players in my case, so we return nil of not online
+    if (not player) then
         return nil, "playerOffline"
     end
 
@@ -403,7 +420,7 @@ function Functions.GetSource(player)
 end
 
 function Functions.HasPermission(source, permission)
-    if (type(source) == "table") then
+    if (type(source) ~= "number") then
         source = Functions.GetSource(source)
     end
 
@@ -476,13 +493,37 @@ function Functions.GetPlayers()
     if (Config.Framework == "QBCore") then
         return QBCore.Functions.GetPlayers()
     elseif (Config.Framework == "ESX") then
-        return ESX.GetPlayers() -- Not tested (Not in use for any active releases yet)
+        return ESX.GetPlayers()
     end
+end
+
+-- vec3
+function Functions.GetClosestPlayerToPos(pos)
+    local players = Functions.GetPlayers()
+    local closestDistance = -1
+    local closestPlayer = -1
+
+    for _, plyId in pairs(players) do
+        local targetPed = GetPlayerPed(plyId)
+        local targetCoords = GetEntityCoords(targetPed)
+        local distance = #(pos - targetCoords)
+
+        if (closestDistance == -1 or closestDistance > distance) then
+            closestPlayer = plyId
+            closestDistance = distance
+        end
+    end
+
+    return closestPlayer, closestDistance
+end
+
+function Functions.Notify(source, msg, type)
+    TriggerClientEvent("zyke_lib:Notify", source, msg, type)
 end
 
 local function insertIntoHandlers(player)
     local identifier = Functions.GetIdentifier(player)
-    local source = Functions.GetSource(player)
+    local source, reason = Functions.GetSource(player)
     local character = Functions.GetPlayerDetails(player)
     local discord = "NOT FOUND"
 

@@ -115,3 +115,7 @@ end
 function Functions.GetWeaponType()
     return Config.WeaponType
 end
+
+function Functions.GetTarget()
+    return Config.Target
+end
