@@ -384,7 +384,7 @@ function Functions.GetPlayerDetails(identifier)
     Functions.Callback("zyke_lib:FetchPlayerDetails", function(res)
         p:resolve(res)
     end, {
-        identifier = identifier,
+        identifier = identifier or Functions.GetIdentifier(),
     })
 
     return Citizen.Await(p)
