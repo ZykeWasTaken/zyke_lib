@@ -144,6 +144,7 @@ function Functions.GetIdentifier()
     end
 end
 
+-- TODO: Fix for ESX, if even possible with default inventory?
 function Functions.OpenInventory(type, invId, other)
     type = type or "stash"
     if (Config.Framework == "QBCore") then
@@ -376,6 +377,17 @@ function Functions.RemoveTargetEntity(entity)
     else
         Functions.Debug("You are using an unsupported target script, please use either qb-target, qtarget or ox_target. Alternatively you can add your own target script.", "error")
     end
+end
+
+function Functions.GetPlayerDetails(identifier)
+    local p = promise.new()
+    Functions.Callback("zyke_lib:FetchPlayerDetails", function(res)
+        p:resolve(res)
+    end, {
+        identifier = identifier,
+    })
+
+    return Citizen.Await(p)
 end
 
 function Fetch()

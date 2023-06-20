@@ -22,3 +22,21 @@ elseif (Config.Framework == "ESX") then
         TriggerEvent("zyke_lib:PlayerJoined", src, src, player)
     end)
 end
+
+Functions.CreateCallback("zyke_lib:FetchPlayerDetails", function(source, cb, passed)
+    if (type(passed.identifier) == "table") then -- Multiple identifiers
+        local identifiers = {}
+
+        for _, identifier in pairs(passed.identifier) do
+            local playerDetails = Functions.GetPlayerDetails(identifier)
+
+            table.insert(identifiers, playerDetails)
+        end
+
+        return cb(identifiers)
+    else
+        return cb(Functions.GetPlayerDetails(passed.identifier)) -- Singular identifier
+    end
+
+    return cb({})
+end)
