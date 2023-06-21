@@ -37,8 +37,6 @@ Functions.CreateCallback("zyke_lib:FetchPlayerDetails", function(source, cb, pas
     else
         return cb(Functions.GetPlayerDetails(passed.identifier)) -- Singular identifier
     end
-
-    return cb({})
 end)
 
 Functions.CreateCallback("zyke_lib:GetPlayersOnJob", function(source, cb, job, onDuty)
