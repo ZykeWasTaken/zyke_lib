@@ -158,7 +158,6 @@ function Functions.OpenInventory(type, invId, other)
     end
 end
 
--- DEV TODO: Re-write this to only fetch the PlayerData once, not sure why I would fetch it for each key
 function Functions.GetJob()
     if (Config.Framework == "QBCore") then
         local job = {}
@@ -167,13 +166,15 @@ function Functions.GetJob()
             return nil
         end
 
+        local playerData = Functions.GetPlayerData()
+
         -- This is to ensure my scripts align with whatever system you're using
         -- By default this will work, but if you have a different system, you can change it here
-        job.name = Functions.GetPlayerData()?.job?.name or ""
-        job.label = Functions.GetPlayerData()?.job?.label or ""
-        job.grade = Functions.GetPlayerData()?.job?.grade or 0
-        job.grade_label = Functions.GetPlayerData()?.job?.grade_label or ""
-        job.grade_name = Functions.GetPlayerData()?.job?.grade_name or ""
+        job.name = playerData?.job?.name or ""
+        job.label = playerData?.job?.label or ""
+        job.grade = playerData?.job?.grade or 0
+        job.grade_label = playerData?.job?.grade_label or ""
+        job.grade_name = playerData?.job?.grade_name or ""
 
         return job
     elseif (Config.Framework == "ESX") then
@@ -184,11 +185,13 @@ function Functions.GetJob()
             return nil
         end
 
-        job.name = Functions.GetPlayerData()?.job?.name or ""
-        job.label = Functions.GetPlayerData()?.job?.label or ""
-        job.grade = Functions.GetPlayerData()?.job?.grade or 0
-        job.grade_label = Functions.GetPlayerData()?.job?.grade_label or ""
-        job.grade_name = Functions.GetPlayerData()?.job?.grade_name or ""
+        local playerData = Functions.GetPlayerData()
+
+        job.name = playerData?.job?.name or ""
+        job.label = playerData?.job?.label or ""
+        job.grade = playerData?.job?.grade or 0
+        job.grade_label = playerData?.job?.grade_label or ""
+        job.grade_name = playerData?.job?.grade_name or ""
 
         return job
     end
@@ -386,6 +389,16 @@ function Functions.GetPlayerDetails(identifier)
     end, {
         identifier = identifier or Functions.GetIdentifier(),
     })
+
+    return Citizen.Await(p)
+end
+
+-- If you server already reflects and caches client side based on server side jobs, you could switch this out for a more performant version
+function Functions.GetPlayersOnJob(job, onDuty)
+    local p = promise.new()
+    Functions.Callback("zyke_lib:GetPlayersOnJob", function(res)
+        p:resolve(res)
+    end, job, onDuty)
 
     return Citizen.Await(p)
 end

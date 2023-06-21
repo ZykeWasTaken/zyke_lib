@@ -40,3 +40,7 @@ Functions.CreateCallback("zyke_lib:FetchPlayerDetails", function(source, cb, pas
 
     return cb({})
 end)
+
+Functions.CreateCallback("zyke_lib:GetPlayersOnJob", function(source, cb, job, onDuty)
+    return cb(Functions.GetPlayersOnJob(job, onDuty))
+end)
