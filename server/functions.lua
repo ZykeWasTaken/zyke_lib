@@ -19,12 +19,11 @@ function SendLog()
     local function send(passed)
         -- Bot
         local username = "Zyke Resources' Logs"
-        local avatarUrl = "https://cdn.discordapp.com/attachments/1048900415967744031/1081685770898784506/zyke.jpg"
+        local avatarUrl = "https://cdn.discordapp.com/attachments/1048900415967744031/1117129086104514721/New_Logo.png"
         local webhook = passed.webhook or "" -- Insert a fallback webhook here, meaning if the resource doesn't have a webhook set, it will use this one instead
 
         -- Message
         local scriptName = passed.scriptName or "Unknown Script"
-        local identifier = passed.identifier or ""
         local message = passed.message or "Empty Message"
         local action = passed.action or "Unknown Action"
         local handler = handlers[passed?.handler] or handlers[Functions.GetIdentifier(passed?.handler)] or "server"
@@ -36,26 +35,31 @@ function SendLog()
             handlerMsg = "Server"
         end
 
-        local getFileName = function()
-            local uniqueNumber = tostring(math.random(100000000, 999999999))
-            local path = "/server/logs/" .. scriptName .. "/" .. action .. "/"
-            local name = uniqueNumber .. ".json"
+        -- local getFileName = function()
+        --     local uniqueNumber = tostring(math.random(100000000, 999999999))
+        --     local path = "/server/logs/" .. scriptName .. "/" .. action .. "/"
+        --     local name = uniqueNumber .. ".json"
 
-            return path, name
-        end
+        --     return path, name
+        -- end
 
-        local filePath, fileName = getFileName()
+        -- local filePath, fileName = getFileName()
 
         local basicInformationStr = ""
         basicInformationStr = basicInformationStr .. "Script: " .. scriptName .. "\n"
-        basicInformationStr = basicInformationStr .. ((identifier ~= nil and identifier ~= "") and "Identifier: " .. identifier .. "\n" or "")
         basicInformationStr = basicInformationStr .. "Action: " .. action .. "\n"
         basicInformationStr = basicInformationStr .. "Handler: " .. handlerMsg
 
         -- rawData additions
         local rawData = passed.rawData
-        rawData.identifier = identifier
-        rawData.handler = handler
+        local encodedRawData = json.encode(rawData, {indent = false}) -- In large logs you may experience up to 2.5x more characters used if you indent, hence why it's disabled
+
+        if (#encodedRawData > 1000) then
+            encodedRawData = json.encode({
+                ["error"] = "Log too large, will hit the character limit.",
+                ["logSize"] = #encodedRawData,
+            }, {indent = false})
+        end
 
         local field1 = {
             ["name"] = "Basic Information",
@@ -67,11 +71,10 @@ function SendLog()
             ["value"] = message,
         }
 
-        local field3 = passed.rawData and Config.ExtensiveLogs == true and {
+        local field3 = {
             ["name"] = "Raw Data",
-            -- ["value"] = json.encode(passed.rawData, {indent = true}),
-            ["value"] = GetCurrentResourceName() .. filePath .. fileName,
-        } or nil
+            ["value"] = "```" .. encodedRawData .. "```",
+        }
 
         local embeds = {
             {
@@ -91,9 +94,9 @@ function SendLog()
             avatar_url = avatarUrl,
         }
 
-        if (Config.ExtensiveLogs == true) then
-            CreateExtensiveLog(filePath, fileName, rawData)
-        end
+        -- if (Config.ExtensiveLogs == true) then
+        --     CreateExtensiveLog(filePath, fileName, rawData)
+        -- end
 
         PerformHttpRequest(webhook, function(err, text, headers) end, 'POST', json.encode(payload), { ['Content-Type'] = 'application/json' })
     end
@@ -110,15 +113,15 @@ function SendLog()
     inLoop = false
 end
 
-function CreateExtensiveLog(filePath, fileName, data)
-    local location = string.gsub(GetResourcePath(GetCurrentResourceName()), "^(.+\\)[^\\]+$", "%1") .. filePath
+-- function CreateExtensiveLog(filePath, fileName, data)
+--     local location = string.gsub(GetResourcePath(GetCurrentResourceName()), "^(.+\\)[^\\]+$", "%1") .. filePath
 
-    os.execute("mkdir " .. location:gsub("/", "\\"))
-    local file = io.open(location .. fileName, "w")
-    -- if (not file) then return false end
-    file:write(json.encode(data, {indent = true}))
-    file:close()
-end
+--     os.execute("mkdir " .. location:gsub("/", "\\"))
+--     local file = io.open(location .. fileName, "w")
+--     -- if (not file) then return false end
+--     file:write(json.encode(data, {indent = true}))
+--     file:close()
+-- end
 
 function Functions.HasItem(player, item, amount)
     if (type(player) ~= "table") then

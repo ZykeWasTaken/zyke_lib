@@ -10,4 +10,3 @@ Config.Target = nil -- "qb-target" / "ox_target" / nil (nil = no target script)
 -- Set to true to enable debug messages, recommended to always keep true since it doesn't spam the console
 -- It only gives relevant information such as critical errors
 Config.Debug = false
-Config.ExtensiveLogs = false -- NOTE THAT THIS FEATURE IS EXPERIMENTAL AND I BEAR NO CONSEQUENCES IF YOU USE IT!
