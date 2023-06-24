@@ -84,6 +84,7 @@ function Functions.FormatCharacterDetails(character, online)
         end
 
         formatted.identifier = character.PlayerData.citizenid
+        formatted.source = character.PlayerData.source
         formatted.firstname = character.PlayerData.charinfo.firstname
         formatted.lastname = character.PlayerData.charinfo.lastname
         formatted.dateofbirth = character.PlayerData.charinfo.birthdate
@@ -97,6 +98,7 @@ function Functions.FormatCharacterDetails(character, online)
         -- TODO: Match ESX (Future proofing)
     elseif (Config.Framework == "ESX") then
         formatted.identifier = character.identifier
+        formatted.source = character.source
         formatted.firstname = character.variables.firstName
         formatted.lastname = character.variables.lastName
         formatted.dateofbirth = character.variables.dateofbirth
