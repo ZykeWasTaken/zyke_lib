@@ -323,7 +323,18 @@ function Functions.GetPlayer(source)
     end
 end
 
+-- Does not accept the identifier to be the player table for conversion
 function Functions.GetPlayerDetails(identifier)
+    if (type(identifier) == "table") then
+        local identifiers = {}
+
+        for idx, _identifier in pairs(identifier) do
+            identifiers[idx] = Functions.GetPlayerDetails(_identifier)
+        end
+
+        return identifiers
+    end
+
     if (tonumber(identifier) ~= nil) then -- Is a source, but set as string
         identifier = Functions.GetIdentifier(tonumber(identifier))
     elseif (type(identifier) ~= "string") then
@@ -580,7 +591,7 @@ AddEventHandler("onResourceStart", function(resource)
     if (GetCurrentResourceName() ~= resource) then return end
 
     for _, player in pairs(Functions.GetPlayers()) do
-        insertIntoHandlers(player)
+        insertIntoHandlers(Functions.GetIdentifier())
     end
 end)
 
