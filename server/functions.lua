@@ -567,6 +567,7 @@ local function insertIntoHandlers(player)
     local character = Functions.GetPlayerDetails(player)
     local discord = "NOT FOUND"
 
+    if (not source) then Functions.Debug("Source not found (CRITICAL!)", Config.Debug) return end
     for _, id in pairs(GetPlayerIdentifiers(source)) do
         if string.find(id, "discord:") then
             discord = id:gsub("discord:", "")
@@ -591,7 +592,7 @@ AddEventHandler("onResourceStart", function(resource)
     if (GetCurrentResourceName() ~= resource) then return end
 
     for _, player in pairs(Functions.GetPlayers()) do
-        insertIntoHandlers(Functions.GetIdentifier())
+        insertIntoHandlers(Functions.GetIdentifier(player))
     end
 end)
 

@@ -1,9 +1,10 @@
 function Functions.LoadModel(mdl)
-    orgMdl = mdl
+    local orgMdl = mdl
     mdl = joaat(mdl)
-    if IsModelValid(mdl) then
+
+    if (IsModelValid(mdl)) then
         RequestModel(mdl)
-        while not HasModelLoaded(mdl) do
+        while (not HasModelLoaded(mdl)) do
             Wait(10)
         end
         return true
