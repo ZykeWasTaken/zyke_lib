@@ -104,7 +104,7 @@ function Functions.ProgressBar(name, label, duration, useWhileDead, canCancel, d
         QBCore.Functions.Progressbar(name, label, duration, useWhileDead, canCancel, disableControls, animation, prop, propTwo, onFinish, onCancel)
     elseif (Config.Framework == "ESX") then
         ESX.Progressbar(label, duration, {
-            animation = {
+            animation = animation and {
                 type = animation.type,
                 dict = animation.animDict,
                 lib = animation.anim,
