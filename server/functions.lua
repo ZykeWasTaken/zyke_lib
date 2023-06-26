@@ -7,6 +7,7 @@ function Functions.Log(passed)
     if (type(passed) ~= "table") then return end -- Make sure the passed argument is a table to continue
     if (passed.logsEnabled == false) or (passed.logsEnabled == nil) then return end -- Make sure logs are enabled in that resource to continue
 
+    passed.scriptName = GetInvokingResource() -- Get the name of the resource that called the function
     table.insert(logQueue, passed)
     CreateThread(function()
         SendLog()
