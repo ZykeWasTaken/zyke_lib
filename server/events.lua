@@ -42,3 +42,7 @@ end)
 Functions.CreateCallback("zyke_lib:GetPlayersOnJob", function(source, cb, job, onDuty)
     return cb(Functions.GetPlayersOnJob(job, onDuty))
 end)
+
+Functions.CreateCallback("zyke_lib:GetItems", function(source, cb)
+    return cb(ESX.Items)
+end)

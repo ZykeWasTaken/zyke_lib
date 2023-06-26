@@ -7,6 +7,7 @@ client_scripts {
     "client/framework.lua",
     "client/functions.lua",
     "client/events.lua",
+    "client/main.lua",
 }
 
 server_scripts {
