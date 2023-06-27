@@ -404,6 +404,20 @@ function Functions.GetPlayersOnJob(job, onDuty)
     return Citizen.Await(p)
 end
 
+-- Text entry is the menu top left
+function Functions.RegisterTextEntry(name, msg)
+    local prefix = GetInvokingResource() .. ":"
+
+    AddTextEntry(prefix .. name, msg)
+end
+
+function Functions.DisplayTextEntry(name)
+    local prefix = GetInvokingResource() .. ":"
+
+    BeginTextCommandDisplayHelp(prefix .. name)
+    EndTextCommandDisplayHelp(0, 0, 1, -1)
+end
+
 function Fetch()
     return Functions
 end
