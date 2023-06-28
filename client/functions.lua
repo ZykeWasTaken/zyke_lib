@@ -369,7 +369,7 @@ function Functions.AddTargetEntity(entity, passed)
         Functions.RemoveTargetEntity(entity) -- You need to remove and re-add the entity if you want to update the options
         exports["ox_target"]:addLocalEntity(entity, passed.options)
     else
-        Functions.Debug("You are using an unsupported target script, please use either qb-target, qtarget or ox_target. Alternatively you can add your own target script.", "error")
+        Functions.Debug("You are using an unsupported target script, please use either qb-target, qtarget or ox_target. Alternatively you can add your own target script.", true)
     end
 end
 
@@ -379,7 +379,7 @@ function Functions.RemoveTargetEntity(entity)
     elseif (Config.Target == "ox_target") then
         exports["ox_target"]:removeLocalEntity(entity)
     else
-        Functions.Debug("You are using an unsupported target script, please use either qb-target, qtarget or ox_target. Alternatively you can add your own target script.", "error")
+        Functions.Debug("You are using an unsupported target script, please use either qb-target, qtarget or ox_target. Alternatively you can add your own target script.", true)
     end
 end
 
