@@ -418,6 +418,15 @@ function Functions.DisplayTextEntry(name)
     EndTextCommandDisplayHelp(0, 0, 1, -1)
 end
 
+function Functions.HasPermission(perm)
+    local p = promise.new()
+    Functions.Callback("zyke_lib:HasPermission", function(res)
+        p:resolve(res)
+    end, perm)
+
+    return Citizen.Await(p)
+end
+
 function Fetch()
     return Functions
 end

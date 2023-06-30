@@ -46,3 +46,7 @@ end)
 Functions.CreateCallback("zyke_lib:GetItems", function(source, cb)
     return cb(ESX.Items)
 end)
+
+Functions.CreateCallback("zyke_lib:HasPermission", function(source, cb, permission)
+    return cb(Functions.HasPermission(source, permission))
+end)
