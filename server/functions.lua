@@ -562,6 +562,96 @@ function Functions.Notify(source, msg, type)
     TriggerClientEvent("zyke_lib:Notify", source, msg, type)
 end
 
+function Functions.DBFetch(query, params)
+    if (not query) then Functions.Debug("No query passed (CRITICAL!)", Config.Debug) return end
+
+    local p = promise.new()
+
+    MySQL.Async.fetchAll(query, params or {}, function(result)
+        p:resolve(result)
+    end)
+
+    return Citizen.Await(p)
+end
+
+-- Keeps track of all sessions
+Sessions = {
+    entities = {},
+    players = {}
+}
+
+local function clearFromSession(type, id)
+    for sessionId, sessionData in pairs(Sessions[type]) do
+        for idx, session in pairs(sessionData) do
+            if (session.id == id) then
+                table.remove(Sessions[type][sessionId], idx)
+                Functions.Debug("Removed from bucket: " .. type .. " | " .. id, Config.Debug)
+                break
+            end
+        end
+    end
+end
+
+local function insertIntoSession(type, id, sessionId)
+    if (not Sessions[type][sessionId]) then Sessions[type][sessionId] = {} end
+
+    clearFromSession(type, id)
+
+    table.insert(Sessions[type][sessionId], {
+        id = id,
+        type = type,
+        set = os.time()
+    })
+
+    if (type == "players") then
+        SetPlayerRoutingBucket(id, sessionId)
+    elseif (type == "entities") then
+        SetEntityRoutingBucket(id, sessionId)
+    end
+
+    Functions.Debug("Inserted into bucket: " .. type .. " | " .. id .. " | " .. sessionId, Config.Debug)
+end
+
+function Functions.SetEntitySession(entityId, sessionId)
+    if (not (entityId or sessionId)) then Functions.Debug("No entityId or sessionId passed (CRITICAL!)", Config.Debug) return end
+
+    insertIntoSession("entities", entityId, sessionId)
+end
+
+function Functions.SetPlayerSession(playerId, sessionId)
+    if (not (playerId or sessionId)) then Functions.Debug("No playerId or sessionId passed (CRITICAL!)", Config.Debug) return end
+
+    insertIntoSession("players", playerId, sessionId)
+end
+
+function Functions.GetEntitySession(entityId)
+    return Sessions.entities[entityId]
+end
+
+function Functions.GetPlayerSession(playerId)
+    return Sessions.players[playerId]
+end
+
+function Functions.ClearFromSessions(type, id)
+    clearFromSession(type, id)
+end
+
+function Functions.GetSession(sessionId, combined, players, entities)
+    local session = {}
+
+    if (combined) then
+        for _, player in pairs(Sessions.players[sessionId] or {}) do
+            table.insert(session, player)
+        end
+
+        for _, entity in pairs(Sessions.entities[sessionId] or {}) do
+            table.insert(session, entity)
+        end
+    end
+
+    return combined and session, players and Sessions.players[sessionId], entities and Sessions.entities[sessionId]
+end
+
 local function insertIntoHandlers(player)
     local identifier = Functions.GetIdentifier(player)
     local source, reason = Functions.GetSource(player)
