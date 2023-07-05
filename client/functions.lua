@@ -97,22 +97,46 @@ function Functions.Notify(msg, type, length)
 end
 
 function Functions.ProgressBar(name, label, duration, useWhileDead, canCancel, disableControls, animation, prop, propTwo, onFinish, onCancel)
-    canCancel = canCancel or false -- QB requires this to have a set value
-    disableControls = disableControls or {} -- QB requires this to have a set value
-
-    if (Config.Framework == "QBCore") then
-        QBCore.Functions.Progressbar(name, label, duration, useWhileDead, canCancel, disableControls, animation, prop, propTwo, onFinish, onCancel)
-    elseif (Config.Framework == "ESX") then
-        ESX.Progressbar(label, duration, {
-            animation = animation and {
-                type = animation.type,
+    if (Config.Progressbar == "ox_lib") then
+        local state = lib.progressBar({
+            duration = duration,
+            label = label,
+            useWhileDead = useWhileDead,
+            canCancel = canCancel,
+            anim = {
                 dict = animation.animDict,
-                lib = animation.anim,
-            },
-            FreezePlayer = disableControls and true or false,
-            onFinish = onFinish,
-            onCancel = onCancel
+                clip = animation.anim,
+                flag = animation.flag or 49,
+            }
         })
+
+        if (state == true) then
+            if (onFinish) then
+                onFinish()
+            end
+        else
+            if (onCancel) then
+                onCancel()
+            end
+        end
+    else
+        canCancel = canCancel or false -- QB requires this to have a set value
+        disableControls = disableControls or {} -- QB requires this to have a set value
+
+        if (Config.Framework == "QBCore") then
+            QBCore.Functions.Progressbar(name, label, duration, useWhileDead, canCancel, disableControls, animation, prop, propTwo, onFinish, onCancel)
+        elseif (Config.Framework == "ESX") then
+            ESX.Progressbar(label, duration, {
+                animation = animation and {
+                    type = animation.type,
+                    dict = animation.animDict,
+                    lib = animation.anim,
+                },
+                FreezePlayer = disableControls and true or false,
+                onFinish = onFinish,
+                onCancel = onCancel
+            })
+        end
     end
 end
 

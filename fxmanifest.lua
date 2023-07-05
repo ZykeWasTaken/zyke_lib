@@ -20,6 +20,11 @@ server_scripts {
 
 shared_scripts {
     -- "@es_extended/imports.lua", -- ESX Legacy's import fetch
+    "@ox_lib/init.lua",
     "shared/shared.lua",
     "shared/config.lua"
+}
+
+dependencies {
+    "ox_lib",
 }
