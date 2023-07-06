@@ -6,7 +6,7 @@ Config = Config or {}
 Config.Framework = "QBCore" -- "QBCore" / "ESX"
 Config.WeaponType = "item" -- "item" / "weapon", whether to remove and give the weapon as an item or as a scrollwheel weapon, most will use item hence why it's default
 Config.Target = "qb-target" -- "qb-target" / "ox_target" / nil (nil = no target script)
-Config.Progressbar = "default" -- "ox_lib" or "default", "default" will use the progressbar in your framework, note that if it is out of date it may not work, ox_lib is recommended to use
+Config.Progressbar = "ox_lib" -- "ox_lib" or "default", "default" will use the progressbar in your framework, note that if it is out of date it may not work, ox_lib is recommended to use
 
 -- Set to true to enable debug messages, recommended to always keep true since it doesn't spam the console
 -- It only gives relevant information such as critical errors
