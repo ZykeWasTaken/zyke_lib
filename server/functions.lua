@@ -251,9 +251,9 @@ function Functions.GetPlayersOnJob(job, onDuty)
     elseif (Config.Framework == "ESX") then -- Untested
         -- ESX doesn't have a default duty system, that's why we're not using it here
         -- If you do have it on your server, you can use the onDuty variable if it's needed in the script
-        if (type(job) == "string") then
-            local players = {}
+        local players = {}
 
+        if (type(job) == "string") then
             for k, v in pairs(ESX.GetPlayers()) do
                 local xPlayer = ESX.GetPlayerFromId(v)
 
@@ -262,8 +262,6 @@ function Functions.GetPlayersOnJob(job, onDuty)
                 end
             end
         elseif (type(job) == "table") then
-            local players = {}
-
             for k, v in pairs(ESX.GetPlayers()) do
                 local xPlayer = ESX.GetPlayerFromId(v)
 
