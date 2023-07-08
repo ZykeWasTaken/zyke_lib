@@ -19,6 +19,7 @@ function Functions.Debug(msg, enabled)
 end
 
 function Functions.CountTable(tbl)
+    if (not tbl) then Functions.Debug(GetInvokingResource() .. " tried to count a nil table", Config.Debug) return 0 end
     local count = 0
 
     for k, v in pairs(tbl) do
@@ -139,6 +140,10 @@ end
 
 function Functions.GetTarget()
     return Config.Target
+end
+
+function Functions.GetConfig()
+    return Config
 end
 
 CreateThread(function()
