@@ -146,11 +146,20 @@ function Functions.PlayAnim(ped, dict, anim, blendInSpeed, blendOutSpeed, durati
 end
 
 function Functions.Callback(name, cb, ...)
+    local promise = promise.new()
     if (Config.Framework == "QBCore") then
-        QBCore.Functions.TriggerCallback(name, cb, ...)
+        QBCore.Functions.TriggerCallback(name, function(res)
+            if (cb) then cb(res) end
+            promise:resolve(res)
+        end, ...)
     elseif (Config.Framework == "ESX") then
-        ESX.TriggerServerCallback(name, cb, ...)
+        ESX.TriggerServerCallback(name, function(res)
+            if (cb) then cb(res) end
+            promise:resolve(res)
+        end, ...)
     end
+
+    Citizen.Await(promise)
 end
 
 function Functions.GetPlayerData()
