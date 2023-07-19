@@ -691,7 +691,8 @@ AddEventHandler("onResourceStop", function(resourceName)
     end
 end)
 
-    return Citizen.Await(p)
+function Functions.CreateUniqueId(length)
+    return Functions.Callback("zyke_lib:CreateUniqueId", false, {length = length})
 end
 
 function Fetch()
