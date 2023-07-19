@@ -504,10 +504,10 @@ function Functions.GetInventory(invId)
         local items = {}
         local result = MySQL.scalar.await('SELECT items FROM stashitems WHERE stash = ?', {invId})
         if not result then return items end
-    
+
         local stashItems = json.decode(result)
         if not stashItems then return items end
-    
+
         for _, item in pairs(stashItems) do
             local itemInfo = QBCore.Shared.Items[item.name:lower()]
             if itemInfo then
