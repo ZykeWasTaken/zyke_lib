@@ -33,7 +33,7 @@ function Functions.DrawMissionText(text, height, length)
     SetTextCentre(1)
     SetTextOutline()
     AddTextComponentString(text)
-    DrawText(length, height)
+    DrawText(length ~= nil and length or 0.5, height ~= nil and height or 0.96)
 end
 
 function Functions.Draw3DText(coords, text, scale)
@@ -70,7 +70,7 @@ function Functions.HasItem(item, amount)
 
     if (Config.Framework == "QBCore") then
         local formatted = Functions.FormatItems(item, amount)
-        
+
         return QBCore.Functions.HasItem(formatted)
     elseif (Config.Framework == "ESX") then
         local formatted = Functions.FormatItems(item, amount)
@@ -141,7 +141,6 @@ function Functions.ProgressBar(name, label, duration, useWhileDead, canCancel, d
 end
 
 function Functions.PlayAnim(ped, dict, anim, blendInSpeed, blendOutSpeed, duration, flag, playbackRate, lockX, lockY, lockZ)
-    Functions.LoadAnim(dict)
     TaskPlayAnim(ped or PlayerPedId(), dict, anim, blendInSpeed or 8.0, blendOutSpeed or 8.0, duration, flag or 0, playbackRate or 1.0, lockX or false, lockY or false, lockZ or false)
 end
 
@@ -231,6 +230,20 @@ function Functions.GetJob()
     end
 end
 
+function Functions.IsJob(job)
+    if (type(job) == "string") then
+        return Functions.GetJob().name == job
+    elseif (type(job) == "table") then
+        for _, jobName in pairs(job) do
+            local isJob = Functions.GetJob().name == jobName
+
+            if (isJob) then return true end
+        end
+    end
+
+    return false
+end
+
 -- Same as above, but for gangs
 function Functions.GetGang()
     if (Config.Framework == "QBCore") then
@@ -291,6 +304,17 @@ function Functions.GetPlayers()
         return QBCore.Functions.GetPlayers()
     elseif (Config.Framework == "ESX") then
         return ESX.GetPlayers() -- Not tested (Not in use for any active releases yet)
+    end
+end
+
+function Functions.GetPlayersServerId()
+    local players = Functions.GetPlayers()
+    local serverIds = {}
+
+    for _, player in pairs(players) do
+        local serverId = GetPlayerServerId(player)
+
+        table.insert(serverIds, serverId)
     end
 end
 

@@ -3,11 +3,18 @@ game "gta5"
 lua54 "yes"
 author "Zyke#0001"
 
+ui_page "javascript/index.html"
+
+files {
+    "javascript/*"
+}
+
 client_scripts {
     "client/framework.lua",
     "client/functions.lua",
     "client/events.lua",
     "client/main.lua",
+    "client/keys.lua",
 }
 
 server_scripts {
@@ -26,5 +33,5 @@ shared_scripts {
 }
 
 dependencies {
-    "ox_lib",
+    "ox_lib"
 }
