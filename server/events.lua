@@ -50,3 +50,7 @@ end)
 Functions.CreateCallback("zyke_lib:HasPermission", function(source, cb, permission)
     return cb(Functions.HasPermission(source, permission))
 end)
+
+Functions.CreateCallback("zyke_lib:CreateUniqueId", function(source, cb, data)
+    return cb(Functions.CreateUniqueId(data.length))
+end)

@@ -610,6 +610,21 @@ AddEventHandler("onResourceStart", function(resource)
     end
 end)
 
+function Functions.CreateUniqueId(length)
+    length = length or 20 -- Max characters
+
+    math.randomseed(os.time())
+
+    local id = ""
+    for i = 1, length do
+        local randNum = math.random(36)
+        local charCode = randNum <= 10 and randNum + 47 or randNum + 54
+        id = id .. string.char(charCode)
+    end
+
+    return id
+end
+
 function Fetch()
     return Functions
 end
