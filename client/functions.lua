@@ -148,17 +148,34 @@ function Functions.Callback(name, cb, ...)
     local promise = promise.new()
     if (Config.Framework == "QBCore") then
         QBCore.Functions.TriggerCallback(name, function(res)
-            if (cb) then cb(res) end
+            if (type(cb) == "table") then
+                cb(res)
+            end
+
             promise:resolve(res)
         end, ...)
     elseif (Config.Framework == "ESX") then
         ESX.TriggerServerCallback(name, function(res)
-            if (cb) then cb(res) end
+            if (type(cb) == "table") then
+                cb(res)
+            end
+
             promise:resolve(res)
         end, ...)
     end
 
     Citizen.Await(promise)
+    if (cb == false) then
+        -- local data = promise.value
+
+        -- if (data == nil) then
+        --     return promise
+        -- else
+        --     return data
+        -- end
+
+        return promise.value
+    end
 end
 
 function Functions.GetPlayerData()
