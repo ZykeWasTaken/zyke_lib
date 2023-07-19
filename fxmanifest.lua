@@ -15,6 +15,8 @@ client_scripts {
     "client/events.lua",
     "client/main.lua",
     "client/keys.lua",
+
+    "client/experimental/*",
 }
 
 server_scripts {
@@ -23,6 +25,8 @@ server_scripts {
     "server/framework.lua",
     "server/functions.lua",
     "server/events.lua",
+
+    "server/experimental/*",
 }
 
 shared_scripts {
