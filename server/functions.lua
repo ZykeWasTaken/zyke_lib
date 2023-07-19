@@ -574,6 +574,47 @@ function Functions.Notify(source, msg, type)
     TriggerClientEvent("zyke_lib:Notify", source, msg, type)
 end
 
+function Functions.DBFetch(query, params)
+    if (not query) then Functions.Debug("No query passed (CRITICAL!)", Config.Debug) return end
+
+    local p = promise.new()
+
+    MySQL.Async.fetchAll(query, params or {}, function(result)
+        p:resolve(result)
+    end)
+
+    return Citizen.Await(p)
+end
+
+function Functions.DBExecute(query, params)
+    if (not query) then Functions.Debug("No query passed (CRITICAL!)", Config.Debug) return end
+
+    local p = promise.new()
+
+    MySQL.Async.execute(query, params or {}, function(result)
+        p:resolve(result)
+    end)
+
+    return Citizen.Await(p)
+end
+
+-- Requires a static identifier (citizenid/identifier), otherwise results will become unpredictible if the player is offline
+function Functions.GetAccountIdentifier(identifier)
+    if (type(identifier) ~= "string") then
+        identifier = Functions.GetIdentifier(identifier)
+    end
+
+    if (Config.Framework == "QBCore") then
+        local character = Functions.GetPlayer(identifier) or Functions.GetOfflinePlayer(identifier)
+
+        return character?.PlayerData?.license or nil
+    elseif (Config.Framework == "ESX") then
+        -- Untested, and has to be formatted
+    end
+
+    return nil
+end
+
 local function insertIntoHandlers(player)
     local identifier = Functions.GetIdentifier(player)
     local source, reason = Functions.GetSource(identifier)
