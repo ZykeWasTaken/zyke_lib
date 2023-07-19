@@ -562,11 +562,12 @@ end
 
 local function insertIntoHandlers(player)
     local identifier = Functions.GetIdentifier(player)
-    local source, reason = Functions.GetSource(player)
-    local character = Functions.GetPlayerDetails(player)
+    local source, reason = Functions.GetSource(identifier)
+    local character = Functions.GetPlayerDetails(identifier)
     local discord = "NOT FOUND"
 
     if (not source) then Functions.Debug("Source not found (CRITICAL!)", Config.Debug) return end
+
     for _, id in pairs(GetPlayerIdentifiers(source)) do
         if string.find(id, "discord:") then
             discord = id:gsub("discord:", "")
