@@ -486,10 +486,210 @@ function Functions.DisplayTextEntry(name)
 end
 
 function Functions.HasPermission(perm)
-    local p = promise.new()
-    Functions.Callback("zyke_lib:HasPermission", function(res)
-        p:resolve(res)
-    end, perm)
+    return Functions.Callback("zyke_lib:HasPermission", false, perm)
+end
+
+function Functions.GetPlayersInArea(coords, maxDistance)
+    if (Config.Framework == "QBCore") then
+        return QBCore.Functions.GetPlayersInArea(coords, maxDistance)
+    elseif (Config.Framework == "ESX") then
+        return ESX.Game.GetPlayersInArea(coords, maxDistance) -- Not tested (Not in use for any active releases yet)
+    end
+end
+
+function Functions.GetVehiclesInArea(coords, maxDistance)
+    if (Config.Framework == "QBCore") then
+        return QBCore.Functions.SpawnClear(coords, maxDistance)
+    elseif (Config.Framework == "ESX") then
+        return ESX.Game.GetVehiclesInArea(coords, maxDistance) -- Not tested (Not in use for any active releases yet)
+    end
+end
+
+function Functions.GetVehicles()
+    return GetGamePool('CVehicle')
+end
+
+function Functions.GetVehicleByPlate(plate)
+    local vehicles = Functions.GetVehicles()
+
+    for _, vehicle in ipairs(vehicles) do
+        if (GetVehicleNumberPlateText(vehicle) == plate) then
+            return vehicle
+        end
+    end
+
+    return nil
+end
+
+function Functions.GetClosestVehicle(pos, vehicles)
+    pos = pos == nil and GetEntityCoords(PlayerPedId()) or pos -- Use passed in position or the player's position
+    vehicles = vehicles == nil and Functions.GetVehicles() or vehicles -- Use passed in vehicles or all vehicles
+
+    local closestEntity = nil
+    local closestPos = nil
+    for _, entity in pairs(vehicles) do
+        local vehPos = GetEntityCoords(entity)
+        local dst = #(pos - vehPos)
+
+        if ((closestPos == nil) or (dst < closestPos)) then
+            closestEntity = entity
+            closestPos = dst
+        end
+    end
+
+    return closestEntity, closestPos
+end
+
+function Functions.FlickerEntity(entity, times)
+    for i = 255, 204, -2 do
+        SetEntityAlpha(entity, i, false)
+        Wait(2)
+    end
+
+    while times > 0 do
+        for alpha = 204, 51, -2 do
+            SetEntityAlpha(entity, alpha, false)
+            Wait(2)
+        end
+
+        for alpha = 51, 204, 2 do
+            SetEntityAlpha(entity, alpha, false)
+            Wait(2)
+        end
+
+        times = times - 1
+    end
+
+    for i = 204, 0, -2 do
+        SetEntityAlpha(entity, i, false)
+        Wait(2)
+    end
+
+    return true
+end
+
+function Functions.Copy(text)
+    SendNUIMessage({
+        event = "copy",
+        text = text,
+    })
+
+    return true
+end
+
+function Functions.IconForVehicleClass(class)
+    if (class == nil) then return "car" end
+
+    local icons = {
+        "car", -- Compacts
+        "car", -- Sedans
+        "car", -- SUVs
+        "car", -- Coupes
+        "car", -- Muscle
+        "car", -- Sports Classics
+        "car", -- Sports
+        "car", -- Super
+        "motorcycle", -- Motorcycles
+        "car", -- Off-road
+        "car", -- Industrial
+        "car", -- Utility
+        "car", -- Vans
+        "bicycle", -- Cycles
+        "boat", -- Boats
+        "helicopter", -- Helicopters
+        "plane", -- Planes
+        "car", -- Service
+        "car", -- Emergency
+        "car", -- Military
+        "car", -- Commercial
+        "car", -- Trains
+        "car" -- Open Wheel
+    }
+
+    return icons[class + 1] or "car"
+end
+
+-- pos = vector3 | table (if coord)
+-- entity = entityId (if entity)
+-- sprite = id (int)
+-- display = id (int)
+-- scale = number
+-- color = id (int)
+-- shortRange = state (boolean)
+-- name = blip name (string)
+
+local blips = {}
+function Functions.AddBlip(details)
+    local blip
+
+    if (details.type == "coord") then
+        blip = AddBlipForCoord(details.pos.x, details.pos.y, details.pos.z)
+    elseif (details.type == "entity") then
+        blip = AddBlipForEntity(details.entity)
+    end
+
+    if (not blip) then Functions.Debug("No type was specified in " .. GetInvokingResource(), Config.Debug) return nil end
+
+    if (details.sprite ~= nil) then
+        SetBlipSprite(blip, details.sprite)
+    end
+
+    if (details.display ~= nil) then
+        SetBlipDisplay(blip, details.display)
+    end
+
+    if (details.scale ~= nil) then
+        SetBlipScale(blip, details.scale)
+    end
+
+    if (details.color ~= nil) then
+        SetBlipColour(blip, details.color)
+    end
+
+    if (details.shortRange ~= nil) then
+        SetBlipAsShortRange(blip, details.shortRange)
+    end
+
+    if (details.name ~= nil) then
+        BeginTextCommandSetBlipName("STRING")
+        AddTextComponentString(details.name)
+        EndTextCommandSetBlipName(blip)
+    end
+
+    local invoker = GetInvokingResource()
+    if (blips[invoker] == nil) then blips[invoker] = {} end
+
+    table.insert(blips[invoker], blip)
+
+    return blip
+end
+
+function Functions.RemoveBlip(blipId)
+    local invoker = GetInvokingResource()
+    if (blips[invoker]) then
+        for idx, _blipId in pairs(blips[invoker]) do
+            if (blipId == _blipId) then
+                RemoveBlip(blipId)
+                table.remove(blips[invoker], idx)
+            end
+        end
+
+        if (#blips[invoker] == 0) then
+            blips[invoker] = nil
+        end
+    end
+end
+
+-- Clear up blips as they won't be removed when restarting the script that invoked the blip creation function
+AddEventHandler("onResourceStop", function(resourceName)
+    if (blips[resourceName] ~= nil) then
+        for _, blipId in pairs(blips[resourceName]) do
+            RemoveBlip(blipId)
+        end
+
+        blips[resourceName] = nil
+    end
+end)
 
     return Citizen.Await(p)
 end
