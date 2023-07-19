@@ -458,14 +458,7 @@ function Functions.RemoveTargetEntity(entity)
 end
 
 function Functions.GetPlayerDetails(identifier)
-    local p = promise.new()
-    Functions.Callback("zyke_lib:FetchPlayerDetails", function(res)
-        p:resolve(res)
-    end, {
-        identifier = identifier or Functions.GetIdentifier(),
-    })
-
-    return Citizen.Await(p)
+    return Functions.Callback("zyke_lib:FetchPlayerDetails", false, {identifier = identifier or Functions.GetIdentifier()})
 end
 
 -- If you server already reflects and caches client side based on server side jobs, you could switch this out for a more performant version
