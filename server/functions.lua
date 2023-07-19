@@ -378,6 +378,20 @@ function Functions.GetOfflinePlayer(identifier)
     end
 end
 
+-- Has to be the static identifider (citizenid/identifier) to verify
+-- @returns
+-- boolean, if identifier is valid
+-- boolean, if player is online
+function Functions.IsIdentifierValid(identifier)
+    local player = Functions.GetPlayer(identifier)
+    if (player) then return true, true end
+
+    local player = Functions.GetOfflinePlayer(identifier)
+    if (player) then return true, false end
+
+    return false, false
+end
+
 function Functions.GetPlayerFromIdentifier(identifier)
     if (Config.Framework == "QBCore") then
         return QBCore.Functions.GetPlayerByCitizenId(identifier)
