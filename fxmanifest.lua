@@ -10,11 +10,13 @@ files {
 }
 
 client_scripts {
+    "@PolyZone/client.lua",
     "client/framework.lua",
     "client/functions.lua",
     "client/events.lua",
     "client/main.lua",
     "client/keys.lua",
+    "client/tools/functions.lua",
 
     "client/experimental/*",
 }
@@ -25,6 +27,7 @@ server_scripts {
     "server/framework.lua",
     "server/functions.lua",
     "server/events.lua",
+    -- "server/tools/functions.lua",
 
     "server/experimental/*",
 }
@@ -37,5 +40,6 @@ shared_scripts {
 }
 
 dependencies {
-    "ox_lib"
+    "ox_lib",
+    "PolyZone",
 }

@@ -696,7 +696,7 @@ function Functions.CreateUniqueId(length)
 end
 
 function Fetch()
-    return Functions
+    return Functions, Tools
 end
 
 exports("Fetch", Fetch)

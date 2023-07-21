@@ -1,4 +1,5 @@
 Functions = {}
+Tools = {}
 
 function Functions.CopyTable(tbl)
     local copy = {}
