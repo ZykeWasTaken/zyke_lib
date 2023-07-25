@@ -1,9 +1,9 @@
 -- Catch inventory changes
-if (Config.Framework == "QBCore") then
+if (Framework == "QBCore") then
     RegisterNetEvent("QBCore:Player:SetPlayerData", function()
         TriggerEvent("zyke_lib:InventoryUpdated")
     end)
-elseif (Config.Framework == "ESX") then
+elseif (Framework == "ESX") then
     RegisterNetEvent("esx:addInventoryItem", function()
         TriggerEvent("zyke_lib:InventoryUpdated")
     end)
@@ -18,11 +18,11 @@ elseif (Config.Framework == "ESX") then
 end
 
 -- Catch character loads
-if (Config.Framework == "QBCore") then
+if (Framework == "QBCore") then
     RegisterNetEvent("QBCore:Client:OnPlayerLoaded", function()
         TriggerEvent("zyke_lib:CharacterLoaded")
     end)
-elseif (Config.Framework == "ESX") then -- Not tested (Not in use for any active releases yet)
+elseif (Framework == "ESX") then -- Not tested (Not in use for any active releases yet)
     RegisterNetEvent("esx:playerLoaded", function()
         TriggerEvent("zyke_lib:CharacterLoaded")
     end)

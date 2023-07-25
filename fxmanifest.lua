@@ -9,9 +9,16 @@ files {
     "javascript/*"
 }
 
+shared_scripts {
+    -- "@es_extended/imports.lua", -- ESX Legacy's import fetch, if you wish to use this instead, but event/export should work fine
+    "@ox_lib/init.lua",
+    "shared/framework.lua",
+    "shared/shared.lua",
+    "shared/config.lua"
+}
+
 client_scripts {
     "@PolyZone/client.lua",
-    "client/framework.lua",
     "client/functions.lua",
     "client/events.lua",
     "client/main.lua",
@@ -24,19 +31,11 @@ client_scripts {
 server_scripts {
     "@oxmysql/lib/MySQL.lua",
     -- "@mysql-async/lib/MySQL.lua",
-    "server/framework.lua",
     "server/functions.lua",
     "server/events.lua",
     -- "server/tools/functions.lua",
 
     "server/experimental/*",
-}
-
-shared_scripts {
-    -- "@es_extended/imports.lua", -- ESX Legacy's import fetch
-    "@ox_lib/init.lua",
-    "shared/shared.lua",
-    "shared/config.lua"
 }
 
 dependencies {

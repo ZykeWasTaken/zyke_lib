@@ -131,7 +131,7 @@ function Functions.HasItem(player, item, amount)
 
     if (not player) then return false, Functions.Debug("Player not found (CRITICAL!)") end
 
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         local source = Functions.GetSource(player)
         local formatted = Functions.FormatItems(item, amount)
 
@@ -145,7 +145,7 @@ function Functions.HasItem(player, item, amount)
         --     if (hasItem == false) then return false end
         -- end
         -- return true
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         local formatted = Functions.FormatItems(item, amount)
         local hasItems = true
 
@@ -168,9 +168,9 @@ function Functions.GetPlayerItemByName(player, item)
         player = Functions.GetPlayer(player)
     end
 
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return player.Functions.GetItemByName(item)
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return player.getInventoryItem(item)
     end
 end
@@ -182,7 +182,7 @@ function Functions.RemoveItem(player, item, amount)
 
     if (not player) then return false, Functions.Debug("Player not found (CRITICAL!)") end
 
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         local formatted = Functions.FormatItems(item, amount)
 
         for _item, _amount in pairs(formatted) do
@@ -190,7 +190,7 @@ function Functions.RemoveItem(player, item, amount)
         end
 
         return true
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         local formatted = Functions.FormatItems(item, amount)
 
         for itemIdx, itemData in pairs(formatted) do
@@ -208,7 +208,7 @@ function Functions.AddItem(player, item, amount)
 
     if (not player) then return false, Functions.Debug("Player not found (CRITICAL!)") end
 
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         local formatted = Functions.FormatItems(item, amount)
 
         for _item, _amount in pairs(formatted) do
@@ -216,7 +216,7 @@ function Functions.AddItem(player, item, amount)
         end
 
         return true
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         local formatted = Functions.FormatItems(item, amount)
 
         for itemIdx, itemData in pairs(formatted) do
@@ -228,7 +228,7 @@ function Functions.AddItem(player, item, amount)
 end
 
 function Functions.GetPlayersOnJob(job, onDuty)
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         if (onDuty == true) then
             if (type(job) == "string") then
                 return QBCore.Functions.GetPlayersOnDuty(job)
@@ -248,7 +248,7 @@ function Functions.GetPlayersOnJob(job, onDuty)
 
             return {}
         end
-    elseif (Config.Framework == "ESX") then -- Untested
+    elseif (Framework == "ESX") then -- Untested
         -- ESX doesn't have a default duty system, that's why we're not using it here
         -- If you do have it on your server, you can use the onDuty variable if it's needed in the script
         local players = {}
@@ -292,17 +292,17 @@ function Functions.EnoughWorkers(job, required)
 end
 
 function Functions.CreateUseableItem(item, passed)
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         QBCore.Functions.CreateUseableItem(item, passed)
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         ESX.RegisterUsableItem(item, passed)
     end
 end
 
 function Functions.CreateCallback(name, passed)
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         QBCore.Functions.CreateCallback(name, passed)
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         ESX.RegisterServerCallback(name, passed)
     end
 end
@@ -315,9 +315,9 @@ function Functions.GetPlayer(source)
         return Functions.GetPlayerFromIdentifier(_source)
     end
 
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return QBCore.Functions.GetPlayer(_source)
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return ESX.GetPlayerFromId(_source) -- Error
     end
 end
@@ -341,7 +341,7 @@ function Functions.GetPlayerDetails(identifier)
     end
 
     local online = true
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         local character = QBCore.Functions.GetPlayerByCitizenId(identifier)
         if (not character) then
             character = QBCore.Functions.GetOfflinePlayerByCitizenId(identifier)
@@ -349,7 +349,7 @@ function Functions.GetPlayerDetails(identifier)
         end
 
         return Functions.FormatCharacterDetails(character, online)
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         local character = ESX.GetPlayerFromIdentifier(identifier)
 
         if (not character) then
@@ -366,9 +366,9 @@ function Functions.GetOfflinePlayer(identifier)
         identifier = Functions.GetIdentifier(identifier)
     end
 
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return QBCore.Functions.GetOfflinePlayerByCitizenId(identifier)
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         local p = promise.new()
         MySQL.Async.fetchAll("SELECT * FROM users WHERE identifier = @identifier", {["@identifier"] = identifier}, function(result)
             p:resolve(result[1])
@@ -393,9 +393,9 @@ function Functions.IsIdentifierValid(identifier)
 end
 
 function Functions.GetPlayerFromIdentifier(identifier)
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return QBCore.Functions.GetPlayerByCitizenId(identifier)
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return ESX.GetPlayerFromIdentifier(identifier)
     end
 end
@@ -405,9 +405,9 @@ function Functions.GetIdentifier(player)
         player = Functions.GetPlayer(player)
     end
 
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return player?.PlayerData?.citizenid
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return player?.identifier
     end
 end
@@ -417,9 +417,9 @@ function Functions.AddMoney(player, moneyType, amount, details)
         player = Functions.GetPlayer(player)
     end
 
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         player.Functions.AddMoney(moneyType, amount, details)
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         moneyType = moneyType == "cash" and "money" or moneyType -- ESX uses "money" instead of "cash", so we're converting it here
         moneyType = moneyType == "dirty_cash" and "black_money" or moneyType -- ESX uses "black_money" instead of "dirty_cash", so we're converting it here
         player.addAccountMoney(moneyType, amount, details)
@@ -433,9 +433,9 @@ function Functions.GetMoney(player, moneyType)
 
     moneyType = moneyType == nil and "cash" or moneyType -- If no moneyType is given, we're using "cash" as default
 
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return player.PlayerData.money[moneyType]
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         moneyType = moneyType == "cash" and "money" or moneyType -- ESX uses "money" instead of "cash", so we're converting it here
         moneyType = moneyType == "dirty_cash" and "black_money" or moneyType -- ESX uses "black_money" instead of "dirty_cash", so we're converting it here
         return player.getAccount(moneyType).money -- Not tested (Not used for any releases)
@@ -447,9 +447,9 @@ function Functions.RemoveMoney(player, moneyType, amount, details)
         player = Functions.GetPlayer(player)
     end
 
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         player.Functions.RemoveMoney(moneyType, amount, details)
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         moneyType = moneyType == "cash" and "money" or moneyType -- ESX uses "money" instead of "cash", so we're converting it here
         moneyType = moneyType == "dirty_cash" and "black_money" or moneyType -- ESX uses "black_money" instead of "dirty_cash", so we're converting it here
         player.removeAccountMoney(moneyType, amount, details) -- Not tested (Not used for any releases)
@@ -465,9 +465,9 @@ function Functions.GetSource(player)
         return nil, "playerOffline"
     end
 
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return player.PlayerData.source
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return player.source
     end
 end
@@ -477,9 +477,9 @@ function Functions.HasPermission(source, permission)
         source = Functions.GetSource(source)
     end
 
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return QBCore.Functions.HasPermission(source, permission)
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return IsPlayerAceAllowed(source, permission)
     end
 end
@@ -490,15 +490,15 @@ function Functions.GetPlayerInventory(player)
         player = Functions.GetPlayer(player)
     end
 
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return player.PlayerData.items
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return player.inventory
     end
 end
 
 function Functions.GetInventory(invId)
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         -- For some reason you can only retrieve this by a client callback, so I copied the code from the inventory
         -- If anyone knows of a better way, please feel free to make a pull request or let me know
         local items = {}
@@ -528,24 +528,24 @@ function Functions.GetInventory(invId)
         end
 
         return items
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return ESX.GetInventory(invId) -- Not tested (Not in use for any active releases yet)
     end
 end
 
 function Functions.OpenInventory(invId, type)
     type = type or "stash"
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         TriggerEvent("inventory:server:OpenInventory", type, invId)
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         -- return ESX.GetInventory(invId) -- Not tested (Not in use for any active releases yet)
     end
 end
 
 function Functions.GetPlayers()
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return QBCore.Functions.GetPlayers()
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return ESX.GetPlayers()
     end
 end
@@ -604,11 +604,11 @@ function Functions.GetAccountIdentifier(identifier)
         identifier = Functions.GetIdentifier(identifier)
     end
 
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         local character = Functions.GetPlayer(identifier) or Functions.GetOfflinePlayer(identifier)
 
         return character?.PlayerData?.license or nil
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         -- Untested, and has to be formatted
     end
 
@@ -646,6 +646,8 @@ end)
 AddEventHandler("onResourceStart", function(resource)
     if (GetCurrentResourceName() ~= resource) then return end
 
+    Wait(100) -- Initial wait to ensure that the framework is fetched first
+
     for _, player in pairs(Functions.GetPlayers()) do
         insertIntoHandlers(Functions.GetIdentifier(player))
     end
@@ -665,6 +667,26 @@ function Functions.CreateUniqueId(length)
 
     return id
 end
+
+CreateThread(function()
+    Wait(1000)
+    print([[
+^4Thanks for choosing
+
+███████╗██╗░░░██╗██╗░░██╗███████╗
+╚════██║╚██╗░██╔╝██║░██╔╝██╔════╝
+░░███╔═╝░╚████╔╝░█████═╝░█████╗░░
+██╔══╝░░░░╚██╔╝░░██╔═██╗░██╔══╝░░
+███████╗░░░██║░░░██║░╚██╗███████╗
+╚══════╝░░░╚═╝░░░╚═╝░░╚═╝╚══════╝
+██████╗░███████╗░██████╗░█████╗░██╗░░░██╗██████╗░░█████╗░███████╗░██████╗
+██╔══██╗██╔════╝██╔════╝██╔══██╗██║░░░██║██╔══██╗██╔══██╗██╔════╝██╔════╝
+██████╔╝█████╗░░╚█████╗░██║░░██║██║░░░██║██████╔╝██║░░╚═╝█████╗░░╚█████╗░
+██╔══██╗██╔══╝░░░╚═══██╗██║░░██║██║░░░██║██╔══██╗██║░░██╗██╔══╝░░░╚═══██╗
+██║░░██║███████╗██████╔╝╚█████╔╝╚██████╔╝██║░░██║╚█████╔╝███████╗██████╔╝
+╚═╝░░╚═╝╚══════╝╚═════╝░░╚════╝░░╚═════╝░╚═╝░░╚═╝░╚════╝░╚══════╝╚═════╝░^0
+]])
+end)
 
 function Fetch()
     return Functions, Tools

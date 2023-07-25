@@ -14,7 +14,8 @@ function Tools.DrawPolyZone()
             polyzone = PolyZone:Create(vectors, {
                 name = "zyke_lib_drawing_zone",
                 minZ = minZ,
-                maxZ = maxZ, debugGrid = true,
+                maxZ = maxZ,
+                debugGrid = true,
             })
         end
     end
@@ -55,7 +56,6 @@ function Tools.DrawPolyZone()
                 DisableControlAction(0, key.keyCode, true)
 
                 if (IsDisabledControlJustReleased(0, key.keyCode)) then
-                    -- print("Pressed", key.name)
                     key.func(coords)
                 end
             end
@@ -74,7 +74,6 @@ function Tools.DrawPolyZone()
         str = str .. coords .. ",\n"
     end
 
-    print(str)
     str = str:sub(1, -3)
     Functions.Copy(str)
 

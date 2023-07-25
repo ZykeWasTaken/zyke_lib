@@ -68,11 +68,11 @@ end
 function Functions.HasItem(item, amount)
     amount = amount or 1
 
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         local formatted = Functions.FormatItems(item, amount)
 
         return QBCore.Functions.HasItem(formatted)
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         local formatted = Functions.FormatItems(item, amount)
         local hasItems = true
 
@@ -89,9 +89,9 @@ function Functions.HasItem(item, amount)
 end
 
 function Functions.Notify(msg, type, length)
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         QBCore.Functions.Notify(msg, type, length)
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         ESX.ShowNotification(msg, type, length)
     end
 end
@@ -123,9 +123,9 @@ function Functions.ProgressBar(name, label, duration, useWhileDead, canCancel, d
         canCancel = canCancel or false -- QB requires this to have a set value
         disableControls = disableControls or {} -- QB requires this to have a set value
 
-        if (Config.Framework == "QBCore") then
+        if (Framework == "QBCore") then
             QBCore.Functions.Progressbar(name, label, duration, useWhileDead, canCancel, disableControls, animation, prop, propTwo, onFinish, onCancel)
-        elseif (Config.Framework == "ESX") then
+        elseif (Framework == "ESX") then
             ESX.Progressbar(label, duration, {
                 animation = animation and {
                     type = animation.type,
@@ -146,7 +146,7 @@ end
 
 function Functions.Callback(name, cb, ...)
     local promise = promise.new()
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         QBCore.Functions.TriggerCallback(name, function(res)
             if (type(cb) == "table") then
                 cb(res)
@@ -154,7 +154,7 @@ function Functions.Callback(name, cb, ...)
 
             promise:resolve(res)
         end, ...)
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         ESX.TriggerServerCallback(name, function(res)
             if (type(cb) == "table") then
                 cb(res)
@@ -179,17 +179,17 @@ function Functions.Callback(name, cb, ...)
 end
 
 function Functions.GetPlayerData()
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return QBCore.Functions.GetPlayerData()
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return ESX.GetPlayerData() -- Not tested (Not in use for any active releases yet) (ERROR)
     end
 end
 
 function Functions.GetIdentifier()
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return Functions.GetPlayerData().citizenid
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return Functions.GetPlayerData().identifier -- Not tested (Not in use for any active releases yet)
     end
 end
@@ -197,19 +197,19 @@ end
 -- TODO: Fix for ESX, if even possible with default inventory?
 function Functions.OpenInventory(type, invId, other)
     type = type or "stash"
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         TriggerServerEvent("inventory:server:OpenInventory", type, invId, {
             maxweight = other?.maxweight or 4000,
             slots = other?.slots or 20,
         })
         TriggerEvent("inventory:client:SetCurrentStash", invId)
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         -- TriggerEvent("esx_inventoryhud:openStashInventory", invId) -- Not tested (Not in use for any active releases yet)
     end
 end
 
 function Functions.GetJob()
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         local job = {}
 
         if (Functions.GetPlayerData().job == nil) then
@@ -227,7 +227,7 @@ function Functions.GetJob()
         job.grade_name = playerData?.job?.grade_name or ""
 
         return job
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         -- return Functions.GetPlayerData()?.job -- Not tested (Not in use for any active releases yet)
         local job = {}
 
@@ -263,7 +263,7 @@ end
 
 -- Same as above, but for gangs
 function Functions.GetGang()
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         local gang = {}
 
         if (Functions.GetPlayerData().gang == nil) then
@@ -277,49 +277,49 @@ function Functions.GetGang()
         gang.grade_name = Functions.GetPlayerData()?.gang?.grade_name or ""
 
         return gang
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return nil -- ESX doesn't have a gang system, so this will always return nil, change this if you're running one
     end
 end
 
 function Functions.HasLoadedFramework()
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return QBCore ~= nil
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return ESX ~= nil
     end
 end
 
 -- Not used atm
 function Functions.GetPlayerInventory()
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return Functions.GetPlayerData().items
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return Functions.GetPlayerData().inventory -- Not tested (Not in use for any active releases yet)
     end
 end
 
 function Functions.GetClosestPlayer()
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return QBCore.Functions.GetClosestPlayer()
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return ESX.GetClosestPlayer() -- Not tested (Not in use for any active releases yet)
     end
 end
 
 function Functions.IsPlayerDead()
     local ped = PlayerPedId()
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return Functions.GetPlayerData().metadata["isdead"] or Functions.GetPlayerData().metadata["inlaststand"]
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return IsEntityDead(ped) -- Not tested (Not in use for any active releases yet)
     end
 end
 
 function Functions.GetPlayers()
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return QBCore.Functions.GetPlayers()
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return ESX.GetPlayers() -- Not tested (Not in use for any active releases yet)
     end
 end
@@ -335,45 +335,37 @@ function Functions.GetPlayersServerId()
     end
 end
 
---[[
-    veh = vehicle handler / entity id
-    mods = {
-        ["engine"] = 2,
-        ["suspension"] = 3,
-        -- etc
-    }
-]]
 function Functions.SetVehicleMods(veh, mods)
-    local _mods = {
-        ["engine"] = {idx = 11, max = 3},
-        ["brakes"] = {idx = 12, max = 2},
-        ["transmission"] = {idx = 13, max = 2},
-        ["suspension"] = {idx = 15, max = 3},
-        ["armor"] = {idx = 16, max = 4},
-        ["turbo"] = {idx = 18, max = 1},
-    }
+    if (Framework == "QBCore") then
+        QBCore.Functions.SetVehicleProperties(veh, mods)
 
-    local function GetLevel(name, value)
-        if (value > _mods[name].max) then
-            return _mods[name].max
-        elseif (value < 0) then
-            return 0
-        end
-
-        return value or 0
-    end
-
-    for name, level in pairs(mods) do
-        if (_mods[name]) then
-            local _level = GetLevel(name, level)
-            SetVehicleModKit(veh, 0)
-
-            if (name == "turbo") then
-                ToggleVehicleMod(veh, _mods[name].idx, _level)
-            else
-                SetVehicleMod(veh, _mods[name].idx, _level, false)
+        -- Extra since depending on your QBCore version, this may not work as they use strings instead of integers, which is incorrect
+        if (mods.windowStatus) then
+            for windowId, isIntact in pairs(mods.windowStatus) do
+                if (not isIntact) then
+                    SmashVehicleWindow(veh, tonumber(windowId))
+                end
             end
         end
+    elseif (Framework == "ESX") then
+        ESX.Game.SetVehicleProperties(veh, mods)
+
+        -- Extra since depending on your ESX version, this may not work as they use strings instead of integers, which is incorrect
+        if (mods.windowStatus) then
+            for windowId, isIntact in pairs(mods.windowStatus) do
+                if (not isIntact) then
+                    SmashVehicleWindow(veh, tonumber(windowId))
+                end
+            end
+        end
+    end
+end
+
+function Functions.GetVehicleMods(veh)
+    if (Framework == "QBCore") then
+        return QBCore.Functions.GetVehicleProperties(veh)
+    elseif (Framework == "ESX") then
+        return ESX.Game.GetVehicleProperties(veh)
     end
 end
 
@@ -392,21 +384,42 @@ end
         engineOn = false, -- Default false, set to true to override
         fuel = 100.0, -- Will default be 100.0, set to any other value to override
         dirtLevel = 0.0, -- Will default be 0.0, set to any other value to override
-        owner = false, -- Default false (This is for qb-vehiclekeys), set to true to override´
+        owner = false, -- Default false (This is for qb-vehiclekeys), set to true to override
         colors = {1, 1}, -- Primary, secondary
+        locked = true, -- Lock all doors
+        ownedVehicle = true, -- When setting locked state, and using zyke_garages, set this to true if it is a player owned vehicle
+        getNetId = true, -- Gives you a netId (Required to use zyke_garages' lockstate)
     }
 ]]
 function Functions.SpawnVehicle(vehData, options)
     local hasLoaded = Functions.LoadModel(vehData.model)
+    local usingZykeGarages = GetResourceState("zyke_garages") == "started"
 
     if (not hasLoaded) then return nil, {msg = "Could not load model", type = "error"} end
 
     local veh = CreateVehicle(vehData.model, vehData.pos.x, vehData.pos.y, vehData.pos.z, vehData.pos.h or vehData.pos.w or vehData.heading or 0.0, vehData.isNetwork or true, vehData.netMissionEntity or false)
+
+    -- Used to spawn and hide vehicle and perform necessary actions before displaying it
+    -- Such as setting state bags, or applying something else that in some cases might fail (delay/lag, glitches etc)
+    -- Instantly applies as going through all other functions most likely will cause delay, resulting in a delayed ghost making the vehicle flicker
+    if (options.ghost) then
+        SetEntityAlpha(veh, 0, false)
+        SetEntityCollision(veh, false, false)
+        FreezeEntityPosition(veh, true)
+    end
+
     SetModelAsNoLongerNeeded(vehData.model)
 
-    if (vehData.plate) then
-        SetVehicleNumberPlateText(veh, vehData.plate)
+    local netId = (options?.getNetId or usingZykeGarages) and NetworkGetNetworkIdFromEntity(veh)
+
+    if (Config.FuelSystem == "LegacyFuel") then
+        exports['LegacyFuel']:SetFuel(veh, options and options.fuel or 100.0)
+    else
+        SetVehicleFuelLevel(veh, options and options.fuel or 100.0)
     end
+
+    SetVehicleDirtLevel(veh, options and options.dirtLevel or 0.0)
+    SetVehicleEngineOn(veh, options and options.engineOn or false, true, false)
 
     if (vehData.mods) then
         Functions.SetVehicleMods(veh, vehData.mods)
@@ -420,17 +433,40 @@ function Functions.SpawnVehicle(vehData, options)
         SetVehicleColours(veh, options.colors[1] or 0, options.colors[2] or 0)
     end
 
-    SetVehicleFuelLevel(veh, options and options.fuel or 100.0)
-    SetVehicleDirtLevel(veh, options and options.dirtLevel or 0.0)
-    SetVehicleEngineOn(veh, options and options.engineOn or false, true, false)
+    if (vehData.plate) then
+        SetVehicleNumberPlateText(veh, vehData.plate)
+    end
 
-    if (Functions.GetFramework() == "QBCore") then
-        if (options and (options.owner == true)) then
-            TriggerEvent("vehiclekeys:client:SetOwner", GetVehicleNumberPlateText(veh))
+    -- For future use
+    if (usingZykeGarages) then
+        local locked = options?.locked == true
+        exports["zyke_garages"]:SetLockState(netId, locked, options?.ownedVehicle)
+    else
+        if (Functions.GetFramework() == "QBCore") then
+            if (options and (options.owner == true)) then
+                Functions.SetAsVehicleOwner(GetVehicleNumberPlateText(veh))
+            end
         end
     end
 
-    return veh, {msg = "Vehicle spawned", type = "success"}
+    local functions = {}
+
+    functions["removeGhost"] = function()
+        SetEntityAlpha(veh, 255, false)
+        SetEntityCollision(veh, true, true)
+        FreezeEntityPosition(veh, false)
+    end
+
+    return veh, netId, functions
+end
+
+function Functions.SetAsVehicleOwner(plate)
+    if (Functions.GetFramework() == "QBCore") then
+        plate = string.gsub(plate, "%s+$", "") -- Triems the strings spaces at the end, which is required for qb-vehiclekeys
+        TriggerEvent("vehiclekeys:client:SetOwner", plate)
+    elseif (Functions.GetFramework() == "ESX") then
+        -- No native support for this, add in your own if your server has any
+    end
 end
 
 function Functions.AddTargetEntity(entity, passed)
@@ -490,17 +526,17 @@ function Functions.HasPermission(perm)
 end
 
 function Functions.GetPlayersInArea(coords, maxDistance)
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return QBCore.Functions.GetPlayersInArea(coords, maxDistance)
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return ESX.Game.GetPlayersInArea(coords, maxDistance) -- Not tested (Not in use for any active releases yet)
     end
 end
 
 function Functions.GetVehiclesInArea(coords, maxDistance)
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return QBCore.Functions.SpawnClear(coords, maxDistance)
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return ESX.Game.GetVehiclesInArea(coords, maxDistance) -- Not tested (Not in use for any active releases yet)
     end
 end

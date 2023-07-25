@@ -30,12 +30,27 @@ function Functions.CountTable(tbl)
     return count
 end
 
+---@param tbl table -- Needs to be an array
+---@param desiredString string
+---@return boolean, number | nil
+function Functions.Contains(tbl, desiredString)
+    if (not tbl) then error("Attempt to scan non-existens table") end
+
+    for idx, string in pairs(tbl) do
+        if (desiredString == string) then
+            return true, idx
+        end
+    end
+
+    return false, nil
+end
+
 -- Formatting the item(s) correctly, no matter what the input is
 -- Used for item checking, adding and removing
 function Functions.FormatItems(item, amount)
     local formatted = {}
 
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         if (type(item) == "string") then
             formatted[item] = amount or 1
         else
@@ -80,7 +95,7 @@ end
 function Functions.FormatCharacterDetails(character, online)
     local formatted = {}
 
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         if (not character?.PlayerData) then
             return {}
         end
@@ -98,7 +113,7 @@ function Functions.FormatCharacterDetails(character, online)
         formatted.dirty_cash = character.PlayerData.money["dirty_cash"] or 0
         formatted.online = online or false
         -- TODO: Match ESX (Future proofing)
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         formatted.identifier = character.identifier
         formatted.source = character.source
         formatted.firstname = character.variables.firstName
@@ -124,15 +139,15 @@ function Functions.FormatCharacterDetails(character, online)
 end
 
 function Functions.GetItem(item)
-    if (Config.Framework == "QBCore") then
+    if (Framework == "QBCore") then
         return QBCore.Shared.Items[item]
-    elseif (Config.Framework == "ESX") then
+    elseif (Framework == "ESX") then
         return ESX.Items[item]
     end
 end
 
 function Functions.GetFramework()
-    return Config.Framework
+    return Framework
 end
 
 function Functions.GetWeaponType()
@@ -153,7 +168,7 @@ CreateThread(function()
         ["QBCore"] = true
     }
 
-    if (not availableFrameworks[Config.Framework]) then
+    if (not availableFrameworks[Framework]) then
         error("Invalid framework specified in config.lua, make sure to use a supported framework!")
     end
 end)
