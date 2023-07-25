@@ -1,5 +1,5 @@
 ### Important
-Unless you are knowlingly donwloading an experimental version for any reason, please make sure to download the latest stable version in releases. We constantly update this repository to make the development of Zyke Resources' scripts easier, and we don't always test all functionality on different servers using different frameworks.
+Unless you are knowlingly downloading an experimental version for any reason, please make sure to download the latest stable version in releases. We constantly update this repository to make the development of Zyke Resources' scripts easier, and we don't always test all functionality on different servers using different frameworks.
 
 ### Information
 
