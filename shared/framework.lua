@@ -25,6 +25,7 @@ CreateThread(function()
             Framework = settings.variable
 
             settings.fetching(settings.fileName)
+            break
         end
     end
 end)
