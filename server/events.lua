@@ -50,7 +50,6 @@ CreateThread(function()
     end)
 
     Functions.CreateCallback("zyke_lib:HasPermission", function(source, cb, permission)
-        print("Checking...")
         return cb(Functions.HasPermission(source, permission))
     end)
 
