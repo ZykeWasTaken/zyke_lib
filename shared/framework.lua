@@ -28,4 +28,8 @@ CreateThread(function()
             break
         end
     end
+
+    if (Framework == nil) then
+        error("Could not find your framework, this is critical!")
+    end
 end)

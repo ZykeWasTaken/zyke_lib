@@ -161,14 +161,3 @@ end
 function Functions.GetConfig()
     return Config
 end
-
-CreateThread(function()
-    local availableFrameworks = {
-        ["ESX"] = true,
-        ["QBCore"] = true
-    }
-
-    if (not availableFrameworks[Framework]) then
-        error("Invalid framework specified in config.lua, make sure to use a supported framework!")
-    end
-end)
