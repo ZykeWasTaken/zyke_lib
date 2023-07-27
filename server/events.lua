@@ -1,6 +1,7 @@
--- Has to be in a loop to start properly, for some odd reason
 CreateThread(function()
-        AddEventHandler("playerDropped", function()
+    while (Framework == nil) do Wait(100) end
+
+    AddEventHandler("playerDropped", function()
         TriggerEvent("zyke_lib:PlayerDropped", source, "exit")
     end)
 
