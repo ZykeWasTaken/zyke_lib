@@ -333,8 +333,19 @@ function Functions.GetPlayersServerId()
 
         table.insert(serverIds, serverId)
     end
+
+    return serverIds
 end
 
+--[[
+    Max (I think, I only tested one vehicle lol, can probably check using GetNumVehicleMods)
+    engine = 3,
+    brakes = 2,
+    transmission = 2,
+    suspension = 3,
+    armor = 4,
+    turbo = 1,
+]]
 function Functions.SetVehicleMods(veh, mods)
     if (Framework == "QBCore") then
         QBCore.Functions.SetVehicleProperties(veh, mods)
