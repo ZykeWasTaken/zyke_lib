@@ -228,57 +228,55 @@ function Functions.AddItem(player, item, amount)
 end
 
 function Functions.GetPlayersOnJob(job, onDuty)
-    CreateThread(function()
-        while (Framework == nil) do Wait(100) end
+    while (Framework == nil) do Wait(100) end
 
-        if (Framework == "QBCore") then
-            if (onDuty == true) then
-                if (type(job) == "string") then
-                    return QBCore.Functions.GetPlayersOnDuty(job)
-                elseif (type(job) == "table") then
-                    local players = {}
+    if (Framework == "QBCore") then
+        if (onDuty == true) then
+            if (type(job) == "string") then
+                return QBCore.Functions.GetPlayersOnDuty(job)
+            elseif (type(job) == "table") then
+                local players = {}
 
-                    for _, v in pairs(job) do
-                        local jobPlayers = QBCore.Functions.GetPlayersOnDuty(v)
+                for _, v in pairs(job) do
+                    local jobPlayers = QBCore.Functions.GetPlayersOnDuty(v)
 
-                        for _, v2 in pairs(jobPlayers) do
-                            table.insert(players, v2)
-                        end
+                    for _, v2 in pairs(jobPlayers) do
+                        table.insert(players, v2)
                     end
-
-                    return players
                 end
 
-                return {}
+                return players
             end
-        elseif (Framework == "ESX") then -- Untested
-            -- ESX doesn't have a default duty system, that's why we're not using it here
-            -- If you do have it on your server, you can use the onDuty variable if it's needed in the script
-            local players = {}
 
-            if (type(job) == "string") then
-                for k, v in pairs(ESX.GetPlayers()) do
-                    local xPlayer = ESX.GetPlayerFromId(v)
+            return {}
+        end
+    elseif (Framework == "ESX") then -- Untested
+        -- ESX doesn't have a default duty system, that's why we're not using it here
+        -- If you do have it on your server, you can use the onDuty variable if it's needed in the script
+        local players = {}
 
-                    if (xPlayer.job.name == job) then
+        if (type(job) == "string") then
+            for k, v in pairs(ESX.GetPlayers()) do
+                local xPlayer = ESX.GetPlayerFromId(v)
+
+                if (xPlayer.job.name == job) then
+                    table.insert(players, v)
+                end
+            end
+        elseif (type(job) == "table") then
+            for k, v in pairs(ESX.GetPlayers()) do
+                local xPlayer = ESX.GetPlayerFromId(v)
+
+                for _, v2 in pairs(job) do
+                    if (xPlayer.job.name == v2) then
                         table.insert(players, v)
                     end
                 end
-            elseif (type(job) == "table") then
-                for k, v in pairs(ESX.GetPlayers()) do
-                    local xPlayer = ESX.GetPlayerFromId(v)
-
-                    for _, v2 in pairs(job) do
-                        if (xPlayer.job.name == v2) then
-                            table.insert(players, v)
-                        end
-                    end
-                end
             end
-
-            return players
         end
-    end)
+
+        return players
+    end
 end
 
 function Functions.EnoughWorkers(job, required)
