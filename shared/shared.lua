@@ -138,6 +138,78 @@ function Functions.FormatCharacterDetails(character, online)
     return formatted
 end
 
+---@class FormattingOptions
+---@field exclude table -- Array of identifiers that should be excluded {"identifier1", "identifier2"}, set to nil/{} to disable
+---@field includeServerId boolean
+
+---@param players table -- Array of player identifiers
+---@param options FormattingOptions
+---@return table -- Array of formatted players
+function Functions.FormatPlayers(players, options)
+    local playerDetails = Functions.GetPlayerDetails(players)
+    local formattedPlayers = {}
+
+    for _, playerDetail in pairs(playerDetails) do
+        if ((options.exclude) and (#options.exclude > 0)) then
+            local shouldBeExcluded = Functions.Contains(options.exclude, playerDetail.identifier)
+            if (shouldBeExcluded) then goto setToEnd end
+        end
+
+        local firstname = playerDetail.firstname or "NOT FOUND"
+        local lastname = playerDetail.lastname or "NOT FOUND"
+        local label = firstname .. " " .. lastname
+
+        if (options.includeServerId) then
+            label = ("(%s) "):format(playerDetail.source or "X") .. label
+        end
+
+        table.insert(formattedPlayers, {
+            label = label,
+            name = playerDetail.identifier,
+            value = playerDetail.identifier,
+        })
+
+        ::setToEnd::
+    end
+
+    return formattedPlayers
+end
+
+-- Note that this only formats, does not check if any values exist
+function Functions.FormatJob(details)
+    if (Framework == "QBCore") then
+        local job = {
+            name = details.name or "NAME NOT FOUND",
+            label = details.label or "LABEL NOT FOUND",
+            grade = {
+                level = details.grade.level or "GRADE LEVEL NOT FOUND",
+                name = details.grade.name or "GRADE NAME NOT FOUND"
+            }
+        }
+
+        return job
+    elseif (Framework == "ESX") then
+        -- Untested
+    end
+end
+
+function Functions.FormatGang(details)
+    if (Framework == "QBCore") then
+        local gang = {
+            name = details.name or "NAME NOT FOUND",
+            label = details.label or "LABEL NOT FOUND",
+            grade = {
+                level = details.grade.level or "GRADE LEVEL NOT FOUND",
+                name = details.grade.name or "GRADE NAME NOT FOUND"
+            }
+        }
+
+        return gang
+    elseif (Framework == "ESX") then
+        -- Untested
+    end
+end
+
 function Functions.GetItem(item)
     if (Framework == "QBCore") then
         return QBCore.Shared.Items[item]
@@ -160,4 +232,84 @@ end
 
 function Functions.GetConfig()
     return Config
+end
+
+-- Only tested for QB
+---@param name string -- Name of job
+function Functions.GetJobDetails(name)
+    while (Framework == nil) do Wait(100) end
+
+    if (Framework == "QBCore") then
+        local details = QBCore.Shared.Jobs[name]
+        if (not details) then return nil end
+
+        local job = {
+            label = details.label
+        }
+
+        return job
+    elseif (Framework == "ESX") then
+        -- Untested
+    else
+        error("This job does not exist: " .. tostring(name))
+    end
+end
+
+-- Only tested for QB
+---@param name string -- Name of gang
+function Functions.GetGangDetails(name)
+    while (Framework == nil) do Wait(100) end
+
+    if (Framework == "QBCore") then
+        local details = QBCore.Shared.Gangs[name]
+        if (not details) then return nil end
+
+        local gang = {
+            label = details.label
+        }
+
+        return gang
+    elseif (Framework == "ESX") then
+        -- Untested
+    else
+        error("This gang does not exist: " .. tostring(name))
+    end
+end
+
+-- Only tested for QB (Not active in any releases yet)
+---@param name string -- Job/gang name
+---@param rankType string -- "job" / "gang"
+---@return table | nil -- name = true, as some servers support multiple bosses, nil if no job/gang is found
+function Functions.GetBossRanks(name, rankType)
+    if (Framework == "QBCore") then
+        if (rankType == "job") then
+            local sortedList = {}
+            local job = QBCore.Shared.Jobs[name]
+            if (not job) then return nil end
+
+            for _, details in pairs(job.grades) do
+                if (details.isboss == true) then
+                    sortedList[details.name] = true
+                end
+            end
+
+            return sortedList
+        elseif (rankType == "gang") then
+            local sortedList = {}
+            local gang = QBCore.Shared.Gangs?[name]
+            if (not gang) then return nil end
+
+            for _, details in pairs(gang.grades) do
+                if (details.isboss == true) then
+                    sortedList[details.name] = true
+                end
+            end
+
+            return sortedList
+        end
+    elseif (Framework == "ESX") then
+        -- TODO: Add this for ESX once needed
+    end
+
+    return nil
 end

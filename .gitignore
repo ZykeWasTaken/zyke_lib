@@ -1,3 +1,4 @@
 client/experimental/*
 server/experimental/*
+shared/experimental/*
 .vscode/*

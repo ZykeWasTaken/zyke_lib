@@ -15,7 +15,9 @@ shared_scripts {
     "@ox_lib/init.lua",
     "shared/framework.lua",
     "shared/shared.lua",
-    "shared/config.lua"
+    "shared/config.lua",
+
+    "shared/experimental/*",
 }
 
 client_scripts {

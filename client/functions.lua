@@ -211,24 +211,23 @@ end
 function Functions.GetJob()
     if (Framework == "QBCore") then
         local job = {}
-
-        if (Functions.GetPlayerData().job == nil) then
-            return nil
-        end
-
-        local playerData = Functions.GetPlayerData()
+        local details = Functions.GetPlayerData()?.job
+        if (not details) then return nil end
 
         -- This is to ensure my scripts align with whatever system you're using
         -- By default this will work, but if you have a different system, you can change it here
-        job.name = playerData?.job?.name or ""
-        job.label = playerData?.job?.label or ""
-        job.grade = playerData?.job?.grade or 0
-        job.grade_label = playerData?.job?.grade_label or ""
-        job.grade_name = playerData?.job?.grade_name or ""
+        job = {
+            name = details.name or "NAME NOT FOUND",
+            label = details.label or "LABEL NOT FOUND",
+            grade = {
+                level = details.grade.level or "GRADE LEVEL NOT FOUND",
+                name = details.grade.name or "GRADE NAME NOT FOUND"
+            }
+        }
 
-        return job
+        return Functions.FormatJob(details)
     elseif (Framework == "ESX") then
-        -- return Functions.GetPlayerData()?.job -- Not tested (Not in use for any active releases yet)
+        -- TODO: Print out the ESX structure and re-make it, same as above with QB
         local job = {}
 
         if (Functions.GetPlayerData().job == nil) then
@@ -252,9 +251,23 @@ function Functions.IsJob(job)
         return Functions.GetJob().name == job
     elseif (type(job) == "table") then
         for _, jobName in pairs(job) do
-            local isJob = Functions.GetJob().name == jobName
+            local isJob = Functions.GetJob()?.name == jobName
 
             if (isJob) then return true end
+        end
+    end
+
+    return false
+end
+
+function Functions.IsGang(gang)
+    if (type(gang) == "string") then
+        return Functions.GetGang().name == gang
+    elseif (type(gang) == "table") then
+        for _, gangName in pairs(gang) do
+            local isGang = Functions.GetGang()?.name == gangName
+
+            if (isGang) then return true end
         end
     end
 
@@ -265,18 +278,10 @@ end
 function Functions.GetGang()
     if (Framework == "QBCore") then
         local gang = {}
+        local details = Functions.GetPlayerData()?.gang
+        if (not details) then return nil end
 
-        if (Functions.GetPlayerData().gang == nil) then
-            return nil
-        end
-
-        gang.name = Functions.GetPlayerData()?.gang?.name or ""
-        gang.label = Functions.GetPlayerData()?.gang?.label or ""
-        gang.grade = Functions.GetPlayerData()?.gang?.grade or 0
-        gang.grade_label = Functions.GetPlayerData()?.gang?.grade_label or ""
-        gang.grade_name = Functions.GetPlayerData()?.gang?.grade_name or ""
-
-        return gang
+        return Functions.FormatGang(details)
     elseif (Framework == "ESX") then
         return nil -- ESX doesn't have a gang system, so this will always return nil, change this if you're running one
     end
@@ -372,12 +377,34 @@ function Functions.SetVehicleMods(veh, mods)
     end
 end
 
+local performanceMods = {
+    {name = "engine", idx = 11},
+    {name = "brakes", idx = 12},
+    {name = "gearbox", idx = 13},
+    {name = "suspension", idx = 15},
+    {name = "armor", idx = 16},
+    {name = "turbo", idx = 18, max = 1} -- No way to check turbo
+}
+
 function Functions.GetVehicleMods(veh)
+    local mods = {}
+
     if (Framework == "QBCore") then
-        return QBCore.Functions.GetVehicleProperties(veh)
+        mods = QBCore.Functions.GetVehicleProperties(veh)
     elseif (Framework == "ESX") then
-        return ESX.Game.GetVehicleProperties(veh)
+        mods = ESX.Game.GetVehicleProperties(veh)
     end
+
+    mods.maxPerformanceMods = {}
+
+    -- Initialize, has to be called in order to fetch/set mods
+    SetVehicleModKit(veh, 0)
+
+    for _, mod in pairs(performanceMods) do
+        mods.maxPerformanceMods[mod.name] = mod.name == "turbo" and 1 or GetNumVehicleMods(veh, mod.idx)
+    end
+
+    return mods
 end
 
 --[[
@@ -480,20 +507,107 @@ function Functions.SetAsVehicleOwner(plate)
     end
 end
 
+-- Saves targets and their type to easily clear them
+local targets = {}
+
 function Functions.AddTargetEntity(entity, passed)
     if (Config.Target == "qb-target") then
         exports["qb-target"]:AddTargetEntity(entity, {
             options = passed.options,
             distance = passed.distance or 2.0
         })
+
+        targets[entity] = {type = "entity"}
     elseif (Config.Target == "ox_target") then
-        Functions.RemoveTargetEntity(entity) -- You need to remove and re-add the entity if you want to update the options
+        Functions.RemoveTarget(entity) -- You need to remove and re-add the entity if you want to update the options
         exports["ox_target"]:addLocalEntity(entity, passed.options)
+
+        targets[entity] = {type = "entity"}
     else
         Functions.Debug("You are using an unsupported target script, please use either qb-target or ox_target. Alternatively you can add your own target script.", true)
     end
 end
 
+---@class TargetOptions
+---@field num number -- Index in the menu
+---@field icon string
+---@field label string
+---@field action? function -- qb-target uses action
+---@field onSelect? function -- ox_target uses onSelect
+
+---@class TargetDetails
+---@field name string -- Unique name (id)
+---@field pos vector3
+---@field length number
+---@field width number
+---@field minZ number
+---@field maxZ number
+---@field heading number
+---@field debugPoly boolean
+---@field options TargetOptions
+---@field distance number
+
+---@param passed TargetDetails
+function Functions.AddTargetBox(passed)
+    if (Config.Target == "qb-target") then
+        exports["qb-target"]:AddBoxZone(passed.name, passed.pos, passed.length, passed.width, {
+            name = passed.name,
+            heading = passed.heading,
+            minZ = passed.minZ,
+            maxZ = passed.maxZ,
+            debugPoly = passed.debugPoly
+        }, {
+            distance = passed.distance or 1.5,
+            options = passed.options
+        })
+
+        targets[passed.name] = {type = "zone"}
+    elseif (Config.Target == "ox_target") then
+        -- exports["ox_target"]
+        local id = exports["ox_target"]:addBoxZone({
+            coords = vec3(passed.pos.x, passed.pos.y, passed.pos.z - (passed.pos.z - passed.minZ) / 2),
+            size = vec3(passed.width, passed.length, passed.pos.z - passed.minZ),
+            rotation = passed.heading,
+            debug = passed.debugPoly,
+            options = passed.options
+        })
+
+        targets[id] = {type = "zone"}
+        return id
+    else
+        error("You are using an unsupported target script, please use either qb-target or ox_target. Alternatively you can add your own target script.")
+    end
+end
+
+---@param id string | number -- String for zones, number for entity hashes
+function Functions.RemoveTarget(id)
+    local details = targets[id]
+
+    if (not details) then
+        id = tostring(id)
+        details = targets[id]
+    end
+
+    if (details) then
+        if (details.type == "entity") then
+            if (Config.Target == "qb-target") then
+                exports["qb-target"]:RemoveTargetEntity(id)
+            elseif (Config.Target == "ox_target") then
+                exports["ox_target"]:removeLocalEntity(id)
+            end
+        elseif (details.type == "zone") then
+            if (Config.Target == "qb-target") then
+                exports["qb-target"]:RemoveZone(id)
+            elseif (Config.Target == "ox_target") then
+                exports["ox_target"]:removeZone(id)
+            end
+        end
+
+        targets[id] = nil
+    end
+end
+
+-- Old way (Kept for support)
 function Functions.RemoveTargetEntity(entity)
     if (Config.Target == "qb-target") then
         exports["qb-target"]:RemoveTargetEntity(entity)
@@ -742,8 +856,58 @@ function Functions.CreateUniqueId(length)
     return Functions.Callback("zyke_lib:CreateUniqueId", false, {length = length})
 end
 
+-- Only tested for QB (Not active in any releases yet)
+---@param name string -- Name of job/gang
+---@param rankType string -- "job" / "gang"
+---@return boolean
+function Functions.IsBoss(name, rankType)
+    if (rankType == "job") then
+        local job = Functions.GetJob()
+        if (not job) then return false end
+        if (job.name ~= name) then return false end
+
+        local bossRanks = Functions.GetBossRank(job.name, rankType)
+        if (not bossRanks) then return false end
+
+        return bossRanks[job.grade.name] == true
+    elseif (rankType == "gang") then
+        local gang = Functions.GetGang()
+        if (not gang) then return false end
+        if (gang.name ~= name) then return false end
+
+        local bossRanks = Functions.GetBossRank(gang.name, rankType)
+        if (not bossRanks) then return false end
+
+        return bossRanks[gang.grade.name] == true
+    else
+        error("This rankType does not exist: " .. tostring(rankType))
+    end
+end
+
 function Fetch()
     return Functions, Tools
 end
 
 exports("Fetch", Fetch)
+
+-- RegisterCommand("getjobboss", function(source, args)
+--     local job = args[1]
+--     local name = Functions.GetBossRank(job, "job")
+
+--     print(json.encode(name))
+-- end, false)
+
+-- RegisterCommand("getgangboss", function(source, args)
+--     local job = args[1]
+--     local name = Functions.GetBossRank(job, "gang")
+
+--     print(json.encode(name))
+-- end, false)
+
+-- RegisterCommand("isboss", function(source, args)
+--     local name = args[1]
+--     local rankType = args[2]
+--     local isBoss = Functions.IsBoss(name, rankType)
+
+--     print(isBoss)
+-- end, false)
