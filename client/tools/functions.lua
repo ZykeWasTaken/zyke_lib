@@ -1,4 +1,5 @@
 function Tools.DrawPolyZone()
+    local invoker = GetInvokingResource()
     local active = true
     local vectors = {}
 
@@ -20,6 +21,27 @@ function Tools.DrawPolyZone()
         end
     end
 
+    local str
+    ---@param save boolean -- true to save & copy coordinates
+    local function stop(save)
+        active = false
+
+        if (polyzone) then
+            polyzone:destroy()
+        end
+
+        if (save) then
+            -- Formatting and copying
+            str = ""
+            for _, coords in pairs(vectors) do
+                str = str .. coords .. ",\n"
+            end
+
+            str = str:sub(1, -3)
+            Functions.Copy(str)
+        end
+    end
+
     local keys = {
         {key = "LEFTMOUSE", func = function(coords)
             local _coords = vec2(coords.x, coords.y)
@@ -33,7 +55,10 @@ function Tools.DrawPolyZone()
             generateNewPolyzone()
         end},
         {key = "ENTER", func = function()
-            active = false
+            stop(true)
+        end},
+        {key = "BACKSPACE", func = function()
+            stop(false)
         end}
     }
 
@@ -43,6 +68,14 @@ function Tools.DrawPolyZone()
         keys[idx].func = _func
     end
 
+    -- Register instructions
+    local instructionsMsg = ""
+    instructionsMsg = instructionsMsg .. "~INPUT_ATTACK~ Place Point"           -- Place point/line
+    instructionsMsg = instructionsMsg .. "\n~INPUT_AIM~ Remove Last Point"      -- Remove last point/line placed
+    instructionsMsg = instructionsMsg .. "\n~INPUT_FRONTEND_ACCEPT~ Save"       -- Stop the drawing & copy the coordinates
+    instructionsMsg = instructionsMsg .. "\n~INPUT_CELLPHONE_CANCEL~ Cancel"    -- Stop the drawing & scrap all coordinates
+    Functions.RegisterTextEntry("draw_polyzone_instructions", instructionsMsg)
+
     while (active) do
         local hit, coords = RaycastFromScreen()
 
@@ -50,6 +83,7 @@ function Tools.DrawPolyZone()
             -- Drawing what you're looking at
             DrawSphere(coords.x, coords.y, coords.z, 0.1, 0, 255, 0, 0.5)
             DrawLine(coords.x, coords.y, coords.z - 20.0, coords.x, coords.y, coords.z + 50.0, 0, 255, 0, 1.0)
+            Functions.DisplayTextEntry("draw_polyzone_instructions", invoker)
 
             -- Disabling attacking, so that you can use your mouse to make the points
             for _, key in pairs(keys) do
@@ -63,19 +97,6 @@ function Tools.DrawPolyZone()
 
         Wait(0)
     end
-
-    if (polyzone) then
-        polyzone:destroy()
-    end
-
-    -- Formatting and copying
-    local str = ""
-    for _, coords in pairs(vectors) do
-        str = str .. coords .. ",\n"
-    end
-
-    str = str:sub(1, -3)
-    Functions.Copy(str)
 
     return vectors, {str}
 end
