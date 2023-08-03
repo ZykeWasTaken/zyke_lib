@@ -639,8 +639,8 @@ function Functions.RegisterTextEntry(name, msg)
     AddTextEntry(prefix .. name, msg)
 end
 
-function Functions.DisplayTextEntry(name)
-    local prefix = GetInvokingResource() .. ":"
+function Functions.DisplayTextEntry(name, resourceName)
+    local prefix = (resourceName or GetInvokingResource()) .. ":" -- When triggering within, GetInvokingResource will not work, pass in resourceName to fix this
 
     BeginTextCommandDisplayHelp(prefix .. name)
     EndTextCommandDisplayHelp(0, 0, 1, -1)
