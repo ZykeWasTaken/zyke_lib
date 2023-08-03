@@ -52,9 +52,10 @@ local keys = {
     ["DOWN"] = {keyCode = 173, name = "~INPUT_CELLPHONE_DOWN~"},
     ["LEFT"] = {keyCode = 174, name = "~INPUT_CELLPHONE_LEFT~"},
     ["RIGHT"] = {keyCode = 175, name = "~INPUT_CELLPHONE_RIGHT~"},
-    ["BACKSPACE"] = {keyCode = 177, name = "~INPUT_CELLPHONE_CANCEL~"},
+    ["CANCEL"] = {keyCode = 177, name = "~INPUT_CELLPHONE_CANCEL~"}, -- BACKSPACE / ESC / RIGHT MOUSE BUTTON
     ["DELETE"] = {keyCode = 178, name = "~INPUT_CELLPHONE_OPTION~"},
     ["L"] = {keyCode = 182, name = "~INPUT_CELLPHONE_CAMERA_FOCUS_LOCK~"},
+    ["BACKSPACE"] = {keyCode = 202, name = "~INPUT_FRONTEND_CANCEL~"},
     ["HOME"] = {keyCode = 213, name = "~INPUT_FRONTEND_SOCIAL_CLUB_SECONDARY~"},
     ["~"] = {keyCode = 243, name = "~INPUT_ENTER_CHEAT_CODE~"},
     ["M"] = {keyCode = 244, name = "~INPUT_INTERACTION_MENU~"},
