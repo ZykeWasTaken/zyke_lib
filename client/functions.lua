@@ -104,9 +104,9 @@ function Functions.ProgressBar(name, label, duration, useWhileDead, canCancel, d
             useWhileDead = useWhileDead,
             canCancel = canCancel,
             anim = {
-                dict = animation.animDict,
-                clip = animation.anim,
-                flag = animation.flag or 49,
+                dict = animation?.animDict,
+                clip = animation?.anim,
+                flag = animation?.flag or 49,
             }
         })
 
@@ -128,9 +128,9 @@ function Functions.ProgressBar(name, label, duration, useWhileDead, canCancel, d
         elseif (Framework == "ESX") then
             ESX.Progressbar(label, duration, {
                 animation = animation and {
-                    type = animation.type,
-                    dict = animation.animDict,
-                    lib = animation.anim,
+                    type = animation?.type,
+                    dict = animation?.animDict,
+                    lib = animation?.anim,
                 },
                 FreezePlayer = disableControls and true or false,
                 onFinish = onFinish,
