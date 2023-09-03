@@ -1,27 +1,23 @@
-function Functions.LoadModel(mdl)
-    local orgMdl = mdl
-    mdl = joaat(mdl)
+function Functions.LoadModel(model)
+    local originalModel = model
+    model = joaat(model)
 
-    if (IsModelValid(mdl)) then
-        RequestModel(mdl)
-        while (not HasModelLoaded(mdl)) do
-            Wait(10)
-        end
-        return true
-    else
-        print("This model does not exist: " .. orgMdl .. " (" .. mdl .. ")")
-        return false
-    end
+    local doesExist = IsModelValid(model)
+    if (not doesExist) then error("This model does not exist: " .. originalModel .. " (" .. model .. ")") end
+
+    RequestModel(model)
+    while (not HasModelLoaded(model)) do Wait(1) end
 end
 
-function Functions.LoadAnim(anim)
-    RequestAnimDict(anim)
-    while not HasAnimDictLoaded(anim) do
-        Wait(10)
-    end
+function Functions.LoadAnim(dict)
+    local doesExist = DoesAnimDictExist(dict)
+    if (not doesExist) then error("This dictionary does not exist " .. tostring(dict)) end
 
-    return true
+    RequestAnimDict(dict)
+    while not HasAnimDictLoaded(dict) do Wait(10) end
 end
+
+Functions.LoadDict = Functions.LoadAnim
 
 function Functions.DrawMissionText(text, height, length)
 	-- 0.96, 0.5 = bottom centered
