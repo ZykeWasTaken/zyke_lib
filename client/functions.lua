@@ -3,18 +3,22 @@ function Functions.LoadModel(model)
     model = joaat(model)
 
     local doesExist = IsModelValid(model)
-    if (not doesExist) then error("This model does not exist: " .. originalModel .. " (" .. model .. ")") end
+    if (not doesExist) then error("This model does not exist: " .. originalModel .. " (" .. model .. ")") return false end
 
     RequestModel(model)
     while (not HasModelLoaded(model)) do Wait(1) end
+
+    return true
 end
 
 function Functions.LoadAnim(dict)
     local doesExist = DoesAnimDictExist(dict)
-    if (not doesExist) then error("This dictionary does not exist " .. tostring(dict)) end
+    if (not doesExist) then error("This dictionary does not exist " .. tostring(dict)) return false end
 
     RequestAnimDict(dict)
     while not HasAnimDictLoaded(dict) do Wait(10) end
+
+    return true
 end
 
 Functions.LoadDict = Functions.LoadAnim
