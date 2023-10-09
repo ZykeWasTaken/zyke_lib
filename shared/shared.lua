@@ -219,6 +219,7 @@ function Functions.GetItem(item)
 end
 
 function Functions.GetFramework()
+    while (Framework == nil or Framework == "") do Wait(10) end
     return Framework
 end
 
