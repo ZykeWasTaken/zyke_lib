@@ -544,7 +544,7 @@ end
 ---@field maxZ number
 ---@field heading number
 ---@field debugPoly boolean
----@field options TargetOptions
+---@field options table<TargetOptions>
 ---@field distance number
 
 ---@param passed TargetDetails
