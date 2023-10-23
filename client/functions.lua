@@ -213,11 +213,6 @@ function Functions.GetIdentifier()
 end
 
 function Functions.OpenInventory(type, invId, other)
-    type = type or "stash"
-    if (Inventory == "ox_inventory") then
-        return exports["ox_inventory"]:openInventory(type, invId)
-    end
-
     if (Framework == "QBCore") then
         TriggerServerEvent("inventory:server:OpenInventory", type, invId, {
             maxweight = other?.maxweight or 4000,
@@ -226,6 +221,10 @@ function Functions.OpenInventory(type, invId, other)
         TriggerEvent("inventory:client:SetCurrentStash", invId)
     elseif (Framework == "ESX") then
         -- TriggerEvent("esx_inventoryhud:openStashInventory", invId) -- Not tested (Not in use for any active releases yet)
+        type = type or "stash"
+        if (Inventory == "ox_inventory") then
+            return exports["ox_inventory"]:openInventory(type, invId)
+        end
     end
 end
 
