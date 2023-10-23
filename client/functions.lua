@@ -36,14 +36,16 @@ function Functions.DrawMissionText(text, height, length)
     DrawText(length ~= nil and length or 0.5, height ~= nil and height or 0.96)
 end
 
-function Functions.Draw3DText(coords, text, scale)
+function Functions.Draw3DText(coords, text, scale, rgba)
     local onScreen,_x,_y=World3dToScreen2d(coords.x, coords.y, coords.z)
     local px,py,pz=table.unpack(GetGameplayCamCoords())
+
+    rgba = rgba or {}
 
     SetTextScale(scale or 0.3, scale or 0.3)
     SetTextFont(4)
     SetTextProportional(1)
-    SetTextColour(255, 255, 255, 255)
+    SetTextColour(rgba.r or 255, rgba.g or 255, rgba.b or 255, rgba.a or 255)
     SetTextEntry("STRING")
     SetTextCentre(1)
     AddTextComponentString(text)
@@ -92,11 +94,27 @@ function Functions.Notify(msg, type, length)
     if (Framework == "QBCore") then
         QBCore.Functions.Notify(msg, type, length)
     elseif (Framework == "ESX") then
+        if (type == "primary") then type = "info" end
+
         ESX.ShowNotification(msg, type, length)
     end
 end
 
 function Functions.ProgressBar(name, label, duration, useWhileDead, canCancel, disableControls, animation, prop, propTwo, onFinish, onCancel)
+    if (type(name) == "table") then
+        label = name.label
+        duration = name.duration
+        useWhileDead = name.useWhileDead
+        canCancel = name.canCancel
+        disableControls = name.disableControls
+        animation = name.animation
+        prop = name.prop
+        propTwo = name.propTwo
+        onFinish = name.onFinish
+        onCancel = name.onCancel
+        name = name.name
+    end
+
     if (Config.Progressbar == "ox_lib") then
         local state = lib.progressBar({
             duration = duration,
@@ -182,7 +200,7 @@ function Functions.GetPlayerData()
     if (Framework == "QBCore") then
         return QBCore.Functions.GetPlayerData()
     elseif (Framework == "ESX") then
-        return ESX.GetPlayerData() -- Not tested (Not in use for any active releases yet) (ERROR)
+        return ESX.GetPlayerData()
     end
 end
 
@@ -190,13 +208,17 @@ function Functions.GetIdentifier()
     if (Framework == "QBCore") then
         return Functions.GetPlayerData().citizenid
     elseif (Framework == "ESX") then
-        return Functions.GetPlayerData().identifier -- Not tested (Not in use for any active releases yet)
+        return Functions.GetPlayerData().identifier
     end
 end
 
 -- TODO: Fix for ESX, if even possible with default inventory?
 function Functions.OpenInventory(type, invId, other)
     type = type or "stash"
+    if (Inventory == "ox_inventory") then
+        return exports["ox_inventory"]:openInventory(type, invId)
+    end
+
     if (Framework == "QBCore") then
         TriggerServerEvent("inventory:server:OpenInventory", type, invId, {
             maxweight = other?.maxweight or 4000,
@@ -210,20 +232,8 @@ end
 
 function Functions.GetJob()
     if (Framework == "QBCore") then
-        local job = {}
         local details = Functions.GetPlayerData()?.job
         if (not details) then return nil end
-
-        -- This is to ensure my scripts align with whatever system you're using
-        -- By default this will work, but if you have a different system, you can change it here
-        job = {
-            name = details.name or "NAME NOT FOUND",
-            label = details.label or "LABEL NOT FOUND",
-            grade = {
-                level = details.grade.level or "GRADE LEVEL NOT FOUND",
-                name = details.grade.name or "GRADE NAME NOT FOUND"
-            }
-        }
 
         return Functions.FormatJob(details)
     elseif (Framework == "ESX") then
@@ -250,8 +260,9 @@ function Functions.IsJob(job)
     if (type(job) == "string") then
         return Functions.GetJob().name == job
     elseif (type(job) == "table") then
+        local plyJobName = Functions.GetJob()?.name
         for _, jobName in pairs(job) do
-            local isJob = Functions.GetJob()?.name == jobName
+            local isJob = plyJobName == jobName
 
             if (isJob) then return true end
         end
@@ -277,12 +288,18 @@ end
 -- Same as above, but for gangs
 function Functions.GetGang()
     if (Framework == "QBCore") then
-        local gang = {}
         local details = Functions.GetPlayerData()?.gang
         if (not details) then return nil end
 
         return Functions.FormatGang(details)
     elseif (Framework == "ESX") then
+        if (Config.GangScript == "zyke_gangphone") then
+            local details = exports["zyke_gangphone"]:GetGang()
+            if (not details) then return nil end
+
+            return Functions.FormatGang(details)
+        end
+
         return nil -- ESX doesn't have a gang system, so this will always return nil, change this if you're running one
     end
 end
@@ -295,13 +312,36 @@ function Functions.HasLoadedFramework()
     end
 end
 
--- Not used atm
-function Functions.GetPlayerInventory()
+---@param disableBundling boolean? -- If set to true, it will not bundle item amounts with the same name (Read the formatting functions for full details)
+function Functions.GetPlayerItems(disableBundling)
     if (Framework == "QBCore") then
-        return Functions.GetPlayerData().items
+        local items = Functions.GetPlayerData().items
+
+        return Functions.FormatItemsFetch(items, disableBundling)
     elseif (Framework == "ESX") then
-        return Functions.GetPlayerData().inventory -- Not tested (Not in use for any active releases yet)
+        local items = Functions.GetPlayerData().inventory -- Not tested (Not in use for any active releases yet)
+
+        return Functions.FormatItemsFetch(items, disableBundling)
     end
+end
+
+---@param name string
+---@param items table? -- Optional way to get your items, pass in a table and save performance from constant fetching
+---@param firstOnly boolean? -- Set to true to return the first item found, instead of an array containing all item tables that match the name
+---@return table | nil
+function Functions.GetPlayerItemByName(name, items, firstOnly)
+    local playerItems = items or Functions.GetPlayerItems()
+    local foundItems = {}
+
+    for _, itemData in pairs(playerItems) do
+        if (itemData.name == name) then
+            if (firstOnly) then return itemData end
+
+            foundItems[#foundItems+1] = itemData
+        end
+    end
+
+    return #foundItems == 0 and nil or foundItems
 end
 
 function Functions.GetClosestPlayer()
@@ -312,12 +352,18 @@ function Functions.GetClosestPlayer()
     end
 end
 
+-- Simply checks if you are dead
+-- You might need to change this if you a custom death script
 function Functions.IsPlayerDead()
     local ped = PlayerPedId()
+    if (Config.CustomDeathScript == "wasabi_ambulance") then
+        return exports["wasabi_ambulance"]:isPlayerDead(GetPlayerServerId(PlayerId()))
+    end
+
     if (Framework == "QBCore") then
         return Functions.GetPlayerData().metadata["isdead"] or Functions.GetPlayerData().metadata["inlaststand"]
     elseif (Framework == "ESX") then
-        return IsEntityDead(ped) -- Not tested (Not in use for any active releases yet)
+        return IsEntityDead(ped)
     end
 end
 
@@ -510,21 +556,28 @@ end
 -- Saves targets and their type to easily clear them
 local targets = {}
 
+---@return string | nil -- id
 function Functions.AddTargetEntity(entity, passed)
+    local invoker <const> = GetInvokingResource()
+
     if (Config.Target == "qb-target") then
         exports["qb-target"]:AddTargetEntity(entity, {
             options = passed.options,
             distance = passed.distance or 2.0
         })
 
-        targets[entity] = {type = "entity"}
+        targets[entity] = {type = "entity", invoker = invoker}
+
+        return entity
     elseif (Config.Target == "ox_target") then
         Functions.RemoveTarget(entity) -- You need to remove and re-add the entity if you want to update the options
         exports["ox_target"]:addLocalEntity(entity, passed.options)
 
-        targets[entity] = {type = "entity"}
+        targets[entity] = {type = "entity", invoker = invoker}
+        return entity
     else
         Functions.Debug("You are using an unsupported target script, please use either qb-target or ox_target. Alternatively you can add your own target script.", true)
+        return nil
     end
 end
 
@@ -548,7 +601,10 @@ end
 ---@field distance number
 
 ---@param passed TargetDetails
+---@return string -- id
 function Functions.AddTargetBox(passed)
+    local invoker <const> = GetInvokingResource()
+
     if (Config.Target == "qb-target") then
         exports["qb-target"]:AddBoxZone(passed.name, passed.pos, passed.length, passed.width, {
             name = passed.name,
@@ -561,18 +617,21 @@ function Functions.AddTargetBox(passed)
             options = passed.options
         })
 
-        targets[passed.name] = {type = "zone"}
+        targets[passed.name] = {type = "zone", invoker = invoker}
+        return passed.name
     elseif (Config.Target == "ox_target") then
-        -- exports["ox_target"]
+        local height = (passed.pos.z - passed.minZ) + (passed.maxZ - passed.pos.z)
+        local size = vec3(passed.width, passed.length, height)
+        local coords = vec3(passed.pos.x, passed.pos.y, (passed.pos.z - (passed.pos.z - passed.minZ)) + (height / 2))
         local id = exports["ox_target"]:addBoxZone({
-            coords = vec3(passed.pos.x, passed.pos.y, passed.pos.z - (passed.pos.z - passed.minZ) / 2),
-            size = vec3(passed.width, passed.length, passed.pos.z - passed.minZ),
+            coords = coords,
+            size = size,
             rotation = passed.heading,
             debug = passed.debugPoly,
             options = passed.options
         })
 
-        targets[id] = {type = "zone"}
+        targets[id] = {type = "zone", invoker = invoker}
         return id
     else
         error("You are using an unsupported target script, please use either qb-target or ox_target. Alternatively you can add your own target script.")
@@ -654,7 +713,7 @@ function Functions.GetPlayersInArea(coords, maxDistance)
     if (Framework == "QBCore") then
         return QBCore.Functions.GetPlayersInArea(coords, maxDistance)
     elseif (Framework == "ESX") then
-        return ESX.Game.GetPlayersInArea(coords, maxDistance) -- Not tested (Not in use for any active releases yet)
+        return ESX.Game.GetPlayersInArea(coords, maxDistance)
     end
 end
 
@@ -666,9 +725,9 @@ function Functions.GetVehiclesInArea(coords, maxDistance)
     end
 end
 
-function Functions.GetVehicles()
-    return GetGamePool('CVehicle')
-end
+-- function Functions.GetVehicles()
+--     return GetGamePool('CVehicle')
+-- end
 
 function Functions.GetVehicleByPlate(plate)
     local vehicles = Functions.GetVehicles()
@@ -738,8 +797,24 @@ function Functions.Copy(text)
     return true
 end
 
-function Functions.IconForVehicleClass(class)
+function Functions.IconForVehicleClass(class, useServer)
     if (class == nil) then return "car" end
+
+    -- Server uses vehicle types and can not find the vehicle classes like the client
+    if (useServer) then
+        local icons = {
+            ["automobile"] = "car",
+            ["bike"] = "motorcycle",
+            ["boat"] = "sailboat",
+            ["heli"] = "helicopter",
+            ["plane"] = "plane",
+            ["submarine"] = "ferry",
+            ["trailer"] = "trailer",
+            ["train"] = "train",
+        }
+
+        return icons[class] or "car"
+    end
 
     local icons = {
         "car", -- Compacts
@@ -756,14 +831,14 @@ function Functions.IconForVehicleClass(class)
         "car", -- Utility
         "car", -- Vans
         "bicycle", -- Cycles
-        "boat", -- Boats
+        "sailboat", -- Boats
         "helicopter", -- Helicopters
         "plane", -- Planes
         "car", -- Service
         "car", -- Emergency
         "car", -- Military
         "car", -- Commercial
-        "car", -- Trains
+        "train", -- Trains
         "car" -- Open Wheel
     }
 
@@ -842,13 +917,27 @@ function Functions.RemoveBlip(blipId)
 end
 
 -- Clear up blips as they won't be removed when restarting the script that invoked the blip creation function
+-- Clear up data we wish to be removed on restarts, prevents us from needing to write this in every resource we use these functions in
+-- Note that these are just simple removers, and if there are no additional actions required, you should remove them in the resource they were created from
 AddEventHandler("onResourceStop", function(resourceName)
+    -- Blips
     if (blips[resourceName] ~= nil) then
         for _, blipId in pairs(blips[resourceName]) do
             RemoveBlip(blipId)
         end
 
         blips[resourceName] = nil
+    end
+
+    -- Target system
+    if (Config.Target) then
+        for targetId, targetDetails in pairs(targets) do
+            local isCorrectScript = resourceName == targetDetails.invoker
+
+            if (isCorrectScript) then
+                Functions.RemoveTarget(targetId)
+            end
+        end
     end
 end)
 
@@ -884,30 +973,83 @@ function Functions.IsBoss(name, rankType)
     end
 end
 
-function Fetch()
-    return Functions, Tools
+---@param buttons table
+---@return number
+function Functions.RegisterInstructions(buttons)
+    local scaleform = RequestScaleformMovie("instructional_buttons")
+    while (not HasScaleformMovieLoaded(scaleform)) do
+        Wait(10)
+    end
+
+    BeginScaleformMovieMethod(scaleform, "CLEAR_ALL")
+    EndScaleformMovieMethod()
+
+    BeginScaleformMovieMethod(scaleform, "SET_CLEAR_SPACE")
+    ScaleformMovieMethodAddParamInt(200)
+    EndScaleformMovieMethod()
+
+    local removedIndexes = 0
+    for idx, button in pairs(buttons) do
+        local key = Functions.GetKey(button.key)
+        if (key) then
+            -- Check if that button is pressed, if it is not pressed, go to end of loop
+            if (button.activate ~= nil) then
+                local keyToPress = Functions.GetKey(button.activate)
+                if (keyToPress) then
+                    if (not IsDisabledControlPressed(0, keyToPress.keyCode)) then
+                        removedIndexes = removedIndexes + 1
+                        goto endOfLoop
+                    end
+                else
+                    error("Trying to find key that does not exist" .. button.activate)
+                end
+            end
+
+            if (button.disable ~= nil) then
+                -- Check if that button is pressed, if it is pressed, go to end of loop
+                local keyToPress = Functions.GetKey(button.disable)
+                if (keyToPress) then
+                    if (IsDisabledControlPressed(0, keyToPress.keyCode)) then
+                        removedIndexes = removedIndexes + 1
+                        goto endOfLoop
+                    end
+                else
+                    error("Trying to find key that does not exist" .. button.disable)
+                end
+            end
+
+            BeginScaleformMovieMethod(scaleform, "SET_DATA_SLOT")
+            ScaleformMovieMethodAddParamInt(idx - 1 - removedIndexes)
+
+            if (type(button.key) == "string") then
+                ScaleformMovieMethodAddParamPlayerNameString(GetControlInstructionalButton(2, key.keyCode, true))
+            elseif (type(button.key) == "table") then
+                for _idx = #key, 1, -1 do
+                    local keyData = key[_idx]
+                    ScaleformMovieMethodAddParamPlayerNameString(GetControlInstructionalButton(2, keyData.keyCode, true))
+                end
+            end
+
+            BeginTextCommandScaleformString("STRING")
+            AddTextComponentSubstringKeyboardDisplay(button.label)
+            EndTextCommandScaleformString()
+            EndScaleformMovieMethod()
+
+            ::endOfLoop::
+        else
+            error("Attempted to register an instruction with an invalid key: " .. button.key)
+        end
+    end
+
+    BeginScaleformMovieMethod(scaleform, "DRAW_INSTRUCTIONAL_BUTTONS")
+    EndScaleformMovieMethod()
+
+    BeginScaleformMovieMethod(scaleform, "SET_BACKGROUND_COLOUR")
+    ScaleformMovieMethodAddParamInt(0)
+    ScaleformMovieMethodAddParamInt(0)
+    ScaleformMovieMethodAddParamInt(0)
+    ScaleformMovieMethodAddParamInt(80)
+    EndScaleformMovieMethod()
+
+    return scaleform
 end
-
-exports("Fetch", Fetch)
-
--- RegisterCommand("getjobboss", function(source, args)
---     local job = args[1]
---     local name = Functions.GetBossRank(job, "job")
-
---     print(json.encode(name))
--- end, false)
-
--- RegisterCommand("getgangboss", function(source, args)
---     local job = args[1]
---     local name = Functions.GetBossRank(job, "gang")
-
---     print(json.encode(name))
--- end, false)
-
--- RegisterCommand("isboss", function(source, args)
---     local name = args[1]
---     local rankType = args[2]
---     local isBoss = Functions.IsBoss(name, rankType)
-
---     print(isBoss)
--- end, false)

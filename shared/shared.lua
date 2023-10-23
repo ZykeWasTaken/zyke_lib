@@ -1,6 +1,3 @@
-Functions = {}
-Tools = {}
-
 function Functions.CopyTable(tbl)
     local copy = {}
     for k, v in pairs(tbl) do
@@ -45,169 +42,19 @@ function Functions.Contains(tbl, desiredString)
     return false, nil
 end
 
--- Formatting the item(s) correctly, no matter what the input is
--- Used for item checking, adding and removing
-function Functions.FormatItems(item, amount)
-    local formatted = {}
+---@param tbl table
+---@param predicate function
+---@return any, number | string | nil
+function Functions.Find(tbl, predicate)
+    if (not tbl) or (type(tbl) ~= "table") then error("Attempt to scan non-existent table") end
 
-    if (Framework == "QBCore") then
-        if (type(item) == "string") then
-            formatted[item] = amount or 1
-        else
-            if (item.name) or (item.item) then
-                item = {item}
-            end
-
-            for k,v in pairs(item) do
-                local _item = (type(v) == "number" and k) or v.name or v.item
-                local _amount = (type(v) == "number" and v) or v.amount or v.count or 1
-
-                formatted[_item] = formatted[_item] and formatted[_item] + _amount or _amount
-            end
-        end
-    else
-        if (type(item) == "string") then
-            table.insert(formatted, {
-                name = item,
-                count = amount or 1
-            })
-        else
-            if (item.name) or (item.item) then
-                item = {item}
-            end
-
-            for k,v in pairs(item) do
-                local _item = (type(v) == "number" and k) or v.name or v.item
-                local _amount = (type(v) == "number" and v) or v.amount or v.count or 1
-
-                table.insert(formatted, {
-                    name = _item,
-                    count = _amount
-                })
-            end
+    for key, value in pairs(tbl) do
+        if (predicate(value)) then
+            return value, key
         end
     end
 
-    return formatted
-end
-
--- Add for offline characters
-function Functions.FormatCharacterDetails(character, online)
-    local formatted = {}
-
-    if (Framework == "QBCore") then
-        if (not character?.PlayerData) then
-            return {}
-        end
-
-        formatted.identifier = character.PlayerData.citizenid
-        formatted.source = character.PlayerData.source
-        formatted.firstname = character.PlayerData.charinfo.firstname
-        formatted.lastname = character.PlayerData.charinfo.lastname
-        formatted.dateofbirth = character.PlayerData.charinfo.birthdate
-        formatted.phonenumber = character.PlayerData.charinfo.phone
-        formatted.nationality = character.PlayerData.charinfo.nationality
-        formatted.backstory = character.PlayerData.charinfo.backstory
-        formatted.cash = character.PlayerData.money["cash"] or 0
-        formatted.bank = character.PlayerData.money["bank"] or 0
-        formatted.dirty_cash = character.PlayerData.money["dirty_cash"] or 0
-        formatted.online = online or false
-        -- TODO: Match ESX (Future proofing)
-    elseif (Framework == "ESX") then
-        formatted.identifier = character.identifier
-        formatted.source = character.source
-        formatted.firstname = character.variables.firstName
-        formatted.lastname = character.variables.lastName
-        formatted.dateofbirth = character.variables.dateofbirth
-        formatted.phonenumber = character.variables.phoneNumber
-        formatted.backstory = nil -- By default there is none
-        formatted.cash = character.accounts.money
-        formatted.bank = character.accounts.bank
-        formatted.dirty_cash = character.accounts.black_money
-        formatted.online = online or false
-
-        -- Unused, future proofing
-        formatted.gender = character.variables.sex
-        formatted.height = character.variables.height
-        formatted.jobName = character.job.name
-        formatted.jobLabel = character.job.label
-        formatted.jobGrade = character.job.grade
-        formatted.salary = character.job.grade_salary
-    end
-
-    return formatted
-end
-
----@class FormattingOptions
----@field exclude table -- Array of identifiers that should be excluded {"identifier1", "identifier2"}, set to nil/{} to disable
----@field includeServerId boolean
-
----@param players table -- Array of player identifiers
----@param options FormattingOptions
----@return table -- Array of formatted players
-function Functions.FormatPlayers(players, options)
-    local playerDetails = Functions.GetPlayerDetails(players)
-    local formattedPlayers = {}
-
-    for _, playerDetail in pairs(playerDetails) do
-        if ((options.exclude) and (#options.exclude > 0)) then
-            local shouldBeExcluded = Functions.Contains(options.exclude, playerDetail.identifier)
-            if (shouldBeExcluded) then goto setToEnd end
-        end
-
-        local firstname = playerDetail.firstname or "NOT FOUND"
-        local lastname = playerDetail.lastname or "NOT FOUND"
-        local label = firstname .. " " .. lastname
-
-        if (options.includeServerId) then
-            label = ("(%s) "):format(playerDetail.source or "X") .. label
-        end
-
-        table.insert(formattedPlayers, {
-            label = label,
-            name = playerDetail.identifier,
-            value = playerDetail.identifier,
-        })
-
-        ::setToEnd::
-    end
-
-    return formattedPlayers
-end
-
--- Note that this only formats, does not check if any values exist
-function Functions.FormatJob(details)
-    if (Framework == "QBCore") then
-        local job = {
-            name = details.name or "NAME NOT FOUND",
-            label = details.label or "LABEL NOT FOUND",
-            grade = {
-                level = details.grade.level or "GRADE LEVEL NOT FOUND",
-                name = details.grade.name or "GRADE NAME NOT FOUND"
-            }
-        }
-
-        return job
-    elseif (Framework == "ESX") then
-        -- Untested
-    end
-end
-
-function Functions.FormatGang(details)
-    if (Framework == "QBCore") then
-        local gang = {
-            name = details.name or "NAME NOT FOUND",
-            label = details.label or "LABEL NOT FOUND",
-            grade = {
-                level = details.grade.level or "GRADE LEVEL NOT FOUND",
-                name = details.grade.name or "GRADE NAME NOT FOUND"
-            }
-        }
-
-        return gang
-    elseif (Framework == "ESX") then
-        -- Untested
-    end
+    return nil, nil
 end
 
 function Functions.GetItem(item)
@@ -244,11 +91,9 @@ function Functions.GetJobDetails(name)
         local details = QBCore.Shared.Jobs[name]
         if (not details) then return nil end
 
-        local job = {
-            label = details.label
-        }
+        details.name = name -- Name is not included, so we'll add it in
 
-        return job
+        return Functions.FormatJobDetails(details)
     elseif (Framework == "ESX") then
         -- Untested
     else
@@ -265,11 +110,9 @@ function Functions.GetGangDetails(name)
         local details = QBCore.Shared.Gangs[name]
         if (not details) then return nil end
 
-        local gang = {
-            label = details.label
-        }
+        details.name = name -- Name is not included, so we'll add it in
 
-        return gang
+        return Functions.FormatGangDetails(details)
     elseif (Framework == "ESX") then
         -- Untested
     else
@@ -313,4 +156,30 @@ function Functions.GetBossRanks(name, rankType)
     end
 
     return nil
+end
+
+function Functions.GetRandomDictionaryKey(tbl)
+    local keys = {}
+
+    for key, _ in pairs(tbl) do
+        keys[#keys+1] = key
+    end
+
+    return keys[math.random(1, #keys)]
+end
+
+---@param tbl table
+---@return boolean
+function Functions.IsArray(tbl)
+    if (next(tbl) == nil) then
+        return false
+    end
+
+    for key in pairs(tbl) do
+        if (type(key) ~= "number") then
+            return false
+        end
+    end
+
+    return true
 end

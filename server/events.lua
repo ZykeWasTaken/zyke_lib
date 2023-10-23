@@ -2,27 +2,36 @@ CreateThread(function()
     while (Framework == nil) do Wait(100) end
 
     AddEventHandler("playerDropped", function()
-        TriggerEvent("zyke_lib:PlayerDropped", source, "exit")
+        local player = Functions.GetPlayer(source)
+        TriggerEvent("zyke_lib:PlayerDropped", player, "exit")  -- Old event, switched out to better name, kept for supporting older resources, also syncing client & server names
+        TriggerEvent("zyke_lib:OnCharacterLogout", player, "exit")
     end)
 
     if (Framework == "QBCore") then
         AddEventHandler("QBCore:Server:OnPlayerUnload", function(src)
-            TriggerEvent("zyke_lib:PlayerDropped", src, "unload")
+            local player = Functions.GetPlayer(src)
+            TriggerEvent("zyke_lib:PlayerDropped", player, "unload")  -- Old event, switched out to better name, kept for supporting older resources, also syncing client & server names
+            TriggerEvent("zyke_lib:OnCharacterLogout", src, "unload")
+            TriggerClientEvent("zyke_lib:OnCharacterLogout", src, "unload")
         end)
     elseif (Framework == "ESX") then
         AddEventHandler("esx:playerDropped", function(src)
-            TriggerEvent("zyke_lib:PlayerDropped", src, "unload")
+            TriggerEvent("zyke_lib:PlayerDropped", src, "unload")  -- Old event, switched out to better name, kept for supporting older resources, also syncing client & server names
+            TriggerEvent("zyke_lib:OnCharacterLogout", src, "unload")
+            TriggerClientEvent("zyke_lib:OnCharacterLogout", src, "unload")
         end)
     end
 
-    -- Checking player join
+    -- When you select a character
     if (Framework == "QBCore") then
         AddEventHandler("QBCore:Server:PlayerLoaded", function(player)
-            TriggerEvent("zyke_lib:PlayerJoined", player)
+            TriggerEvent("zyke_lib:PlayerJoined", player) -- Old event, switched out to better name, kept for supporting older resources, also syncing client & server names
+            TriggerEvent("zyke_lib:OnCharacterSelect", player)
         end)
     elseif (Framework == "ESX") then
         AddEventHandler("esx:playerLoaded", function(src, player) -- Not tested (Not in use for any active releases yet)
-            TriggerEvent("zyke_lib:PlayerJoined", src, src, player)
+            TriggerEvent("zyke_lib:PlayerJoined", src, src, player) -- Old event, switched out to better name, kept for supporting older resources, also syncing client & server names
+            TriggerEvent("zyke_lib:OnCharacterSelect", src, player)
         end)
     end
 

@@ -17,6 +17,7 @@ local frameworks = {
 -- Fetching your framework automatically
 CreateThread(function()
     Framework = nil
+    Inventory = nil
 
     for _, settings in pairs(frameworks) do
         local resourceState = GetResourceState(settings.fileName)
@@ -28,6 +29,16 @@ CreateThread(function()
             break
         end
     end
+
+    -- Only ESX support at the moment
+    if (Framework == "ESX") then
+        local oxInventory = GetResourceState("ox_inventory")
+        if (oxInventory == "started") then
+            Inventory = "ox_inventory"
+        end
+    end
+
+    if (Inventory == nil) then Inventory = "default" end
 
     if (Framework == nil) then
         error("Could not find your framework, this is critical!")

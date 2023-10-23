@@ -30,10 +30,10 @@ function SendLog()
         local handler = handlers[passed?.handler] or handlers[Functions.GetIdentifier(passed?.handler)] or "server"
         local handlerMsg = "None"
 
-        if (handler ~= "server") then
-            handlerMsg = (("<@" .. handler?.discord .. ">") or "unknown") .. " | " .. (handler?.identifier or "unknown") .. " | " .. (handler?.firstname or "unknown") .. " " .. (handler?.lastname or "unknown")
-        else
+        if (type(handler) ~= "table" and string.lower(handler) == "server") then
             handlerMsg = "Server"
+        else
+            handlerMsg = (("<@" .. handler?.discord .. ">") or "unknown") .. " | " .. (handler?.identifier or "unknown") .. " | " .. (handler?.firstname or "unknown") .. " " .. (handler?.lastname or "unknown")
         end
 
         -- local getFileName = function()
@@ -162,16 +162,25 @@ function Functions.HasItem(player, item, amount)
     end
 end
 
--- Not used
-function Functions.GetPlayerItemByName(player, item)
+---@param player table
+---@param item string
+---@param disableBundling boolean? -- See the formatter function for more information
+function Functions.GetPlayerItemByName(player, item, disableBundling)
     if (type(player) ~= "table") then
         player = Functions.GetPlayer(player)
     end
 
     if (Framework == "QBCore") then
-        return player.Functions.GetItemByName(item)
-    elseif (Framework == "ESX") then
-        return player.getInventoryItem(item)
+        local items = player.Functions.GetItemsByName(item)
+        local formatted = Functions.FormatItemsFetch(items, disableBundling)
+
+        return disableBundling and formatted or formatted[1]
+    elseif (Framework == "ESX") then -- Untested, not used in any active releases yet
+        local items = player.getInventoryItem(item)
+        local formatted = Functions.FormatItemsFetch(items, disableBundling)
+
+        -- return disableBundling and formatted[1] or formatted
+        return formatted
     end
 end
 
@@ -186,7 +195,22 @@ function Functions.RemoveItem(player, item, amount)
         local formatted = Functions.FormatItems(item, amount)
 
         for _item, _amount in pairs(formatted) do
-            player.Functions.RemoveItem(_item, _amount)
+            local isItemUnique = QBCore.Shared.Items[_item].unique
+            local success = true
+
+            if (isItemUnique) then
+                for i = 1, _amount do
+                    local _success = player.Functions.RemoveItem(_item, 1)
+                    if (not _success) then success = false end
+                end
+            else
+                local _success = player.Functions.RemoveItem(_item, _amount)
+                if (not _success) then success = false end
+            end
+
+            if (not success) then
+                error("CRITICAL ERROR! Attempted to remove items which could not be removed. Please contact the developer of the script you're using." .. " (" .. tostring(_item) .. ", " .. tostring(_amount) .. ")")
+            end
         end
 
         return true
@@ -381,7 +405,16 @@ function Functions.GetOfflinePlayer(identifier)
     elseif (Framework == "ESX") then
         local p = promise.new()
         MySQL.Async.fetchAll("SELECT * FROM users WHERE identifier = @identifier", {["@identifier"] = identifier}, function(result)
-            p:resolve(result[1])
+            local character = result[1]
+            character.accounts = json.decode(character.accounts)
+            character.inventory = json.decode(character.inventory)
+            character.loadout = json.decode(character.loadout)
+            character.position = json.decode(character.position)
+            character.skin = json.decode(character.skin)
+            character.status = json.decode(character.status)
+            character.metadata = json.decode(character.metadata or {})
+
+            p:resolve(character)
         end)
 
         return Citizen.Await(p)
@@ -490,7 +523,10 @@ function Functions.HasPermission(source, permission)
     if (Framework == "QBCore") then
         return QBCore.Functions.HasPermission(source, permission)
     elseif (Framework == "ESX") then
-        return IsPlayerAceAllowed(source, permission)
+        local plyPermission = ESX.GetPlayerFromId(source).getGroup()
+        local hasPermission = plyPermission == "superadmin" or plyPermission == permission
+
+        return hasPermission
     end
 end
 
@@ -560,7 +596,8 @@ function Functions.GetPlayers()
     end
 end
 
--- vec3
+---@param pos vector3
+---@return number, number
 function Functions.GetClosestPlayerToPos(pos)
     local players = Functions.GetPlayers()
     local closestDistance = -1
@@ -596,8 +633,13 @@ function Functions.DBFetch(query, params)
     return Citizen.Await(p)
 end
 
-function Functions.DBExecute(query, params)
+function Functions.DBExecute(query, params, async)
     if (not query) then Functions.Debug("No query passed (CRITICAL!)", Config.Debug) return end
+
+    if (async == true) then
+        MySQL.Async.execute(query, params or {})
+        return
+    end
 
     local p = promise.new()
 
@@ -663,15 +705,20 @@ AddEventHandler("onResourceStart", function(resource)
     end
 end)
 
+-- Has to have a character in the first position, otherwise there will be database errors as it removes the first sequence of numbers for some reason
+-- Unsure as to what causes this issue, we will just ensure that a character is in the first position as it doesn't matter
+---@param length number
+---@return string
 function Functions.CreateUniqueId(length)
-    length = length or 20 -- Max characters
+    length = (length or 20) - 1 -- Max characters
 
     math.randomseed(os.time())
 
-    local id = ""
-    for i = 1, length do
+    local id = string.char(math.random(65, 90))
+    for _ = 1, length do
         local randNum = math.random(36)
         local charCode = randNum <= 10 and randNum + 47 or randNum + 54
+
         id = id .. string.char(charCode)
     end
 
@@ -697,9 +744,3 @@ CreateThread(function()
 ╚═╝░░╚═╝╚══════╝╚═════╝░░╚════╝░░╚═════╝░╚═╝░░╚═╝░╚════╝░╚══════╝╚═════╝░^0
 ]])
 end)
-
-function Fetch()
-    return Functions, Tools
-end
-
-exports("Fetch", Fetch)

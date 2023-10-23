@@ -23,7 +23,8 @@ CreateThread(function()
     -- Catch character loads
     if (Framework == "QBCore") then
         RegisterNetEvent("QBCore:Client:OnPlayerLoaded", function()
-            TriggerEvent("zyke_lib:CharacterLoaded")
+            TriggerEvent("zyke_lib:CharacterLoaded")  -- Old event, switched out to better name, kept for supporting older resources, also syncing client & server names
+            TriggerEvent("zyke_lib:OnCharacterSelect")
         end)
     elseif (Framework == "ESX") then -- Not tested (Not in use for any active releases yet)
         RegisterNetEvent("esx:playerLoaded", function()

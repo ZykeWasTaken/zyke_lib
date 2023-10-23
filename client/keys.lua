@@ -4,6 +4,8 @@ local keys = {
     ["D"] = {keyCode = 9, name = "~INPUT_SCRIPTED_FLY_LR~"},
     ["PAGEUP"] = {keyCode = 10, name = "~INPUT_SCRIPTED_FLY_ZUP~"},
     ["PAGEDOWN"] = {keyCode = 11, name = "~INPUT_SCRIPTED_FLY_ZDOWN~"},
+    ["SCROLLDOWN"] = {keyCode = 14, name = "~INPUT_WEAPON_WHEEL_NEXT~"},
+    ["SCROLLUP"] = {keyCode = 15, name = "~INPUT_WEAPON_WHEEL_PREV~"},
     ["ENTER"] = {keyCode = 201, name = "~INPUT_FRONTEND_ACCEPT~"},
     ["LEFTALT"] = {keyCode = 19, name = "~INPUT_CHARACTER_WHEE~"},
     ["Z"] = {keyCode = 20, name = "~INPUT_MULTIPLAYER_INFO~"},
@@ -17,7 +19,6 @@ local keys = {
     ["B"] = {keyCode = 29, name = "~INPUT_SPECIAL_ABILITY_SECONDARY~"},
     ["W"] = {keyCode = 32, name = "~INPUT_MOVE_UP_ONLY~"},
     ["A"] = {keyCode = 34, name = "~INPUT_MOVE_LEFT_ONLY~"},
-    ["LEFTCTRL"] = {keyCode = 36, name = "~INPUT_DUCK~"},
     ["TAB"] = {keyCode = 37, name = "~INPUT_SELECT_WEAPON~"},
     ["E"] = {keyCode = 38, name = "~INPUT_PICKUP~"},
     ["["] = {keyCode = 39, name = "~INPUT_SNIPER_ZOOM~"},
@@ -49,6 +50,7 @@ local keys = {
     ["F7"] = {keyCode = 168, name = "~INPUT_SELECT_CHARACTER_TREVOR~"},
     ["F8"] = {keyCode = 169, name = "~INPUT_SELECT_CHARACTER_MULTIPLAYER~"},
     ["F3"] = {keyCode = 170, name = "~INPUT_SAVE_REPLAY_CLIP~"},
+    ["UP"] = {keyCode = 172, name = "~INPUT_CELLPHONE_UP~"},
     ["DOWN"] = {keyCode = 173, name = "~INPUT_CELLPHONE_DOWN~"},
     ["LEFT"] = {keyCode = 174, name = "~INPUT_CELLPHONE_LEFT~"},
     ["RIGHT"] = {keyCode = 175, name = "~INPUT_CELLPHONE_RIGHT~"},
@@ -67,11 +69,29 @@ local keys = {
     ["U"] = {keyCode = 303, name = "INPUT_REPLAY_SCREENSHOT~~"},
     ["K"] = {keyCode = 311, name = "~INPUT_REPLAY_SHOWHOTKEY~"},
     ["ESC"] = {keyCode = 322, name = "~INPUT_REPLAY_TOGGLE_TIMELINE~"},
+    ["LEFTCTRL"] = {keyCode = 326, name = "~INPUT_DUCK~"},
 }
 
 function Functions.GetKey(key)
-    local keyData = keys[key]
-    if (not keyData) then Functions.Debug("Could not find key .. " .. tostring(key), Config.Debug) return nil end
+    local keyData = {}
+
+    if (type(key) == "string") then
+        keyData = keys[key]
+        if (not keyData) then Functions.Debug("Could not find key .. " .. tostring(key), Config.Debug) return nil end
+    elseif (type(key) == "table") then
+        local _keys = {}
+        for _, keyName in pairs(key) do
+            _keys[#_keys+1] = Functions.GetKey(keyName)
+        end
+
+        keyData = _keys
+    else
+        error("You are attempting to get a key with an invalid type.")
+    end
 
     return keyData
+end
+
+function Functions.GetKeys()
+    return keys
 end
