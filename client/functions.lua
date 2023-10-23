@@ -212,7 +212,6 @@ function Functions.GetIdentifier()
     end
 end
 
--- TODO: Fix for ESX, if even possible with default inventory?
 function Functions.OpenInventory(type, invId, other)
     type = type or "stash"
     if (Inventory == "ox_inventory") then
