@@ -29,7 +29,7 @@ CreateThread(function()
             if (not source) then return end
 
             TriggerEvent("zyke_lib:PlayerJoined", source) -- Old event, switched out to better name, kept for supporting older resources, also syncing client & server names
-            TriggerEvent("zyke_lib:OnCharacterSelect", source, source, player)
+            TriggerEvent("zyke_lib:OnCharacterSelect", source, player)
         end)
     elseif (Framework == "ESX") then
         AddEventHandler("esx:playerLoaded", function(src, player) -- Not tested (Not in use for any active releases yet)
