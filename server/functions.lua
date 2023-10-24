@@ -725,7 +725,6 @@ function Functions.CreateUniqueId(length)
     return id
 end
 
-
 -- If your inventory requires you to register the stash, it is done in here
 ---@param id string
 function Functions.RegisterStash(id, label, slots, weight)
