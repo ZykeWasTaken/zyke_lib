@@ -725,6 +725,36 @@ function Functions.CreateUniqueId(length)
     return id
 end
 
+
+-- If your inventory requires you to register the stash, it is done in here
+---@param id string
+function Functions.RegisterStash(id, label, slots, weight)
+    if (Inventory == "ox_inventory") then
+        local stash = Functions.GetStash(id)
+
+        if (not stash) then
+            exports["ox_inventory"]:RegisterStash(id, label, slots, weight)
+        end
+    end
+end
+
+-- Untested
+---@param id string
+function Functions.OpenStash(id, plyId)
+    if (Inventory == "ox_inventory") then
+        exports["ox_inventory"]:forceOpenInventory(plyId, id)
+    end
+end
+
+---@param id string
+function Functions.GetStash(id)
+    if (Inventory == "ox_inventory") then
+        return exports["ox_inventory"]:GetInventory(id)
+    end
+
+    return nil
+end
+
 CreateThread(function()
     Wait(1000)
     print([[
