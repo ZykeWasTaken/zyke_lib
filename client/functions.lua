@@ -369,7 +369,7 @@ function Functions.GetPlayers()
     if (Framework == "QBCore") then
         return QBCore.Functions.GetPlayers()
     elseif (Framework == "ESX") then
-        return ESX.GetPlayers() -- Not tested (Not in use for any active releases yet)
+        return ESX.Game.GetPlayers()
     end
 end
 
