@@ -25,6 +25,7 @@ CreateThread(function()
     -- When you select a character
     if (Framework == "QBCore") then
         AddEventHandler("QBCore:Server:PlayerLoaded", function(player)
+            -- TODO: Add identifier state here
             local source = Functions.GetSource(player)
             if (not source) then return end
 
@@ -33,6 +34,8 @@ CreateThread(function()
         end)
     elseif (Framework == "ESX") then
         AddEventHandler("esx:playerLoaded", function(src, player) -- Not tested (Not in use for any active releases yet)
+            Player(src).state:set("zyke_lib:identifier", player.identifier, true)
+
             TriggerEvent("zyke_lib:PlayerJoined", src, src, player) -- Old event, switched out to better name, kept for supporting older resources, also syncing client & server names
             TriggerEvent("zyke_lib:OnCharacterSelect", src, player)
         end)
