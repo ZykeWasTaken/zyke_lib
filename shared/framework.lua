@@ -35,6 +35,8 @@ CreateThread(function()
         local oxInventory = GetResourceState("ox_inventory")
         if (oxInventory == "started") then
             Inventory = "ox_inventory"
+
+            ESX.Items = exports["ox_inventory"]:Items()
         end
     end
 
