@@ -94,6 +94,7 @@ end
 ---@class FormattingOptions
 ---@field exclude? table -- Array of identifiers that should be excluded {"identifier1", "identifier2"}, set to nil/{} to disable
 ---@field includeServerId? boolean
+---@field sortServerId? boolean -- Sort by server id, only works if includeServerId is true
 ---@field removeIfNil? boolean -- Simply remove if the value is nil, sometimes the list may contain values that are not players, instead of having to manually remove them and then add them, this removes them and you can later re-add them
 ---@field allowRepeatedIdentifiers? boolean -- Set to true to allow the same identifier to be added multiple times
 
@@ -140,6 +141,12 @@ function Functions.FormatPlayers(players, options)
         })
 
         ::setToEnd::
+    end
+
+    if (options?.includeServerId and options?.sortServerId) then
+        table.sort(formattedPlayers, function(a, b)
+            return tonumber(a.label:match("%((%d+)%)")) < tonumber(b.label:match("%((%d+)%)"))
+        end)
     end
 
     return formattedPlayers
