@@ -1061,6 +1061,7 @@ local disabled = {
         }
     ]]
 }
+
 -- Toggle function to disable keys easily
 -- When you set state to false the keys will not apply
 ---@param id string -- Unique ID to ensure that you do not accidentally re-enable the keys when they should be disabled because of some other process
