@@ -724,9 +724,9 @@ function Functions.GetVehiclesInArea(coords, maxDistance)
     end
 end
 
--- function Functions.GetVehicles()
---     return GetGamePool('CVehicle')
--- end
+function Functions.GetVehicles()
+    return GetGamePool('CVehicle')
+end
 
 function Functions.GetVehicleByPlate(plate)
     local vehicles = Functions.GetVehicles()
