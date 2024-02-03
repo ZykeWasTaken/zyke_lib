@@ -1052,3 +1052,56 @@ function Functions.RegisterInstructions(buttons)
 
     return scaleform
 end
+
+local disabled = {
+    --[[
+        [id] = {
+            state = boolean,
+            keys = table<number>
+        }
+    ]]
+}
+-- Toggle function to disable keys easily
+-- When you set state to false the keys will not apply
+---@param id string -- Unique ID to ensure that you do not accidentally re-enable the keys when they should be disabled because of some other process
+---@param state boolean -- true to enable, false to disable
+---@param keys table<string | number>? -- Keys to disable, set as string to fetch their keyCode, set as number to use the keyCode directly, set to nil to disable all keys
+function Functions.DisableKeys(id, state, keys)
+    if (not disabled[id]) then disabled[id] = {} end
+
+    disabled[id].state = state
+
+    if (state == false) then return end
+
+    local allKeys = Functions.GetKeys()
+    if (keys == nil) then
+        local formattedKeys = {}
+
+        for _, keyData in pairs(allKeys) do
+            formattedKeys[#formattedKeys+1] = keyData.keyCode
+        end
+
+        disabled[id].keys = formattedKeys
+    else
+        local formattedKeys = {}
+        for _, key in pairs(keys) do
+            if (type(key) == "string") then
+                formattedKeys[#formattedKeys+1] = allKeys[key].keyCode
+            else
+                formattedKeys[#formattedKeys+1] = key
+            end
+        end
+
+        disabled[id].keys = formattedKeys
+    end
+
+    CreateThread(function()
+        while (disabled[id].state == true) do
+            for _, keyCode in pairs(disabled[id].keys) do
+                DisableControlAction(0, keyCode, true)
+            end
+
+            Wait(1)
+        end
+    end)
+end
