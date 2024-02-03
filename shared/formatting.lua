@@ -301,15 +301,29 @@ function Functions.FormatItemsFetch(tbl, disableBundling)
         return formatted
     end
 
-    if (Framework == "QBCore") then
+    if (Inventory == "ox_inventory") then
         formatted = {
             name = tbl.name,
             label = tbl.label,
             weight = tbl.weight,
-            amount = tbl.amount,
+            amount = tbl.count,
         }
-    elseif (Framework == "ESX") then
-        -- Untested (Not needed for any active releases)
+    else
+        if (Framework == "QBCore") then
+            formatted = {
+                name = tbl.name,
+                label = tbl.label,
+                weight = tbl.weight,
+                amount = tbl.amount,
+            }
+        elseif (Framework == "ESX") then
+            formatted = {
+                name = tbl.name,
+                label = tbl.label,
+                weight = tbl.weight,
+                amount = tbl.count,
+            }
+        end
     end
 
     return formatted
