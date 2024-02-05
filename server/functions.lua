@@ -499,6 +499,8 @@ function Functions.RemoveMoney(player, moneyType, amount, details)
     end
 end
 
+---@param player table
+---@return number | nil, string?
 function Functions.GetSource(player)
     if (type(player) ~= "table") then
         player = Functions.GetPlayer(player)
@@ -752,6 +754,26 @@ function Functions.GetStash(id)
     end
 
     return nil
+end
+
+---@param player string | number | table -- Will convert
+---@return table | nil
+function Functions.GetJob(player)
+    if (type(player) ~= "table") then
+        player = Functions.GetPlayer(player)
+    end
+
+    if (Framework == "QBCore") then
+        local details = player.PlayerData.job
+        if (not details) then return nil end
+
+        return Functions.FormatJob(details)
+    elseif (Framework == "ESX") then
+        local details = player.job
+        if (not details) then return nil end
+
+        return Functions.FormatJob(details)
+    end
 end
 
 CreateThread(function()
