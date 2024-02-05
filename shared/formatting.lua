@@ -167,7 +167,16 @@ function Functions.FormatJob(details)
 
         return job
     elseif (Framework == "ESX") then
-        -- Untested
+        local job = {
+            name = details?.name or "NAME NOT FOUND",
+            label = details?.label or "LABEL NOT FOUND",
+            grade = {
+                level = details?.grade or "GRADE LEVEL NOT FOUND",
+                name = details?.grade_name or "GRADE NAME NOT FOUND"
+            }
+        }
+
+        return job
     end
 
     return {}
