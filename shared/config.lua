@@ -13,3 +13,49 @@ Config.Progressbar = "ox_lib" -- "ox_lib" or "default", "default" will use the p
 Config.FuelSystem = "LegacyFuel" -- "LegacyFuel" / nil (nil = no fuel system, will use default Gta natives)
 Config.CustomDeathScript = false -- Support false, "wasabi_ambulance"
 Config.GangScript = false -- Support false, "zyke_gangphone"
+
+Config.Minigames = {
+    ["lockpick"] = {
+        active = "ox_lib_skillcheck",
+        minigames = {
+            ["ox_lib_skillcheck"] = {
+                -- https://overextended.dev/ox_lib/Modules/Interface/Client/skillcheck
+                easy = {
+                    difficulty = {"easy", "easy", "easy"},
+                    inputs = {"W"}
+                },
+                medium = {
+                    difficulty = {"easy", "medium", "medium"},
+                    inputs = {"A", "D"}
+                },
+                hard = {
+                    difficulty = {"medium", "medium", "hard"},
+                    inputs = {"W", "A", "S", "D"}
+                },
+            },
+        }
+    },
+    ["memorize"] = {
+        active = "ps-ui_thermite",
+        minigames = {
+            ["ps-ui_thermite"] = {
+                -- https://overextended.dev/ox_lib/Modules/Interface/Client/skillcheck
+                easy = {
+                    time = 20,
+                    gridSize = 5,
+                    incorrectBlocks = 3,
+                },
+                medium = {
+                    time = 15,
+                    gridSize = 6,
+                    incorrectBlocks = 3,
+                },
+                hard = {
+                    time = 10,
+                    gridSize = 7,
+                    incorrectBlocks = 3,
+                },
+            },
+        },
+    },
+}
