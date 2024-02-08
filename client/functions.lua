@@ -347,17 +347,29 @@ end
 ---@param name string
 ---@param items table? -- Optional way to get your items, pass in a table and save performance from constant fetching
 ---@param firstOnly boolean? -- Set to true to return the first item found, instead of an array containing all item tables that match the name
+---@param disableBundling boolean? -- If set to true, it will not bundle item amounts with the same name (Read the formatting functions for full details)
+---@param metadata table
 ---@return table | nil
-function Functions.GetPlayerItemByName(name, items, firstOnly)
-    local playerItems = items or Functions.GetPlayerItems()
+function Functions.GetPlayerItemByName(name, items, firstOnly, disableBundling, metadata)
+    local playerItems = items or Functions.GetPlayerItems(disableBundling)
     local foundItems = {}
 
     for _, itemData in pairs(playerItems) do
         if (itemData.name == name) then
+            if (metadata and type(metadata) == "table") then -- TODO: Add QB support
+                for metaName, metaValue in pairs(metadata) do
+                    if (not itemData?.metadata?[metaName] or itemData?.metadata?[metaName] ~= metaValue) then
+                        goto endOfLoop
+                    end
+                end
+            end
+
             if (firstOnly) then return itemData end
 
             foundItems[#foundItems+1] = itemData
         end
+
+        ::endOfLoop::
     end
 
     return #foundItems > 0 and foundItems or nil

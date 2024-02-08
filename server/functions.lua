@@ -162,29 +162,59 @@ function Functions.HasItem(player, item, amount)
     end
 end
 
----@param player table
----@param item string
----@param disableBundling boolean? -- See the formatter function for more information
-function Functions.GetPlayerItemByName(player, item, disableBundling)
+---@param disableBundling boolean? -- If set to true, it will not bundle item amounts with the same name (Read the formatting functions for full details)
+function Functions.GetPlayerItems(player, disableBundling)
     if (type(player) ~= "table") then
         player = Functions.GetPlayer(player)
     end
 
     if (Framework == "QBCore") then
-        local items = player.Functions.GetItemsByName(item)
-        local formatted = Functions.FormatItemsFetch(items, disableBundling)
+        local items = player.PlayerData.items -- UNTESTED
 
-        return disableBundling and formatted or formatted[1]
-    elseif (Framework == "ESX") then -- Untested, not used in any active releases yet
-        local items = player.getInventoryItem(item)
-        local formatted = Functions.FormatItemsFetch(items, disableBundling)
+        return Functions.FormatItemsFetch(items, disableBundling)
+    elseif (Framework == "ESX") then
+        local items = player.inventory
 
-        -- return disableBundling and formatted[1] or formatted
-        return formatted
+        return Functions.FormatItemsFetch(items, disableBundling)
     end
 end
 
-function Functions.RemoveItem(player, item, amount)
+---@param name string
+---@param player string | number | table -- Will convert
+---@param firstOnly boolean? -- Set to true to return the first item found, instead of an array containing all item tables that match the name
+---@param disableBundling boolean? -- If set to true, it will not bundle item amounts with the same name (Read the formatting functions for full details)
+---@param metadata table
+---@return table | nil
+function Functions.GetPlayerItemByName(player, name, firstOnly, disableBundling, metadata)
+    if (type(player) ~= "table") then
+        player = Functions.GetPlayer(player)
+    end
+
+    local playerItems = Functions.GetPlayerItems(player, disableBundling)
+    local foundItems = {}
+
+    for _, itemData in pairs(playerItems) do
+        if (itemData.name == name) then
+            if (metadata and type(metadata) == "table") then -- TODO: Add QB support
+                for metaName, metaValue in pairs(metadata) do
+                    if (not itemData?.metadata?[metaName] or itemData?.metadata?[metaName] ~= metaValue) then
+                        goto endOfLoop
+                    end
+                end
+            end
+
+            if (firstOnly) then return itemData end
+
+            foundItems[#foundItems+1] = itemData
+        end
+
+        ::endOfLoop::
+    end
+
+    return #foundItems > 0 and foundItems or nil
+end
+
+function Functions.RemoveItem(player, item, amount, metadata) -- TODO: Add qb-core metadata support
     if (type(player) ~= "table") then
         player = Functions.GetPlayer(player)
     end
@@ -218,14 +248,14 @@ function Functions.RemoveItem(player, item, amount)
         local formatted = Functions.FormatItems(item, amount)
 
         for itemIdx, itemData in pairs(formatted) do
-            player.removeInventoryItem(itemData.name, itemData.count)
+            player.removeInventoryItem(itemData.name, itemData.count, metadata)
         end
 
         return true
     end
 end
 
-function Functions.AddItem(player, item, amount)
+function Functions.AddItem(player, item, amount, metadata)
     if (type(player) ~= "table") then
         player = Functions.GetPlayer(player)
     end
@@ -236,7 +266,7 @@ function Functions.AddItem(player, item, amount)
         local formatted = Functions.FormatItems(item, amount)
 
         for _item, _amount in pairs(formatted) do
-            player.Functions.AddItem(_item, _amount)
+            player.Functions.AddItem(_item, _amount) -- TODO: Add metadata
         end
 
         return true
@@ -244,7 +274,7 @@ function Functions.AddItem(player, item, amount)
         local formatted = Functions.FormatItems(item, amount)
 
         for itemIdx, itemData in pairs(formatted) do
-            player.addInventoryItem(itemData.name, itemData.count)
+            player.addInventoryItem(itemData.name, itemData.count, metadata)
         end
 
         return true
@@ -529,19 +559,6 @@ function Functions.HasPermission(source, permission)
         local hasPermission = plyPermission == "superadmin" or plyPermission == permission
 
         return hasPermission
-    end
-end
-
--- Not tested and not active for any release yet, was temporarily tested for QB
-function Functions.GetPlayerInventory(player)
-    if (type(player) ~= "table") then
-        player = Functions.GetPlayer(player)
-    end
-
-    if (Framework == "QBCore") then
-        return player.PlayerData.items
-    elseif (Framework == "ESX") then
-        return player.inventory
     end
 end
 
