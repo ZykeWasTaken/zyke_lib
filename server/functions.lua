@@ -266,7 +266,7 @@ function Functions.AddItem(player, item, amount, metadata)
         local formatted = Functions.FormatItems(item, amount)
 
         for _item, _amount in pairs(formatted) do
-            player.Functions.AddItem(_item, _amount) -- TODO: Add metadata
+            player.Functions.AddItem(_item, _amount, nil, metadata)
         end
 
         return true
