@@ -360,7 +360,7 @@ function Functions.GetPlayerItemByName(name, items, firstOnly)
         end
     end
 
-    return #foundItems == 0 and nil or foundItems
+    return #foundItems > 0 and foundItems or nil
 end
 
 function Functions.GetClosestPlayer()
