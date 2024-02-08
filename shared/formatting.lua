@@ -316,6 +316,7 @@ function Functions.FormatItemsFetch(tbl, disableBundling)
             label = tbl.label,
             weight = tbl.weight,
             amount = tbl.count,
+            metadata = tbl.metadata
         }
     else
         if (Framework == "QBCore") then
@@ -324,6 +325,7 @@ function Functions.FormatItemsFetch(tbl, disableBundling)
                 label = tbl.label,
                 weight = tbl.weight,
                 amount = tbl.amount,
+                metadata = tbl.metadata -- TODO: Test and fix
             }
         elseif (Framework == "ESX") then
             formatted = {
@@ -331,6 +333,7 @@ function Functions.FormatItemsFetch(tbl, disableBundling)
                 label = tbl.label,
                 weight = tbl.weight,
                 amount = tbl.count,
+                metadata = tbl.metadata -- Untested, should work if your inventory supports
             }
         end
     end
