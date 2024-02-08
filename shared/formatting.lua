@@ -325,7 +325,7 @@ function Functions.FormatItemsFetch(tbl, disableBundling)
                 label = tbl.label,
                 weight = tbl.weight,
                 amount = tbl.amount,
-                metadata = tbl.metadata -- TODO: Test and fix
+                metadata = tbl.info
             }
         elseif (Framework == "ESX") then
             formatted = {
