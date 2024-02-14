@@ -392,7 +392,9 @@ function Functions.IsPlayerDead()
     end
 
     if (Framework == "QBCore") then
-        return Functions.GetPlayerData().metadata["isdead"] or Functions.GetPlayerData().metadata["inlaststand"]
+        local plyData = Functions.GetPlayerData()
+
+        return plyData.metadata.isdead or plyData.metadata.inlaststand
     elseif (Framework == "ESX") then
         return IsEntityDead(ped)
     end
