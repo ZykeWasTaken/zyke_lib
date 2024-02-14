@@ -742,7 +742,7 @@ end
 
 function Functions.GetPlayersInArea(coords, maxDistance)
     if (Framework == "QBCore") then
-        return QBCore.Functions.GetPlayersInArea(coords, maxDistance)
+        return QBCore.Functions.GetPlayersFromCoords(coords, maxDistance)
     elseif (Framework == "ESX") then
         return ESX.Game.GetPlayersInArea(coords, maxDistance)
     end
@@ -752,7 +752,7 @@ function Functions.GetVehiclesInArea(coords, maxDistance)
     if (Framework == "QBCore") then
         return QBCore.Functions.SpawnClear(coords, maxDistance)
     elseif (Framework == "ESX") then
-        return ESX.Game.GetVehiclesInArea(coords, maxDistance) -- Not tested (Not in use for any active releases yet)
+        return ESX.Game.GetVehiclesInArea(coords, maxDistance)
     end
 end
 
