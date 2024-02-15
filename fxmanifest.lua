@@ -1,8 +1,8 @@
 fx_version "cerulean"
 game "gta5"
 lua54 "yes"
-author "Zyke#0001"
-version "1.0.7"
+author "realzyke"
+version "1.0.8"
 
 ui_page "javascript/index.html"
 
