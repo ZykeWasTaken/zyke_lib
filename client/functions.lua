@@ -101,6 +101,8 @@ function Functions.Notify(msg, type, length)
 end
 
 function Functions.ProgressBar(name, label, duration, useWhileDead, canCancel, disableControls, animation, prop, propTwo, onFinish, onCancel)
+    local success = false
+
     if (type(name) == "table") then
         label = name.label
         duration = name.duration
@@ -128,6 +130,7 @@ function Functions.ProgressBar(name, label, duration, useWhileDead, canCancel, d
             }
         })
 
+        success = state
         if (state == true) then
             if (onFinish) then
                 onFinish()
@@ -142,7 +145,10 @@ function Functions.ProgressBar(name, label, duration, useWhileDead, canCancel, d
         disableControls = disableControls or {} -- QB requires this to have a set value
 
         if (Framework == "QBCore") then
-            QBCore.Functions.Progressbar(name, label, duration, useWhileDead, canCancel, disableControls, animation, prop, propTwo, onFinish, onCancel)
+            QBCore.Functions.Progressbar(name, label, duration, useWhileDead, canCancel, disableControls, animation, prop, propTwo, function()
+                success = true
+                onFinish()
+            end, onCancel)
         elseif (Framework == "ESX") then
             ESX.Progressbar(label, duration, {
                 animation = animation and {
@@ -151,11 +157,16 @@ function Functions.ProgressBar(name, label, duration, useWhileDead, canCancel, d
                     lib = animation?.anim,
                 },
                 FreezePlayer = disableControls and true or false,
-                onFinish = onFinish,
+                onFinish = function()
+                    success = true
+                    onFinish()
+                end,
                 onCancel = onCancel
             })
         end
     end
+
+    return success
 end
 
 function Functions.PlayAnim(ped, dict, anim, blendInSpeed, blendOutSpeed, duration, flag, playbackRate, lockX, lockY, lockZ)
