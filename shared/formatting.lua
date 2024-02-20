@@ -97,6 +97,7 @@ end
 ---@field sortServerId? boolean -- Sort by server id, only works if includeServerId is true
 ---@field removeIfNil? boolean -- Simply remove if the value is nil, sometimes the list may contain values that are not players, instead of having to manually remove them and then add them, this removes them and you can later re-add them
 ---@field allowRepeatedIdentifiers? boolean -- Set to true to allow the same identifier to be added multiple times
+---@field includeSteamName? boolean -- True to include their steam name
 
 ---@param players table -- Array of player identifiers
 ---@param options FormattingOptions
@@ -139,6 +140,7 @@ function Functions.FormatPlayers(players, options)
             name = playerDetail.identifier,
             value = playerDetail.identifier,
             plyId = options?.includeServerId and playerDetail.source or nil,
+            steamName = options?.includeSteamName and GetPlayerName(GetPlayerFromServerId(playerDetail.source)) or nil
         })
 
         ::setToEnd::
