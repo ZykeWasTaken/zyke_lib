@@ -98,6 +98,7 @@ end
 ---@field removeIfNil? boolean -- Simply remove if the value is nil, sometimes the list may contain values that are not players, instead of having to manually remove them and then add them, this removes them and you can later re-add them
 ---@field allowRepeatedIdentifiers? boolean -- Set to true to allow the same identifier to be added multiple times
 ---@field includeSteamName? boolean -- True to include their steam name
+---@field idAsValue? boolean -- Set the value key to the server id
 
 ---@param players table -- Array of player identifiers
 ---@param options FormattingOptions
@@ -138,7 +139,7 @@ function Functions.FormatPlayers(players, options)
         table.insert(formattedPlayers, {
             label = label,
             name = playerDetail.identifier,
-            value = playerDetail.identifier,
+            value = options?.idAsValue and playerDetail.source or playerDetail.identifier,
             plyId = options?.includeServerId and playerDetail.source or nil,
             steamName = options?.includeSteamName and GetPlayerName(GetPlayerFromServerId(playerDetail.source)) or nil
         })
