@@ -138,6 +138,7 @@ function Functions.FormatPlayers(players, options)
             label = label,
             name = playerDetail.identifier,
             value = playerDetail.identifier,
+            plyId = options?.includeServerId and playerDetail.source or nil,
         })
 
         ::setToEnd::
