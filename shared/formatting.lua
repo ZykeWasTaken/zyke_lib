@@ -164,9 +164,9 @@ function Functions.FormatPlayers(players, options)
         ::setToEnd::
     end
 
-    if (options?.includeServerId and options?.sortServerId) then
+    if (#formattedPlayers > 1 and options?.includeServerId and options?.sortServerId) then
         table.sort(formattedPlayers, function(a, b)
-            return tonumber(a.label:match("%((%d+)%)")) < tonumber(b.label:match("%((%d+)%)"))
+            return a.plyId < b.plyId
         end)
     end
 
