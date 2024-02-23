@@ -46,6 +46,8 @@ end
 
 -- Add for offline characters
 function Functions.FormatCharacterDetails(character, online)
+    if (character == nil) then return nil end
+
     local formatted = {}
 
     if (Framework == "QBCore") then

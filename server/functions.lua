@@ -388,6 +388,8 @@ end
 
 -- Does not accept the identifier to be the player table for conversion
 function Functions.GetPlayerDetails(identifier)
+    if (identifier == nil) then return nil end
+
     if (type(identifier) == "table") then
         local identifiers = {}
 
@@ -426,6 +428,8 @@ function Functions.GetPlayerDetails(identifier)
 end
 
 function Functions.GetOfflinePlayer(identifier)
+    if (identifier == nil) then return nil end
+
     if (type(identifier) ~= "string") then
         identifier = Functions.GetIdentifier(identifier)
     end
