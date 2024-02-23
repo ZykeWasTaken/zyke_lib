@@ -86,6 +86,17 @@ function Functions.FormatCharacterDetails(character, online)
         formatted.jobLabel = character?.job?.label or "NON-EXISTENT"
         formatted.jobGrade = character.job_grade or character?.job?.grade
         formatted.salary = character?.job?.grade_salary or 0
+
+        -- For some reason, sometimes it has keys in the character.accounts and sometimes not?
+        if (formatted.cash == nil) then
+            for _, account in pairs(character.accounts) do
+                if (account.name == "bank") then
+                    formatted.bank = account.money
+                elseif (account.name == "money") then
+                    formatted.cash = account.money
+                end
+            end
+        end
     end
 
     return formatted
