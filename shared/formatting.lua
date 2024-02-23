@@ -104,7 +104,7 @@ end
 
 ---@class FormattingOptions
 ---@field exclude? table -- Array of identifiers that should be excluded {"identifier1", "identifier2"}, set to nil/{} to disable
----@field includeServerId? boolean
+---@field includeServerId? boolean | string -- Include %s which will be replaced with the id, allows custom formatting (%s., (%s), %s -)
 ---@field sortServerId? boolean -- Sort by server id, only works if includeServerId is true
 ---@field removeIfNil? boolean -- Simply remove if the value is nil, sometimes the list may contain values that are not players, instead of having to manually remove them and then add them, this removes them and you can later re-add them
 ---@field allowRepeatedIdentifiers? boolean -- Set to true to allow the same identifier to be added multiple times
@@ -144,7 +144,11 @@ function Functions.FormatPlayers(players, options)
         local label = firstname .. " " .. lastname
 
         if (options?.includeServerId) then
-            label = ("(%s) "):format(playerDetail.source or "X") .. label
+            if (type(options.includeServerId) == "boolean") then
+                label = ("(%s) "):format(playerDetail.source or "X") .. label
+            elseif (type(options.includeServerId) == "string") then
+                label = options.includeServerId:format(playerDetail.source) .. " " .. label
+            end
         end
 
         table.insert(formattedPlayers, {
