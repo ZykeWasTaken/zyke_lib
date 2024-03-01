@@ -35,6 +35,7 @@ CreateThread(function()
     elseif (Framework == "ESX") then
         AddEventHandler("esx:playerLoaded", function(src, player) -- Not tested (Not in use for any active releases yet)
             Player(src).state:set("zyke_lib:identifier", player.identifier, true)
+            Player(src).state:set("zyke_lib:license", Functions.GetAccountIdentifiers(src, "license"), true)
 
             TriggerEvent("zyke_lib:PlayerJoined", src, src, player) -- Old event, switched out to better name, kept for supporting older resources, also syncing client & server names
             TriggerEvent("zyke_lib:OnCharacterSelect", src, player)
