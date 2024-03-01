@@ -729,12 +729,28 @@ AddEventHandler("onResourceStart", function(resource)
     end
 end)
 
----@param identifier string
+---@param identifier string | number @Use player id if you do not have the player identifier, requires more performance
 ---@param desiredIdentifiers string | table<string>? @String or list of strings of identifiers you want
 ---@param labelForNonExisting string | nil @If the identifier does not exist, replace it with this label
 ---@return string | table | nil
 function Functions.GetAccountIdentifiers(identifier, desiredIdentifiers, labelForNonExisting)
-    local values = handlers[identifier]
+    if (not identifier) then return nil end
+
+    local values = {}
+    if (type(identifier) == "string") then
+        values = handlers[identifier]
+    elseif (type(identifier) == "number") then
+        for _, id in pairs(GetPlayerIdentifiers(identifier)) do
+            local colon = id:find(":")
+            if (colon) then
+                local key = id:sub(1, colon - 1)
+                local value = id:sub(colon + 1)
+
+                values[key] = value
+            end
+        end
+    end
+
     if (not values) then return nil end
 
     if (type(desiredIdentifiers) == "string") then
