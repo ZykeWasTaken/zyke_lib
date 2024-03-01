@@ -183,3 +183,11 @@ function Functions.IsArray(tbl)
 
     return true
 end
+
+function Functions.HasLoadedFramework()
+    if (Framework == "QBCore") then
+        return QBCore ~= nil
+    elseif (Framework == "ESX") then
+        return ESX ~= nil
+    end
+end

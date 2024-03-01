@@ -334,14 +334,6 @@ function Functions.GetGang()
     end
 end
 
-function Functions.HasLoadedFramework()
-    if (Framework == "QBCore") then
-        return QBCore ~= nil
-    elseif (Framework == "ESX") then
-        return ESX ~= nil
-    end
-end
-
 ---@param disableBundling boolean? -- If set to true, it will not bundle item amounts with the same name (Read the formatting functions for full details)
 function Functions.GetPlayerItems(disableBundling)
     if (Framework == "QBCore") then
