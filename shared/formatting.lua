@@ -112,6 +112,7 @@ end
 ---@field allowRepeatedIdentifiers? boolean -- Set to true to allow the same identifier to be added multiple times
 ---@field includeSteamName? boolean -- True to include their steam name
 ---@field idAsValue? boolean -- Set the value key to the server id
+---@field includeLicense? boolean -- Includes the account license
 
 ---@param players table -- Array of player identifiers
 ---@param options FormattingOptions
@@ -158,7 +159,8 @@ function Functions.FormatPlayers(players, options)
             name = playerDetail.identifier,
             value = options?.idAsValue and playerDetail.source or playerDetail.identifier,
             plyId = options?.includeServerId and playerDetail.source or nil,
-            steamName = options?.includeSteamName and GetPlayerName(GetPlayerFromServerId(playerDetail.source)) or nil
+            steamName = options?.includeSteamName and GetPlayerName(GetPlayerFromServerId(playerDetail.source)) or nil,
+            license = options?.includeLicense and Player(playerDetail.source).state["zyke_lib:license"],
         })
 
         ::setToEnd::
