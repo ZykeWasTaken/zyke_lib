@@ -729,6 +729,33 @@ AddEventHandler("onResourceStart", function(resource)
     end
 end)
 
+---@param identifier string
+---@param desiredIdentifiers string | table<string>? @String or list of strings of identifiers you want
+---@param labelForNonExisting string | nil @If the identifier does not exist, replace it with this label
+---@return string | table | nil
+function Functions.GetAccountIdentifiers(identifier, desiredIdentifiers, labelForNonExisting)
+    local values = handlers[identifier]
+    if (not values) then return nil end
+
+    if (type(desiredIdentifiers) == "string") then
+        local value = values[desiredIdentifiers]
+
+        return value or labelForNonExisting
+    elseif (type(desiredIdentifiers) == "table") then
+        local identifiers = {}
+
+        for _, desiredIdentifier in pairs(desiredIdentifiers) do
+            local value = values[desiredIdentifier]
+
+            identifiers[desiredIdentifier] = value or labelForNonExisting
+        end
+
+        return identifiers
+    end
+
+    return nil
+end
+
 -- Has to have a character in the first position, otherwise there will be database errors as it removes the first sequence of numbers for some reason
 -- Unsure as to what causes this issue, we will just ensure that a character is in the first position as it doesn't matter
 ---@param length number
