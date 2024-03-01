@@ -722,7 +722,7 @@ end)
 AddEventHandler("onResourceStart", function(resource)
     if (GetCurrentResourceName() ~= resource) then return end
 
-    Wait(100) -- Initial wait to ensure that the framework is fetched first
+    while (not Functions.HasLoadedFramework()) do Wait(1) end
 
     for _, player in pairs(Functions.GetPlayers()) do
         insertIntoHandlers(Functions.GetIdentifier(player))
