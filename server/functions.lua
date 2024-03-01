@@ -692,26 +692,27 @@ end
 
 local function insertIntoHandlers(player)
     local identifier = Functions.GetIdentifier(player)
-    local source, reason = Functions.GetSource(identifier)
+    local source = Functions.GetSource(identifier)
     local character = Functions.GetPlayerDetails(identifier)
-    local discord = "NOT FOUND"
 
     if (not source) then Functions.Debug("Source not found (CRITICAL!)", Config.Debug) return end
-
-    for _, id in pairs(GetPlayerIdentifiers(source)) do
-        if string.find(id, "discord:") then
-            discord = id:gsub("discord:", "")
-            break
-        end
-    end
 
     handlers[identifier] = {
         firstname = character?.firstname,
         lastname = character?.lastname,
         identifier = identifier,
         source = source,
-        discord = discord
     }
+
+    for _, id in pairs(GetPlayerIdentifiers(source)) do
+        local colon = id:find(":")
+        if (colon) then
+            local key = id:sub(1, colon)
+            local value = id:sub(colon + 1)
+
+            handlers[identifier][key] = value
+        end
+    end
 end
 
 AddEventHandler("zyke_lib:PlayerJoined", function(player)
