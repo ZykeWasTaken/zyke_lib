@@ -1151,3 +1151,19 @@ function Functions.DisableKeys(id, state, keys)
         end
     end)
 end
+
+---@param playerId integer
+function Functions.Revive(playerId)
+    if (Framework == "QBCore") then
+        TriggerEvent("hospital:client:Revive")
+    elseif (Framework == "ESX") then
+        TriggerEvent("esx_ambulancejob:revive")
+    end
+end
+
+function Functions.Heal()
+    local ply = PlayerPedId()
+    local maxHealth = GetEntityMaxHealth(ply)
+
+    SetEntityHealth(ply, maxHealth)
+end
