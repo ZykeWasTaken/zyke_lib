@@ -707,7 +707,7 @@ local function insertIntoHandlers(player)
     for _, id in pairs(GetPlayerIdentifiers(source)) do
         local colon = id:find(":")
         if (colon) then
-            local key = id:sub(1, colon)
+            local key = id:sub(1, colon - 1)
             local value = id:sub(colon + 1)
 
             handlers[identifier][key] = value
