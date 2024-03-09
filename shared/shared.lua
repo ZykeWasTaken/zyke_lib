@@ -191,3 +191,8 @@ function Functions.HasLoadedFramework()
         return ESX ~= nil
     end
 end
+
+---@param playerId number
+function Functions.GetLicense(playerId)
+    return Player(playerId).state["zyke_lib:license"]
+end
