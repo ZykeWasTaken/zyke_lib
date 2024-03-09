@@ -28,8 +28,10 @@ function Translations.Translate(key, formatting)
     end
 
     local isTable = type(translation) == "table"
-    local msg = isTable and translation.msg or translation
-    local notiType = isTable and translation.type or "info"
+    if (not isTable) then return translation end
+
+    local msg = translation.msg
+    local notiType = translation.type
 
     if (formatting) then
         msg = msg:format(table.unpack(formatting))
