@@ -27,6 +27,11 @@ server_scripts {
     "server/experimental/*",
 }
 
+files {
+    "javascript/index.html",
+    "javascript/*.js",
+}
+
 dependencies {
     "ox_lib",
     "PolyZone",
