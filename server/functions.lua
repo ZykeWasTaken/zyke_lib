@@ -684,7 +684,12 @@ function Functions.GetAccountIdentifier(identifier)
 
         return character?.PlayerData?.license or nil
     elseif (Framework == "ESX") then
-        -- Untested, and has to be formatted
+        local character = Functions.GetPlayer(identifier) or Functions.GetOfflinePlayer(identifier)
+        if (not character) then return nil end
+
+        local trimmed = character.license:gsub("license:", "")
+
+        return trimmed
     end
 
     return nil
