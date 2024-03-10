@@ -440,6 +440,8 @@ function Functions.GetOfflinePlayer(identifier)
         local p = promise.new()
         MySQL.Async.fetchAll("SELECT * FROM users WHERE identifier = @identifier", {["@identifier"] = identifier}, function(result)
             local character = result[1]
+            if (not character) then p:resolve(nil) return end
+
             character.accounts = json.decode(character.accounts)
             character.inventory = json.decode(character.inventory)
             character.loadout = json.decode(character.loadout)
