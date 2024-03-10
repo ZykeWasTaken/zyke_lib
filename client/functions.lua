@@ -761,8 +761,24 @@ function Functions.GetVehiclesInArea(coords, maxDistance)
     end
 end
 
-function Functions.GetVehicles()
-    return GetGamePool('CVehicle')
+---@class OptionDetails
+---@field includeStates boolean -- Includes all of the required states, note that you can not name the state keys as any of the default detail properties
+
+---@class Options
+---@field reachable boolean -- Will only give you vehicles within 350 units (400 is general cap)
+---@field pos vector3 -- Will utilize this position if provided to check distances, if not, it will use the player's position based on source
+---@field states table -- States to filter by, example: {locked = true, engine = true}, note that you can also set the value to "none" to solely filter based on the state existing
+---@field detailed OptionDetails | boolean -- Will give you a table with {pos = vector3, netId = number, handler = number, plate = string, vehicleType = string, model = string} when set to true, if set to a table it will act as a true boolean, but also allows you to add more details
+
+---@param serverFetch boolean? -- If set to true, it will return vehicles from the server-side based on the "options" parameter
+---@param options? Options
+---@return table
+function Functions.GetVehicles(serverFetch, options)
+    if (serverFetch) then
+        return Functions.Callback("zyke_lib:GetVehicles", false, {options = options})
+    else
+        return GetGamePool("CVehicle")
+    end
 end
 
 function Functions.GetVehicleByPlate(plate)
