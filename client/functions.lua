@@ -255,8 +255,6 @@ function Functions.OpenInventory(type, invId, other)
             slots = other?.slots or 20,
         })
         TriggerEvent("inventory:client:SetCurrentStash", invId)
-    elseif (Framework == "ESX") then
-        -- TODO: Fix for ESX, if even possible with default inventory?
     end
 end
 
