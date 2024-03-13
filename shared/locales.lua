@@ -29,7 +29,8 @@ function Translations.Translate(key, formatting)
 
     local isTable = type(translation) == "table"
     if (not isTable) then
-        return translation:format(table.unpack(formatting or {}))
+        if (formatting) then return translation:format(table.unpack(formatting)) end
+        return translation
     end
 
     local msg = translation.msg
