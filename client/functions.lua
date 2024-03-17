@@ -1173,3 +1173,11 @@ function Functions.Heal()
 
     SetEntityHealth(ply, maxHealth)
 end
+
+---@param pos vector3
+function Functions.IsOnGround(pos)
+    local ray = StartExpensiveSynchronousShapeTestLosProbe(pos.x, pos.y, pos.z, pos.x, pos.y, pos.z, 16, PlayerPedId(), 0)
+    local _, _, _, _, result = GetShapeTestResult(ray)
+
+    return result == 1
+end
