@@ -221,13 +221,12 @@ function Functions.FormatGang(details)
         return gang
     elseif (Framework == "ESX") then
         if (Config.GangScript == "zyke_gangphone") then
-            local plyRank, index = exports["zyke_gangphone"]:GetRank()
             local gang = {
                 name = details?.id or "NAME NOT FOUND",
                 label = details?.name or "LABEL NOT FOUND",
                 grade = {
-                    name = plyRank?.name or "GRADE LEVEL NOT FOUND",
-                    level = index or "GRADE NAME NOT FOUND"
+                    name = details?.name or "GRADE LEVEL NOT FOUND",
+                    level = details?.rankLevel or "GRADE NAME NOT FOUND"
                 }
             }
 

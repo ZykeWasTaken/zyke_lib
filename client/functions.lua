@@ -322,7 +322,7 @@ function Functions.GetGang()
         return Functions.FormatGang(details)
     elseif (Framework == "ESX") then
         if (Config.GangScript == "zyke_gangphone") then
-            local details = exports["zyke_gangphone"]:GetGang()
+            local details = exports["zyke_gangphone"]:GetPlayerGangDetails()
             if (not details) then return nil end
 
             return Functions.FormatGang(details)
