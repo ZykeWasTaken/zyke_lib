@@ -535,7 +535,7 @@ function Functions.RemoveMoney(player, moneyType, amount, details)
     end
 end
 
----@param player table
+---@param player table | string | number
 ---@return number | nil, string?
 function Functions.GetSource(player)
     if (type(player) ~= "table") then
