@@ -78,6 +78,10 @@ function Functions.GetTarget()
     return Config.Target
 end
 
+function Functions.GetBlipColors()
+    return Config.BlipColors
+end
+
 function Functions.GetConfig()
     return Config
 end
