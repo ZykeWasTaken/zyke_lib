@@ -11,6 +11,8 @@ function Functions.CopyTable(tbl)
 end
 
 function Functions.Debug(msg, enabled)
+    enabled = enabled or Config.Debug
+
     if (enabled == true) then
         print("^4[Debug]: ^7" .. msg)
     end
