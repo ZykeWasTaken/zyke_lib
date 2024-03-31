@@ -122,10 +122,32 @@ function Functions.GetGangDetails(name)
 
         return Functions.FormatGangDetails(details)
     elseif (Framework == "ESX") then
-        -- Untested
-    else
-        error("This gang does not exist: " .. tostring(name))
+        -- Untested (Not needed for any active releases)
+        if (Config.GangScript == "zyke_gangphone") then
+            local details = Functions.GetGangData(name)
+            if (not details) then return nil end
+
+            details.name = name -- Name is not included, so we'll add it in
+
+            return Functions.FormatGangDetails(details)
+        end
     end
+end
+
+---@param identifier string
+---@return table | nil
+function Functions.GetGangData(identifier)
+    while (Framework == nil) do Wait(100) end
+
+    if (Framework == "QBCore") then
+        return QBCore.Shared.Gangs[identifier]
+    elseif (Framework == "ESX") then
+        if (Config.GangScript == "zyke_gangphone") then
+            return exports["zyke_gangphone"]:GetGang(identifier)
+        end
+    end
+
+    return nil
 end
 
 -- Only tested for QB (Not active in any releases yet)
@@ -160,7 +182,32 @@ function Functions.GetBossRanks(name, rankType)
             return sortedList
         end
     elseif (Framework == "ESX") then
-        -- TODO: Add this for ESX once needed
+        if (rankType == "job") then
+            local job = Functions.GetJobData(name)
+            if (not job) then return nil end
+
+            local highestGrade = 1
+            local highestKey = nil
+            for key, value in pairs(job.grades) do
+                local grade = tonumber(key) or 0
+
+                if (grade > highestGrade) then
+                    highestGrade = grade
+                    highestKey = key
+                end
+            end
+
+            return {
+                [job.grades[highestKey].name] = true
+            }
+        elseif (rankType == "gang") then
+            if (Config.GangScript == "zyke_gangphone") then
+                local gang = Functions.GetGangData(name)
+                -- TODO
+            end
+
+            return nil
+        end
     end
 
     return nil
