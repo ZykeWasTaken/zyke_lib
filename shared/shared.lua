@@ -202,3 +202,18 @@ end
 function Functions.GetLicense(playerId)
     return Player(playerId).state["zyke_lib:license"]
 end
+
+---@param job string
+---@return table | nil
+function Functions.GetJobData(job)
+    while (Framework == nil) do Wait(100) end
+
+    if (Framework == "QBCore") then
+        return QBCore.Shared.Jobs[job]
+    elseif (Framework == "ESX") then
+        local isServer = IsDuplicityVersion()
+        return (isServer and ESX.GetJobs() or Functions.Callback("zyke_lib:ESX:FetchJobs", false))[job]
+    end
+
+    return nil
+end
