@@ -409,17 +409,24 @@ function Functions.GetPlayers()
     end
 end
 
-function Functions.GetPlayersServerId()
-    local players = Functions.GetPlayers()
-    local serverIds = {}
+---@param server boolean? @ Whether to fetch the players from the server or not, clients heavily limit how far you can see ~350 units
+function Functions.GetPlayersServerId(server)
+    local players = nil
 
-    for _, player in pairs(players) do
-        local serverId = GetPlayerServerId(player)
+    if (server) then
+        return Functions.Callback("zyke_lib:GetPlayers", false)
+    else
+        players = Functions.GetPlayers()
+        local serverIds = {}
 
-        table.insert(serverIds, serverId)
+        for _, player in pairs(players) do
+            local serverId = GetPlayerServerId(player)
+
+            table.insert(serverIds, serverId)
+        end
+
+        return serverIds
     end
-
-    return serverIds
 end
 
 --[[
