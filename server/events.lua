@@ -137,4 +137,12 @@ CreateThread(function()
 
         return cb(vehicles)
     end)
+
+    Functions.CreateCallback("zyke_lib:ESX:FetchJobs", function(source, cb)
+        return cb(ESX.GetJobs())
+    end)
+
+    Functions.CreateCallback("zyke_lib:GetPlayers", function(source, cb, data)
+        return cb(GetPlayers())
+    end)
 end)
