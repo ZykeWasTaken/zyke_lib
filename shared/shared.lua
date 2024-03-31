@@ -88,22 +88,24 @@ function Functions.GetConfig()
     return Config
 end
 
--- Only tested for QB
 ---@param name string -- Name of job
 function Functions.GetJobDetails(name)
     while (Framework == nil) do Wait(100) end
 
     if (Framework == "QBCore") then
-        local details = QBCore.Shared.Jobs[name]
+        local details = Functions.GetJobData(name)
         if (not details) then return nil end
 
         details.name = name -- Name is not included, so we'll add it in
 
         return Functions.FormatJobDetails(details)
     elseif (Framework == "ESX") then
-        -- Untested
-    else
-        error("This job does not exist: " .. tostring(name))
+        local details = Functions.GetJobData(name)
+        if (not details) then return nil end
+
+        details.name = name -- Name is not included, so we'll add it in
+
+        return Functions.FormatJobDetails(details)
     end
 end
 
