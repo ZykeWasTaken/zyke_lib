@@ -109,7 +109,6 @@ function Functions.GetJobDetails(name)
     end
 end
 
--- Only tested for QB
 ---@param name string -- Name of gang
 function Functions.GetGangDetails(name)
     while (Framework == nil) do Wait(100) end
@@ -122,7 +121,6 @@ function Functions.GetGangDetails(name)
 
         return Functions.FormatGangDetails(details)
     elseif (Framework == "ESX") then
-        -- Untested (Not needed for any active releases)
         if (Config.GangScript == "zyke_gangphone") then
             local details = Functions.GetGangData(name)
             if (not details) then return nil end
