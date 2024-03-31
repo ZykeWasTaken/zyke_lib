@@ -258,7 +258,30 @@ function Functions.FormatJobDetails(details)
             grades = grades,
         }
     elseif (Framework == "ESX") then
-        -- Untested (Not needed for any active releases)
+        local grades = {}
+
+        local highestGrade = 1
+        for key, value in pairs(details.grades) do
+            local grade = tonumber(key) + 1
+
+            if (grade > highestGrade) then
+                highestGrade = grade
+            end
+
+            grades[grade] = {
+                name = value.name,
+                label = value.label,
+                boss = false
+            }
+        end
+
+        grades[highestGrade].boss = true
+
+        return {
+            name = details.name,
+            label = details.label,
+            grades = grades,
+        }
     end
 
     return {}
