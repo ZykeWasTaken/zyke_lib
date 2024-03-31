@@ -855,6 +855,28 @@ function Functions.GetJob(player)
     end
 end
 
+---@param job string
+---@param amount number
+---@return boolean @ Success
+function Functions.PaySociety(job, amount)
+    if (Framework == "QBCore") then
+        exports['qb-management']:AddMoney(job, amount)
+
+        return true -- Always returns true, if the money is not added it will create an account to add the money to, does not return if anything fails
+    elseif (Framework == "ESX") then -- UNTESTED, Not used for any active releases yet
+        TriggerEvent("esx_addonaccount:getSharedAccount", job, function(account)
+            if (account) then
+                account.addMoney(amount)
+                return true
+            end
+
+            return false
+        end)
+    end
+
+    return false
+end
+
 CreateThread(function()
     Wait(1000)
     print([[
