@@ -751,12 +751,24 @@ function Functions.GetPlayersInArea(coords, maxDistance)
     end
 end
 
+---@param coords vector3 | table
+---@param maxDistance number? -- Default 350
 function Functions.GetVehiclesInArea(coords, maxDistance)
-    if (Framework == "QBCore") then
-        return QBCore.Functions.SpawnClear(coords, maxDistance)
-    elseif (Framework == "ESX") then
-        return ESX.Game.GetVehiclesInArea(coords, maxDistance)
+    local vehicles = Functions.GetVehicles(false, nil)
+    local inArea = {}
+
+    maxDistance = maxDistance or 350
+
+    for _, vehicle in ipairs(vehicles) do
+        local vehPos = GetEntityCoords(vehicle)
+        local dst = #(vec3(coords.x, coords.y, coords.z) - vehPos)
+
+        if (dst < maxDistance) then
+            table.insert(inArea, vehicle)
+        end
     end
+
+    return inArea
 end
 
 ---@class OptionDetails
