@@ -479,6 +479,13 @@ function Functions.GetPlayerFromIdentifier(identifier)
     end
 end
 
+function Functions.GetSourceFromIdentifier(identifier)
+    local player = Functions.GetPlayerFromIdentifier(identifier)
+    if (not player) then return nil end
+
+    return Functions.GetSource(player)
+end
+
 function Functions.GetIdentifier(player)
     if (type(player) ~= "table") then
         player = Functions.GetPlayer(player)
