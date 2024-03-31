@@ -877,6 +877,27 @@ function Functions.PaySociety(job, amount)
     return false
 end
 
+---@param player string | number | table -- Will convert
+function Functions.GetGang(player)
+    player = Functions.GetPlayer(player)
+
+    if (Framework == "QBCore") then
+        local details = player.PlayerData.gang
+        if (not details) then return nil end
+
+        return Functions.FormatGang(details)
+    elseif (Framework == "ESX") then
+        if (Config.GangScript == "zyke_gangphone") then
+            local plySource = Functions.GetSource(player)
+            local plyGangDetails = exports["zyke_gangphone"]:GetPlayerGangDetails(plySource)
+
+            return Functions.FormatGang(plyGangDetails)
+        end
+
+        return nil
+    end
+end
+
 CreateThread(function()
     Wait(1000)
     print([[
