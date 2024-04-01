@@ -201,7 +201,11 @@ function Functions.GetBossRanks(name, rankType)
         elseif (rankType == "gang") then
             if (Config.GangScript == "zyke_gangphone") then
                 local gang = Functions.GetGangData(name)
-                -- TODO
+                if (not gang) then return {} end
+
+                return {
+                    [gang.ranks[1].name] = true
+                }
             end
 
             return nil
