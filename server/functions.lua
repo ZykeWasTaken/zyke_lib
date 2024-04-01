@@ -972,6 +972,31 @@ function Functions.GetDetailedPlayersOnGang(gang)
     return formattedPlayers
 end
 
+---@param profession string -- Name of profession
+---@param professionType string -- "job" or "gang"
+---@param onDuty boolean
+---@return table -- Array of ids
+function Functions.GetBossesForProfession(profession, professionType, onDuty)
+    if (onDuty == nil) then onDuty = true end
+
+    local bosses = {}
+
+    local players = professionType == "job" and Functions.GetDetailedPlayersOnJob(profession, onDuty) or Functions.GetDetailedPlayersOnGang(profession)
+    if (not players) then return bosses end
+
+    local bossRanks = Functions.GetBossRanks(profession, professionType)
+    if (not bossRanks) then return bosses end
+
+    for _, player in pairs(players) do
+        local rank = professionType == "job" and player.grade.name or player.grade.name
+        if (bossRanks[rank]) then
+            table.insert(bosses, player.source)
+        end
+    end
+
+    return bosses
+end
+
 CreateThread(function()
     Wait(1000)
     print([[
