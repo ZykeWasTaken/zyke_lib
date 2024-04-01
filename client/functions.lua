@@ -1200,3 +1200,95 @@ function Functions.IsOnGround(pos)
 
     return result == 1
 end
+
+-- Returns all the jobs or gangs in a formatted table
+---@class ProfessionDetailsOptions
+---@field sortAlphabetically boolean? -- Sorts based on label
+---@field suffix string? -- Addition to the label
+---@field prefix string? -- Addition to the label
+
+---@param professionType string -- "job" or "gang"
+---@param detailed boolean -- If detailed, each job will have a table containing all Functions.GetJobDetails data
+---@param options ProfessionDetailsOptions
+---@return table
+function Functions.GetExistingForProfessionType(professionType, detailed, options)
+    -- Initializing certain values to make the code cleaner
+    if ((not options) or (type(options) ~= "table")) then
+        options = {}
+    end
+
+    local suffix = options.suffix or ""
+    local prefix = options.prefix or ""
+
+    local formatted = {}
+
+    -- Get the basic profession settings
+    if (Framework == "QBCore") then
+        if (professionType == "job") then
+            local jobs = QBCore.Shared.Jobs
+
+            for jobName, jobSettings in pairs(jobs) do
+                table.insert(formatted, {
+                    name = jobName,
+                    label = prefix .. jobSettings.label .. suffix
+                })
+            end
+        elseif (professionType == "gang") then
+            local gangs = QBCore.Shared.Gangs
+
+            for gangName, gangSettings in pairs(gangs) do
+                table.insert(formatted, {
+                    name = gangName,
+                    label = prefix .. gangSettings.label .. suffix
+                })
+            end
+        end
+    elseif (Framework == "ESX") then
+        if (professionType == "job") then
+            local jobs = Functions.Callback("zyke_lib:ESX:FetchJobs", false)
+
+            for jobName, jobSettings in pairs(jobs) do
+                table.insert(formatted, {
+                    name = jobSettings.name,
+                    label = prefix .. jobSettings.label .. suffix,
+                })
+            end
+        elseif (professionType == "gang") then
+            -- No native gang support for ESX
+            if (Config.GangScript == "zyke_gangphone") then
+                local gangs = exports["zyke_gangphone"]:GetGangList()
+                for _, gangSettings in pairs(gangs) do
+                    table.insert(formatted, {
+                        name = gangSettings.id,
+                        label = prefix .. gangSettings.name .. suffix,
+                    })
+                end
+            end
+        end
+    end
+
+    -- Getting job details
+    if (detailed) then
+        for idx, professionDetails in pairs(formatted) do
+            local newDetails = professionType == "gang" and Functions.GetJobDetails(professionDetails.name) or Functions.GetGangDetails(professionDetails.name)
+            newDetails.label = prefix .. professionDetails.label .. suffix
+
+            formatted[idx] = newDetails
+        end
+    end
+
+    -- Additional functionalities such as sorting
+    if (options.sortAlphabetically) then
+        table.sort(formatted, function(a, b)
+            return a.label < b.label
+        end)
+    end
+
+    -- Adding what type of profession it is at the end, to easily get it in menus etc
+    for idx, professionDetails in pairs(formatted) do
+        formatted[idx].professionType = professionType
+        formatted[idx].value = professionDetails.name -- Some UI components require value instead, so adding that in here too
+    end
+
+    return formatted
+end
