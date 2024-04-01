@@ -333,6 +333,39 @@ function Functions.GetPlayersOnJob(job, onDuty)
     end
 end
 
+---@param gang string | table
+---@return table
+function Functions.GetPlayersOnGang(gang)
+    while (Framework == nil) do Wait(100) end
+
+    if (Framework == "QBCore") then
+    elseif (Framework == "ESX") then
+        if (Config.GangScript == "zyke_gangphone") then
+            local players = {}
+
+            for _, plyId in pairs(GetPlayers()) do
+                local plyGang = exports["zyke_gangphone"]:GetPlayerGangId(plyId)
+
+                if (type(gang) == "string") then
+                    if (plyGang == gang) then
+                        players[#players+1] = plyId
+                    end
+                elseif (type(gang) == "table") then
+                    for _, _gang in pairs(gang) do
+                        if (plyGang == _gang) then
+                            players[#players+1] = plyId
+                        end
+                    end
+                end
+            end
+
+            return players
+        end
+    end
+
+    return {}
+end
+
 function Functions.EnoughWorkers(job, required)
     local players = Functions.GetPlayersOnJob(job, true)
 
