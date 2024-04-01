@@ -313,17 +313,21 @@ function Functions.GetPlayersOnJob(job, onDuty)
             for k, v in pairs(ESX.GetPlayers()) do
                 local xPlayer = ESX.GetPlayerFromId(v)
 
-                if (xPlayer.job.name == job) then
-                    table.insert(players, v)
+                if (xPlayer) then
+                    if (xPlayer.job.name == job) then
+                        table.insert(players, v)
+                    end
                 end
             end
         elseif (type(job) == "table") then
             for k, v in pairs(ESX.GetPlayers()) do
                 local xPlayer = ESX.GetPlayerFromId(v)
 
-                for _, v2 in pairs(job) do
-                    if (xPlayer.job.name == v2) then
-                        table.insert(players, v)
+                if (xPlayer) then
+                    for _, v2 in pairs(job) do
+                        if (xPlayer.job.name == v2) then
+                            table.insert(players, v)
+                        end
                     end
                 end
             end
@@ -346,14 +350,16 @@ function Functions.GetPlayersOnGang(gang)
             for _, plyId in pairs(GetPlayers()) do
                 local plyGang = exports["zyke_gangphone"]:GetPlayerGangId(plyId)
 
-                if (type(gang) == "string") then
-                    if (plyGang == gang) then
-                        players[#players+1] = plyId
-                    end
-                elseif (type(gang) == "table") then
-                    for _, _gang in pairs(gang) do
-                        if (plyGang == _gang) then
+                if (plyGang) then
+                    if (type(gang) == "string") then
+                        if (plyGang == gang) then
                             players[#players+1] = plyId
+                        end
+                    elseif (type(gang) == "table") then
+                        for _, _gang in pairs(gang) do
+                            if (plyGang == _gang) then
+                                players[#players+1] = plyId
+                            end
                         end
                     end
                 end
