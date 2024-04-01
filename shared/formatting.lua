@@ -225,8 +225,8 @@ function Functions.FormatGang(details)
                 name = details?.id or "NAME NOT FOUND",
                 label = details?.name or "LABEL NOT FOUND",
                 grade = {
-                    name = details?.name or "GRADE LEVEL NOT FOUND",
-                    level = details?.rankLevel or "GRADE NAME NOT FOUND"
+                    name = details?.rank.name or "GRADE LEVEL NOT FOUND",
+                    level = details?.rank.level or "GRADE NAME NOT FOUND"
                 }
             }
 
