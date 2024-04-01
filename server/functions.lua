@@ -997,6 +997,43 @@ function Functions.GetBossesForProfession(profession, professionType, onDuty)
     return bosses
 end
 
+--[[
+    driver (QB & ESX)
+]]
+-- Only intended for online-players
+---@param identifier string
+---@param licenseType string
+---@return boolean
+function Functions.HasLicense(identifier, licenseType)
+    if (Framework == "QBCore") then
+        local player = Functions.GetPlayer(identifier)
+        if (not player) then return false end
+
+        local licenses = player.PlayerData.metadata["licences"]
+        if (not licenses) then return false end
+
+        return licenses[licenseType] or false
+    elseif (Framework == "ESX") then -- UNTESTED, Not used for any active releases yet
+        local source = Functions.GetSource(identifier)
+        if (not source) then return false end
+
+        local p = promise.new()
+        TriggerEvent('esx_license:getLicenses', source, function(licenses)
+            for _, license in pairs(licenses) do
+                if (license.type == licenseType) then
+                    p:resolve(true)
+                end
+            end
+
+            p:resolve(false)
+		end)
+
+        return Citizen.Await(p)
+    end
+
+    return false
+end
+
 CreateThread(function()
     Wait(1000)
     print([[
