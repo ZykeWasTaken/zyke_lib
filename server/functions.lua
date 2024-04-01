@@ -931,6 +931,47 @@ function Functions.GetGang(player)
     end
 end
 
+---@param job string
+---@param onDuty boolean
+---@return table -- Array
+function Functions.GetDetailedPlayersOnJob(job, onDuty)
+    local playersOnJob = Functions.GetPlayersOnJob(job, onDuty)
+    local formattedPlayers = {}
+
+    for _, plyId in pairs(playersOnJob) do
+        local format = {}
+        local plyJob = Functions.GetJob(plyId)
+
+        format = plyJob or {}
+        format.identifier = Functions.GetIdentifier(plyId)
+        format.source = plyId
+
+        table.insert(formattedPlayers, format)
+    end
+
+    return formattedPlayers
+end
+
+---@param gang string
+---@return table -- Array
+function Functions.GetDetailedPlayersOnGang(gang)
+    local playersOnGang = Functions.GetPlayersOnGang(gang)
+    local formattedPlayers = {}
+
+    for _, plyId in pairs(playersOnGang) do
+        local format = {}
+        local plyGang = Functions.GetGang(plyId)
+
+        format = plyGang or {}
+        format.identifier = Functions.GetIdentifier(plyId)
+        format.source = plyId
+
+        formattedPlayers[#formattedPlayers+1] = format
+    end
+
+    return formattedPlayers
+end
+
 CreateThread(function()
     Wait(1000)
     print([[
