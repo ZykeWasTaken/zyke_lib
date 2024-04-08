@@ -1292,3 +1292,7 @@ function Functions.GetExistingForProfessionType(professionType, detailed, option
 
     return formatted
 end
+
+function Functions.GetSessionId()
+    return LocalPlayer.state.session or 0
+end
