@@ -42,6 +42,32 @@ CreateThread(function()
         end)
     end
 
+    -- Job & Gang updates
+    if (Framework == "QBCore") then
+        RegisterNetEvent("QBCore:Server:OnJobUpdate", function(source, job)
+            Functions.Debug("Caught server side QB job update, sending new event...")
+            TriggerEvent("zyke_lib:OnJobUpdate", source, Functions.FormatJob(job))
+        end)
+
+        RegisterNetEvent("QBCore:Server:OnGangUpdate", function(source, gang)
+            Functions.Debug("Caught server side QB gang update, sending new event...")
+            TriggerEvent("zyke_lib:OnGangUpdate", source, Functions.FormatGang(gang))
+        end)
+    elseif (Framework == "ESX") then
+        RegisterNetEvent("esx:setJob", function(source, job)
+            Functions.Debug("Caught server side ESX job update, sending new event...")
+            TriggerEvent("zyke_lib:OnJobUpdate", source, Functions.FormatJob(job))
+        end)
+
+        if (Config.GangScript == "zyke_gangphone") then
+            RegisterNetEvent("zyke_gangphone:OnGangUpdate", function(source, gang)
+                Functions.Debug("Caught server side ESX gang update, sending new event...")
+
+                TriggerEvent("zyke_lib:OnGangUpdate", source, gang) -- Already formatted
+            end)
+        end
+    end
+
     Functions.CreateCallback("zyke_lib:FetchPlayerDetails", function(source, cb, passed)
         if (type(passed.identifier) == "table") then -- Multiple identifiers
             local identifiers = {}
