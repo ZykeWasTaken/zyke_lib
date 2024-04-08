@@ -1040,6 +1040,118 @@ function Functions.HasLicense(identifier, licenseType)
     return false
 end
 
+local function syncSessions()
+    GlobalState.sessions = Sessions
+end
+
+---@param type string @ "players" or "entities"
+---@param playerId number
+---@param sendToClient boolean?
+---@param setSession boolean?
+local function clearFromSession(type, playerId, sendToClient, setSession)
+    for sessionId, sessionData in pairs(Sessions[type]) do
+        for idx, session in pairs(sessionData) do
+            if (session.playerId == playerId) then
+                table.remove(Sessions[type][sessionId], idx)
+                Functions.Debug("Removed from session: " .. type .. " | " .. playerId, Config.Debug)
+
+                if (setSession) then
+                    if (type == "players") then
+                        ---@diagnostic disable-next-line: param-type-mismatch
+                        SetPlayerRoutingBucket(playerId, 0)
+                    elseif (type == "entities") then
+                        SetEntityRoutingBucket(playerId, 0)
+                    end
+                end
+
+                Player(playerId).state:set("session", 0, true)
+                syncSessions()
+
+                break
+            end
+        end
+    end
+end
+
+---@param type string @ "players" or "entities"
+---@param playerId number
+---@param sessionId number
+local function insertIntoSession(type, playerId, sessionId)
+    if (not Sessions[type][sessionId]) then Sessions[type][sessionId] = {} end
+
+    clearFromSession(type, playerId)
+
+    table.insert(Sessions[type][sessionId], {
+        playerId = playerId,
+        type = type,
+        set = os.time()
+    })
+
+    if (type == "players") then
+        ---@diagnostic disable-next-line: param-type-mismatch
+        SetPlayerRoutingBucket(playerId, sessionId)
+        Player(playerId).state:set("session", sessionId, true)
+    elseif (type == "entities") then
+        SetEntityRoutingBucket(playerId, sessionId)
+    end
+
+    syncSessions()
+    Functions.Debug("Inserted into session: " .. type .. " | " .. playerId .. " | " .. sessionId, Config.Debug)
+end
+
+-- TODO: Needs to be synced with netId, when fetching return both handler and netId
+function Functions.SetEntitySession(entityId, sessionId)
+    if (not (entityId or sessionId)) then Functions.Debug("No entityId or sessionId passed (CRITICAL!)", Config.Debug) return end
+
+    insertIntoSession("entities", entityId, sessionId)
+end
+
+function Functions.SetPlayerSession(playerId, sessionId)
+    if (not (playerId or sessionId)) then Functions.Debug("No playerId or sessionId passed (CRITICAL!)", Config.Debug) return end
+
+    insertIntoSession("players", playerId, sessionId)
+end
+
+function Functions.ClearFromSessions(playerId, type)
+    clearFromSession(type, playerId, true, true)
+end
+
+---@param sessionId string
+---@param sessionType string @ "players" or "entities" or "combined"
+function Functions.GetSession(sessionId, sessionType)
+    local session = {}
+
+    if (sessionType == "combined") then
+        for _, player in pairs(Sessions.players[sessionId] or {}) do
+            table.insert(session, player)
+        end
+
+        for _, entity in pairs(Sessions.entities[sessionId] or {}) do
+            table.insert(session, entity)
+        end
+    elseif (sessionType == "players") then
+        session = Sessions.players[sessionId] or {}
+    elseif (sessionType == "entities") then
+        session = Sessions.entities[sessionId] or {}
+    end
+
+    return session
+end
+
+function Functions.GetPlayerSessionId(playerId)
+    if (not playerId) then Functions.Debug("No playerId passed (CRITICAL!)", Config.Debug) return end
+
+    for sessionId, sessionData in pairs(Sessions.players) do
+        for _, session in pairs(sessionData) do
+            if (session.playerId == playerId) then
+                return sessionId
+            end
+        end
+    end
+
+    return nil
+end
+
 CreateThread(function()
     Wait(1000)
     print([[
