@@ -78,8 +78,38 @@ function Functions.HasItem(item, amount)
         local formatted = Functions.FormatItems(item, amount)
         local hasItems = true
 
+        -- Due to recent changes in ESX, it broke the old standard way of checking items in certain scenarios, like using ox_inventory
+        -- To fix this, we pasted the old method that works
+        local function esxSearchInventory(items, count)
+            if type(items) == 'string' then
+                items = {items}
+            end
+
+            local returnData = {}
+            local itemCount = #items
+
+            for i = 1, itemCount do
+                local itemName = items[i]
+                returnData[itemName] = count and 0
+
+                for _, _item in pairs(Functions.GetPlayerData().inventory) do
+                    if _item.name == itemName then
+                        if count then
+                            returnData[itemName] = returnData[itemName] + _item.count
+                        else
+                            returnData[itemName] = _item
+                        end
+                    end
+                end
+            end
+
+            if next(returnData) then
+                return itemCount == 1 and returnData[items[1]] or returnData
+            end
+        end
+
         for itemIdx, itemData in pairs(formatted) do
-            local hasItem = ESX.SearchInventory(itemData.name, itemData.count)
+            local hasItem = esxSearchInventory(itemData.name, itemData.count)
 
             if not hasItem or hasItem == 0 then
                 hasItems = false
