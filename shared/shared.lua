@@ -270,3 +270,25 @@ function Functions.GetJobData(job)
 
     return nil
 end
+
+local onResourceStopCallbacks = {}
+---@param func function
+function Functions.OnResourceStop(func)
+    local invoker = GetInvokingResource()
+
+    if (not onResourceStopCallbacks[invoker]) then
+        onResourceStopCallbacks[invoker] = {}
+    end
+
+    onResourceStopCallbacks[invoker][#onResourceStopCallbacks[invoker] + 1] = func
+end
+
+AddEventHandler("onResourceStop", function(resourceName)
+    if (onResourceStopCallbacks[resourceName]) then
+        for _, func in pairs(onResourceStopCallbacks[resourceName]) do
+            func()
+        end
+    end
+
+    onResourceStopCallbacks[resourceName] = nil
+end)
