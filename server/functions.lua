@@ -23,6 +23,12 @@ function SendLog()
         local avatarUrl = "https://cdn.discordapp.com/attachments/1048900415967744031/1117129086104514721/New_Logo.png"
         local webhook = passed.webhook or "" -- Insert a fallback webhook here, meaning if the resource doesn't have a webhook set, it will use this one instead
 
+        -- Temp, before all resources migrate
+        local isWebhook = passed.webhook:find("discord.com")
+        if (not isWebhook) then
+            webhook = Webhooks[passed.scriptName][passed.action]
+        end
+
         -- Message
         local scriptName = passed.scriptName or "Unknown Script"
         local message = passed.message or "Empty Message"
