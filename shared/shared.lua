@@ -11,10 +11,12 @@ function Functions.CopyTable(tbl)
 end
 
 function Functions.Debug(msg, enabled)
+    local invoker = GetInvokingResource() or "zyke_lib"
+
     enabled = enabled or Config.Debug
 
     if (enabled == true) then
-        print("^4[Debug]: ^7" .. msg)
+        print(("^4[Debug - %s]: ^7" .. msg):format(invoker))
     end
 end
 
