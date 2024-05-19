@@ -22,7 +22,13 @@ client_scripts {
 
 server_scripts {
     "@oxmysql/lib/MySQL.lua",
-    "server/**/*",
+    "server/webhooks.lua",
+
+    "server/main.lua",
+    "server/functions.lua",
+    "server/events.lua",
+
+    "server/experimental/*", -- Dev & personal stuff
 }
 
 files {
