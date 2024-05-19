@@ -24,7 +24,7 @@ local keys = {
     ["["] = {keyCode = 39, name = "~INPUT_SNIPER_ZOOM~"},
     ["]"] = {keyCode = 40, name = "~INPUT_SNIPER_ZOOM_IN_ONLY~"},
     ["Q"] = {keyCode = 44, name = "~INPUT_COVER~"},
-    ["R"] = {keyCode = 45, name = "~INPUT_RELOAD~"},
+    ["R"] = {keyCode = 140, name = "~INPUT_MELEE_ATTACK_LIGHT~"},
     ["G"] = {keyCode = 47, name = "~INPUT_DETONATE~"},
     ["F9"] = {keyCode = 56, name = "~INPUT_DROP_WEAPON~"},
     ["F10"] = {keyCode = 57, name = "~INPUT_DROP_AMMO~"},
