@@ -831,14 +831,13 @@ function Functions.GetAccountIdentifiers(identifier, desiredIdentifiers, labelFo
     return nil
 end
 
+math.randomseed(os.time())
 -- Has to have a character in the first position, otherwise there will be database errors as it removes the first sequence of numbers for some reason
 -- Unsure as to what causes this issue, we will just ensure that a character is in the first position as it doesn't matter
 ---@param length number
 ---@return string
 function Functions.CreateUniqueId(length)
     length = (length or 20) - 1 -- Max characters
-
-    math.randomseed(os.time())
 
     local id = string.char(math.random(65, 90))
     for _ = 1, length do
