@@ -387,3 +387,19 @@ function Functions.GetWeaponName(weaponHash)
 
     return formatted, raw
 end
+
+---@param tbl table -- array
+---@return table -- array
+function Functions.EnsureUniqueEntries(tbl)
+    local seen = {}
+    local uniqueEntries = {}
+
+    for _, value in pairs(tbl) do
+        if not (seen[value]) then
+            table.insert(uniqueEntries, value)
+            seen[value] = true
+        end
+    end
+
+    return uniqueEntries
+end
