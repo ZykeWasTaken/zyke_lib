@@ -977,7 +977,7 @@ function Functions.AddBlip(details)
         SetBlipScale(blip, details.scale)
     end
 
-    if (details.color ~= nil) then
+    if (details.color ~= nil and details.color ~= -1) then
         SetBlipColour(blip, details.color)
     end
 
