@@ -60,6 +60,7 @@ Config.Minigames = {
 }
 
 Config.BlipColors = {
+    {label = "None", value = -1},
     {label = "Light Red #1", value = 6, hex = "#c25050", rgb = {194, 80, 80}},
     {label = "Violet", value = 7, hex = "#9c6eaf", rgb = {156, 110, 175}},
     {label = "Pink", value = 8, hex = "#fe7ac3", rgb = {254, 122, 195}},
