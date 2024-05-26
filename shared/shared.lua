@@ -10,8 +10,8 @@ function Functions.CopyTable(tbl)
     return copy
 end
 
-function Functions.Debug(msg, enabled)
-    local invoker = GetInvokingResource() or "zyke_lib"
+function Functions.Debug(msg, enabled, invoker)
+    invoker = invoker or GetInvokingResource() or "zyke_lib"
 
     enabled = enabled or Config.Debug
 
