@@ -520,3 +520,13 @@ function Functions.GetVehicles(serverFetch, options)
 
     return formatted
 end
+
+---@param coords vector3 | vector4 | table @x, y, z relevant
+---@param maxDistance number @Max distance to check for vehicles
+---@param serverFetch boolean @Used client-side to allow for server-sided vehicle fetch, allows reach beyond your render
+function Functions.GetVehiclesInArea(coords, maxDistance, serverFetch)
+    return Functions.GetVehicles(serverFetch, {
+        maxDistance = maxDistance,
+        pos = coords
+    })
+end
