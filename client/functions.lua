@@ -204,6 +204,9 @@ function Functions.PlayAnim(ped, dict, anim, blendInSpeed, blendOutSpeed, durati
 end
 
 function Functions.Callback(name, cb, ...)
+    local invoker = GetInvokingResource()
+    Functions.Debug("Ran callback: " .. name, true, invoker)
+
     local promise = promise.new()
     if (Framework == "QBCore") then
         QBCore.Functions.TriggerCallback(name, function(res)
