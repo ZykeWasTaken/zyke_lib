@@ -100,71 +100,19 @@ CreateThread(function()
         return cb(Functions.CreateUniqueId(data.length))
     end)
 
-    -- TODO: Make sure you're fetching from the correct routing session
     Functions.CreateCallback("zyke_lib:GetVehicles", function(source, cb, data)
-        local vehicles = GetAllVehicles()
-
-        -- Filter based on the options
-        if (data.options) then
-            local filteredVehicles = {}
-            local position = data.options.pos or GetEntityCoords(GetPlayerPed(source))
-
-            local hasToBeWithinReach = data.options.reachable or false
-            local filterByStates = data.options.states or false
-
-            for _, vehicle in pairs(vehicles) do
-                if (hasToBeWithinReach) then
-                    local dst = #(position - GetEntityCoords(vehicle))
-                    if (dst > 350) then goto endOfLoop end
-                end
-
-                if (filterByStates) then
-                    for state, requiredValue in pairs(data.options.states) do
-                        local entityStateValue = Entity(vehicle)?.state?[state]
-
-                        if (requiredValue == "none") then
-                            if (entityStateValue == nil) then goto endOfLoop end
-                        else
-                            if (requiredValue ~= entityStateValue) then goto endOfLoop end
-                        end
-                    end
-                end
-
-                local vehicleDetails
-                if (data.options.detailed) then
-                    vehicleDetails = {
-                        pos = GetEntityCoords(vehicle),
-                        netId = NetworkGetNetworkIdFromEntity(vehicle),
-                        plate = GetVehicleNumberPlateText(vehicle),
-                        vehicleType = GetVehicleType(vehicle),
-                        model = GetEntityModel(vehicle),
-                        handler = vehicle,
-                    }
-
-                    if (type(data.options.detailed) == "table") then
-                        if (data.options.detailed.includeStates) then
-                            for state in pairs(data.options.states) do
-                                vehicleDetails[state] = Entity(vehicle)?.state?[state]
-                            end
-                        end
-                    end
-
-                else
-                    vehicleDetails = vehicle
-                end
-
-                filteredVehicles[vehicleDetails] = vehicleDetails
-
-                ::endOfLoop::
-            end
-
-            vehicles = filteredVehicles
-        end
-
-        return cb(vehicles)
+        return cb(Functions.GetVehicles(true, data))
     end)
 
-    Functions.CreateCallback("zyke_lib:ESX:FetchJobs", function(source, cb)
+    Functions.CreateCallback("zyke_lib:GetRawVehicles", function(source, cb)
+        return cb(GetAllVehicles())
+    end)
+
+    Functions.CreateCallback("zyke_lib:ESX:FetchJobs", function(source, cb, data)
+        if (data.name) then
+            return cb(ESX.GetJobs()[data.name])
+        end
+
         return cb(ESX.GetJobs())
     end)
 
