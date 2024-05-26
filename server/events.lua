@@ -109,7 +109,7 @@ CreateThread(function()
     end)
 
     Functions.CreateCallback("zyke_lib:ESX:FetchJobs", function(source, cb, data)
-        if (data.name) then
+        if (data?.name) then
             return cb(ESX.GetJobs()[data.name])
         end
 
