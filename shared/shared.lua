@@ -61,6 +61,23 @@ function Functions.Find(tbl, predicate)
     return nil, nil
 end
 
+---@param tbl1 table
+---@param tbl2 table
+---@return table
+function Functions.Combine(tbl1, tbl2)
+    local result = {}
+
+    for k, v in pairs(tbl1) do
+        result[k] = v
+    end
+
+    for k, v in pairs(tbl2) do
+        result[k] = v
+    end
+
+    return result
+end
+
 function Functions.GetItem(item)
     if (Framework == "QBCore") then
         return QBCore.Shared.Items[item]
