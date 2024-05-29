@@ -205,7 +205,7 @@ end
 
 function Functions.Callback(name, cb, ...)
     local invoker = GetInvokingResource()
-    Functions.Debug("Ran callback: " .. name, true, invoker)
+    Functions.Debug("Ran callback: " .. name, Config.Debug, invoker)
 
     local promise = promise.new()
     if (Framework == "QBCore") then
