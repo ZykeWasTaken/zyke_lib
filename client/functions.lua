@@ -907,16 +907,20 @@ function Functions.IconForVehicleClass(class, useServer)
     return icons[class + 1] or "car"
 end
 
--- pos = vector3 | table (if coord)
--- entity = entityId (if entity)
--- sprite = id (int)
--- display = id (int)
--- scale = number
--- color = id (int)
--- shortRange = state (boolean)
--- name = blip name (string)
+---@class BlipDetails
+---@field type string @"coord" | "entity" | "radius"
+---@field pos vector3 | table
+---@field entity number? @Entity handle
+---@field sprite number?
+---@field display number?
+---@field scale number?
+---@field color number?
+---@field shortRange boolean?
+---@field name string?
+---@field alpha number?
 
 local blips = {}
+---@param details BlipDetails
 function Functions.AddBlip(details)
     local blip
 
@@ -924,28 +928,22 @@ function Functions.AddBlip(details)
         blip = AddBlipForCoord(details.pos.x, details.pos.y, details.pos.z)
     elseif (details.type == "entity") then
         blip = AddBlipForEntity(details.entity)
+    elseif (details.type == "radius") then
+        blip = AddBlipForRadius(details.pos.x, details.pos.y, details.pos.z, details.scale)
     end
 
     if (not blip) then Functions.Debug("No type was specified in " .. GetInvokingResource(), Config.Debug) return nil end
 
-    if (details.sprite ~= nil) then
-        SetBlipSprite(blip, details.sprite)
-    end
+    local sprite = (details.type == "radius" and 9) or details.sprite or 1
 
-    if (details.display ~= nil) then
-        SetBlipDisplay(blip, details.display)
-    end
-
-    if (details.scale ~= nil) then
-        SetBlipScale(blip, details.scale)
-    end
+    SetBlipSprite(blip, sprite)
+    SetBlipDisplay(blip, details.display or 6)
+    SetBlipScale(blip, details.scale or 0.8)
+    SetBlipAsShortRange(blip, details.shortRange or false)
+    SetBlipAlpha(blip, details.alpha or 255)
 
     if (details.color ~= nil and details.color ~= -1) then
         SetBlipColour(blip, details.color)
-    end
-
-    if (details.shortRange ~= nil) then
-        SetBlipAsShortRange(blip, details.shortRange)
     end
 
     if (details.name ~= nil) then
