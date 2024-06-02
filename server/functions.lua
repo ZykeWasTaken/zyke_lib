@@ -350,7 +350,7 @@ function Functions.GetPlayersOnGang(gang)
 
     if (Framework == "QBCore") then
     elseif (Framework == "ESX") then
-        if (Config.GangScript == "zyke_gangphone") then
+        if (GangScript == "zyke_gangphone") then
             local players = {}
 
             for _, plyId in pairs(GetPlayers()) do
@@ -931,7 +931,7 @@ function Functions.GetGang(player)
 
         return Functions.FormatGang(details)
     elseif (Framework == "ESX") then
-        if (Config.GangScript == "zyke_gangphone") then
+        if (GangScript == "zyke_gangphone") then
             local plySource = Functions.GetSource(player)
             local plyGangDetails = exports["zyke_gangphone"]:GetPlayerGangDetails(plySource)
 

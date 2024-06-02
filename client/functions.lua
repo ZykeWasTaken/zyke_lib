@@ -354,7 +354,7 @@ function Functions.GetGang()
 
         return Functions.FormatGang(details)
     elseif (Framework == "ESX") then
-        if (Config.GangScript == "zyke_gangphone") then
+        if (GangScript == "zyke_gangphone") then
             local details = exports["zyke_gangphone"]:GetPlayerGangDetails()
             if (not details) then return nil end
 
@@ -1246,8 +1246,10 @@ function Functions.GetExistingForProfessionType(professionType, detailed, option
             end
         elseif (professionType == "gang") then
             -- No native gang support for ESX
-            if (Config.GangScript == "zyke_gangphone") then
+            print(GangScript)
+            if (GangScript == "zyke_gangphone") then
                 local gangs = exports["zyke_gangphone"]:GetGangList()
+                print(gangs, #gangs)
                 for _, gangSettings in pairs(gangs) do
                     table.insert(formatted, {
                         name = gangSettings.id,

@@ -11,7 +11,6 @@ Config.WeaponType = "item" -- "item" / "weapon", whether to remove and give the 
 Config.Progressbar = "ox_lib" -- "ox_lib" or "default", "default" will use the progressbar in your framework, note that if it is out of date it may not work, ox_lib is recommended to use
 Config.FuelSystem = "LegacyFuel" -- "LegacyFuel" / nil (nil = no fuel system, will use default Gta natives)
 Config.CustomDeathScript = false -- Support false, "wasabi_ambulance"
-Config.GangScript = false -- Support false, "zyke_gangphone"
 
 Config.Minigames = {
     ["lockpick"] = {

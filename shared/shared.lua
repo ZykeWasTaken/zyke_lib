@@ -140,7 +140,7 @@ function Functions.GetGangDetails(name)
 
         return Functions.FormatGangDetails(details)
     elseif (Framework == "ESX") then
-        if (Config.GangScript == "zyke_gangphone") then
+        if (GangScript == "zyke_gangphone") then
             local details = Functions.GetGangData(name)
             if (not details) then return nil end
 
@@ -159,7 +159,7 @@ function Functions.GetGangData(identifier)
     if (Framework == "QBCore") then
         return QBCore.Shared.Gangs[identifier]
     elseif (Framework == "ESX") then
-        if (Config.GangScript == "zyke_gangphone") then
+        if (GangScript == "zyke_gangphone") then
             return exports["zyke_gangphone"]:GetGang(identifier)
         end
     end
@@ -218,7 +218,7 @@ function Functions.GetBossRanks(name, rankType)
                 [job.grades[highestKey].name] = true
             }
         elseif (rankType == "gang") then
-            if (Config.GangScript == "zyke_gangphone") then
+            if (GangScript == "zyke_gangphone") then
                 local gang = Functions.GetGangData(name)
                 if (not gang or not gang.ranks) then return {} end
 

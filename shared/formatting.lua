@@ -220,7 +220,7 @@ function Functions.FormatGang(details)
 
         return gang
     elseif (Framework == "ESX") then
-        if (Config.GangScript == "zyke_gangphone") then
+        if (GangScript == "zyke_gangphone") then
             local gang = {
                 name = details?.id or "NAME NOT FOUND",
                 label = details?.name or "LABEL NOT FOUND",

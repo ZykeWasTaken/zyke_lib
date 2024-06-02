@@ -55,7 +55,7 @@ CreateThread(function()
             TriggerEvent("zyke_lib:OnJobUpdate", Functions.FormatJob(job))
         end)
 
-        if (Config.GangScript == "zyke_gangphone") then
+        if (GangScript == "zyke_gangphone") then
             RegisterNetEvent("zyke_gangphone:OnGangUpdate", function(gang)
                 Functions.Debug("Caught client side ESX gang update, sending new event...")
                 TriggerEvent("zyke_lib:OnGangUpdate", gang) -- Already formatted
