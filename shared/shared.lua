@@ -529,7 +529,7 @@ function Functions.GetVehicles(serverFetch, options)
 
             table.insert(formatted, vehicleDetails)
         else
-            vehicleDetails = veh
+            table.insert(formatted, veh)
         end
 
         ::continue::
