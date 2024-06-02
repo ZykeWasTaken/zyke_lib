@@ -35,7 +35,7 @@ end
 ---@param desiredString string
 ---@return boolean, number | nil
 function Functions.Contains(tbl, desiredString)
-    if (not tbl) then error("Attempt to scan non-existens table") end
+    if (not tbl) then error("Attempt to scan non-existant table") end
 
     for idx, string in pairs(tbl) do
         if (desiredString == string) then
