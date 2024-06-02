@@ -11,8 +11,15 @@ shared_scripts {
     "imports.lua",
     "@ox_lib/init.lua",
 
-    "shared/**/*",
-    "shared/experimental/*",
+    "shared/config.lua",
+    "shared/shared.lua",
+    "shared/framework.lua",
+    "shared/targeting.lua",
+    "shared/gang.lua",
+    "shared/locales.lua",
+    "shared/formatting.lua",
+
+    "shared/experimental/*", -- Dev & personal stuff
 }
 
 client_scripts {
