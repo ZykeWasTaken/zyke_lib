@@ -13,9 +13,11 @@ shared_scripts {
 
     "shared/config.lua",
     "shared/shared.lua",
-    "shared/framework.lua",
-    "shared/targeting.lua",
-    "shared/gang.lua",
+    "shared/auto_fetchers/framework.lua",
+    "shared/auto_fetchers/targeting.lua",
+    "shared/auto_fetchers/gang.lua",
+    "shared/auto_fetchers/death.lua",
+    "shared/auto_fetchers/fuel.lua",
     "shared/locales.lua",
     "shared/formatting.lua",
 

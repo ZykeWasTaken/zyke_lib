@@ -421,7 +421,7 @@ end
 -- You might need to change this if you a custom death script
 function Functions.IsPlayerDead()
     local ped = PlayerPedId()
-    if (Config.CustomDeathScript == "wasabi_ambulance") then
+    if (DeathScript == "wasabi_ambulance") then
         return exports["wasabi_ambulance"]:isPlayerDead(GetPlayerServerId(PlayerId()))
     end
 
@@ -570,7 +570,7 @@ function Functions.SpawnVehicle(vehData, options)
 
     local netId = (options?.getNetId or usingZykeGarages) and NetworkGetNetworkIdFromEntity(veh)
 
-    if (Config.FuelSystem == "LegacyFuel") then
+    if (FuelScript == "LegacyFuel") then
         exports['LegacyFuel']:SetFuel(veh, options and options.fuel or 100.0)
     else
         SetVehicleFuelLevel(veh, options and options.fuel or 100.0)
