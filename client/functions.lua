@@ -209,6 +209,9 @@ function Functions.Callback(name, cb, ...)
 
     local promise = promise.new()
     if (Framework == "QBCore") then
+        -- Due to how QBCore is built, you can't run callbacks back to back, you need to have them slightly apart
+        Wait(1)
+
         QBCore.Functions.TriggerCallback(name, function(res)
             if (type(cb) == "table") then
                 cb(res)
