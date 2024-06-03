@@ -1249,10 +1249,8 @@ function Functions.GetExistingForProfessionType(professionType, detailed, option
             end
         elseif (professionType == "gang") then
             -- No native gang support for ESX
-            print(GangScript)
             if (GangScript == "zyke_gangphone") then
                 local gangs = exports["zyke_gangphone"]:GetGangList()
-                print(gangs, #gangs)
                 for _, gangSettings in pairs(gangs) do
                     table.insert(formatted, {
                         name = gangSettings.id,
