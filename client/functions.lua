@@ -3,7 +3,7 @@ function Functions.LoadModel(model)
     model = joaat(model)
 
     local doesExist = IsModelValid(model)
-    if (not doesExist) then error("This model does not exist: " .. originalModel .. " (" .. model .. ")") return false end
+    if (not doesExist) then print("^1This model does not exist: " .. originalModel .. " (" .. model .. ")^0") return false end
 
     RequestModel(model)
     while (not HasModelLoaded(model)) do Wait(1) end
