@@ -1,7 +1,6 @@
 Config = Config or {}
 
--- Set to true to enable debug messages, recommended to always keep true since it doesn't spam the console
--- It only gives relevant information such as critical errors
+-- Set to true to enable debug messages
 Config.Debug = false
 
 -- Make sure to use the correct fetching when switching over to ESX
