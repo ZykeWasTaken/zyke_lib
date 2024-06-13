@@ -24,7 +24,7 @@ function SendLog()
         local webhook = passed.webhook or "" -- Insert a fallback webhook here, meaning if the resource doesn't have a webhook set, it will use this one instead
 
         -- Temp, before all resources migrate
-        local isWebhook = passed.webhook:find("discord.com")
+        local isWebhook = webhook:find("discord.com")
         if (not isWebhook) then
             webhook = Webhooks[passed.scriptName][passed.action]
         end
