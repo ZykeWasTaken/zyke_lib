@@ -4,24 +4,24 @@ local systems = {
     {fileName = "zyke_gangphone", variable = "zyke_gangphone"}
 }
 
-local isServer = IsDuplicityVersion()
-for _, system in pairs(systems) do
-    if (isServer) then
-        AddEventHandler("onResourceStart", function(resourceName)
-            if (resourceName == system.fileName) then
-                GangScript = system.variable
-            end
-        end)
-    else
-        local resourceState = GetResourceState(system.fileName)
+-- Track if the script is started after zyke_lib
+for i = 1, #systems do
+    AddEventHandler("onResourceStart", function(resourceName)
+        if (resourceName == systems[i].fileName) then
+            GangScript = systems[i].variable
+            Functions.Debug("Found gang system: " .. GangScript)
+        end
+    end)
+end
 
-        if (resourceState == "started") then
-            GangScript = system.variable
+-- Check if the resource is already started, and if so, set it as active
+for i = 1, #systems do
+    if (GetResourceState(systems[i].fileName) == "started") then
+        GangScript = systems[i].variable
+
+        if (GangScript) then
+            Functions.Debug("Found gang system: " .. GangScript)
             return
         end
-    end
-
-    if (GangScript) then
-        Functions.Debug("Found gang system: " .. GangScript)
     end
 end

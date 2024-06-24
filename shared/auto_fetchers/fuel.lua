@@ -4,24 +4,24 @@ local systems = {
     {fileName = "LegacyFuel", variable = "LegacyFuel"}
 }
 
-local isServer = IsDuplicityVersion()
-for _, system in pairs(systems) do
-    if (isServer) then
-        AddEventHandler("onResourceStart", function(resourceName)
-            if (resourceName == system.fileName) then
-                FuelScript = system.variable
-            end
-        end)
-    else
-        local resourceState = GetResourceState(system.fileName)
+-- Track if the script is started after zyke_lib
+for i = 1, #systems do
+    AddEventHandler("onResourceStart", function(resourceName)
+        if (resourceName == systems[i].fileName) then
+            FuelScript = systems[i].variable
+            Functions.Debug("Found fuel system: " .. FuelScript)
+        end
+    end)
+end
 
-        if (resourceState == "started") then
-            FuelScript = system.variable
+-- Check if the resource is already started, and if so, set it as active
+for i = 1, #systems do
+    if (GetResourceState(systems[i].fileName) == "started") then
+        FuelScript = systems[i].variable
+
+        if (FuelScript) then
+            Functions.Debug("Found fuel system: " .. FuelScript)
             return
         end
-    end
-
-    if (FuelScript) then
-        Functions.Debug("Found fuel system: " .. FuelScript)
     end
 end
