@@ -144,7 +144,8 @@ function Functions.GetGangDetails(name)
             local details = Functions.GetGangData(name)
             if (not details) then return nil end
 
-            details.name = name -- Name is not included, so we'll add it in
+            details.label = details.name
+            details.name = details.id -- Name is not included, so we'll add it in
 
             return Functions.FormatGangDetails(details)
         end
@@ -437,6 +438,7 @@ end
 ---@field pos vector3 | vector4 | table @Position to check distance with, if not provided it will use your player position if client
 ---@field states table? @States to filter by, example: {locked = true, engine = true}, note that you can also set the value to "none" to solely filter based on the state existing
 ---@field detailed GetVehicleOptionsDetails | boolean? @Will give you class DetailedVehicle when set to true, if set to a table it will act as a boolean, but also allows you to add more details
+---@field netId integer? @If passed in, it will only return the vehicle with the matching netId (Will perform a break for next iteration)
 
 -- TODO: Make sure you're fetching from the correct routing session
 -- Note that you can only use limited options when only using the client, such as states not always being synced the same (but usually is), getting routing buckets, etc
@@ -508,6 +510,11 @@ function Functions.GetVehicles(serverFetch, options)
             end
         end
 
+        if (options.netId) then
+            local netId = NetworkGetNetworkIdFromEntity(veh)
+            if (netId ~= options.netId) then goto continue end
+        end
+
         local vehicleDetails
         if (options.detailed) then
             vehicleDetails = {
@@ -530,6 +537,11 @@ function Functions.GetVehicles(serverFetch, options)
             table.insert(formatted, vehicleDetails)
         else
             table.insert(formatted, veh)
+        end
+
+        -- If you can reach here and you're looking for a specific netId, then you've found it
+        if (options.netId) then
+            break
         end
 
         ::continue::

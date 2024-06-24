@@ -308,7 +308,22 @@ function Functions.FormatGangDetails(details)
             grades = grades,
         }
     elseif (Framework == "ESX") then
-        -- Untested (Not needed for any active releases)
+        if (GangScript == "zyke_gangphone") then
+            local grades = {}
+            for idx, value in pairs(details.ranks) do
+                grades[idx] = {
+                    name = value.name,
+                    label = value.label,
+                    boss = idx == 1
+                }
+            end
+
+            return {
+                name = details.id,
+                label = details.label or details.name,
+                grades = grades
+            }
+        end
     end
 
     return {}
