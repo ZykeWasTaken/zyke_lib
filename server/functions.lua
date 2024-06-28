@@ -683,7 +683,7 @@ function Functions.GetClosestPlayerToPos(pos)
     for _, plyId in pairs(players) do
         local targetPed = GetPlayerPed(plyId)
         local targetCoords = GetEntityCoords(targetPed)
-        local distance = #(pos - targetCoords)
+        local distance = #(vector3(pos.x, pos.y, pos.z) - targetCoords)
 
         if (closestDistance == -1 or closestDistance > distance) then
             closestPlayer = plyId
