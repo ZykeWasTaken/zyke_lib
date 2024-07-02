@@ -36,6 +36,7 @@ server_scripts {
     "server/main.lua",
     "server/functions.lua",
     "server/events.lua",
+    "server/callbacks.lua",
 
     "server/experimental/*", -- Dev & personal stuff
 }
