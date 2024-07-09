@@ -1290,3 +1290,22 @@ end
 function Functions.GetSessionId()
     return LocalPlayer.state.session or 0
 end
+
+---@param id string
+---@param key string
+---@param description string
+function Functions.RegisterKey(id, key, description, onPress, onRelease)
+    RegisterKeyMapping("+" .. id, description, "keyboard", key)
+
+    RegisterCommand("+" .. id, function()
+        TriggerEvent("zyke_lib:OnKeyPress", id)
+
+        if (onPress) then onPress() end
+    end, false)
+
+    RegisterCommand("-" .. id, function()
+        TriggerEvent("zyke_lib:OnKeyRelease", id)
+
+        if (onRelease) then onRelease() end
+    end, false)
+end
