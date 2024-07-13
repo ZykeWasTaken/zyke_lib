@@ -1295,7 +1295,11 @@ end
 ---@param key string
 ---@param description string
 function Functions.RegisterKey(id, key, description, onPress, onRelease)
-    RegisterKeyMapping("+" .. id, description, "keyboard", key)
+    local invoker = GetInvokingResource()
+    local _, endIdx = invoker:find("zyke_")
+    local scriptName = invoker:sub(endIdx + 1)
+
+    RegisterKeyMapping("+" .. id, "(" .. scriptName .. ") " .. description, "keyboard", key)
 
     RegisterCommand("+" .. id, function()
         TriggerEvent("zyke_lib:OnKeyPress", id)
