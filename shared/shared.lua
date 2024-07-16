@@ -209,7 +209,7 @@ function Functions.GetBossRanks(name, rankType)
             for key, value in pairs(job.grades) do
                 local grade = tonumber(key) or 0
 
-                if (grade > highestGrade) then
+                if (grade > highestGrade or highestKey == nil) then
                     highestGrade = grade
                     highestKey = key
                 end
