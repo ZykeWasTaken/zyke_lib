@@ -1017,6 +1017,17 @@ end
 ---@param licenseType string
 ---@return boolean
 function Functions.HasLicense(identifier, licenseType)
+    local translations = {
+        ["QBCore"] = {
+            ["car"] = "driver"
+        },
+        ["ESX"] = {
+            ["car"] = "drive"
+        }
+    }
+
+    licenseType = translations[Framework][licenseType]
+
     if (Framework == "QBCore") then
         local player = Functions.GetPlayer(identifier)
         if (not player) then return false end
