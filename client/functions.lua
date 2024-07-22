@@ -1294,12 +1294,15 @@ end
 ---@param id string
 ---@param key string
 ---@param description string
-function Functions.RegisterKey(id, key, description, onPress, onRelease)
+---@param onPress function?
+---@param onRelease function?
+---@param keyType string? @keyboard, mouse_button
+function Functions.RegisterKey(id, key, description, onPress, onRelease, keyType)
     local invoker = GetInvokingResource()
     local _, endIdx = invoker:find("zyke_")
     local scriptName = invoker:sub(endIdx + 1)
 
-    RegisterKeyMapping("+" .. id, "(" .. scriptName .. ") " .. description, "keyboard", key)
+    RegisterKeyMapping("+" .. id, "(" .. scriptName .. ") " .. description, keyType or "keyboard", key)
 
     RegisterCommand("+" .. id, function()
         TriggerEvent("zyke_lib:OnKeyPress", id)
