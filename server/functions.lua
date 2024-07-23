@@ -175,7 +175,7 @@ function Functions.GetPlayerItems(player, disableBundling)
     end
 
     if (Framework == "QBCore") then
-        local items = player.PlayerData.items -- UNTESTED
+        local items = player.PlayerData.items
 
         return Functions.FormatItemsFetch(items, disableBundling)
     elseif (Framework == "ESX") then
@@ -310,7 +310,7 @@ function Functions.GetPlayersOnJob(job, onDuty)
 
             return {}
         end
-    elseif (Framework == "ESX") then -- Untested
+    elseif (Framework == "ESX") then
         -- ESX doesn't have a default duty system, that's why we're not using it here
         -- If you do have it on your server, you can use the onDuty variable if it's needed in the script
         local players = {}
@@ -908,7 +908,7 @@ function Functions.PaySociety(job, amount)
         exports["qb-banking"]:AddMoney(job, amount)
 
         return true -- Always returns true, if the money is not added it will create an account to add the money to, does not return if anything fails
-    elseif (Framework == "ESX") then -- UNTESTED, Not used for any active releases yet
+    elseif (Framework == "ESX") then
         TriggerEvent("esx_addonaccount:getSharedAccount", job, function(account)
             if (account) then
                 account.addMoney(amount)
@@ -1036,7 +1036,7 @@ function Functions.HasLicense(identifier, licenseType)
         if (not licenses) then return false end
 
         return licenses[licenseType] or false
-    elseif (Framework == "ESX") then -- UNTESTED, Not used for any active releases yet
+    elseif (Framework == "ESX") then
         local source = Functions.GetSource(identifier)
         if (not source) then return false end
 

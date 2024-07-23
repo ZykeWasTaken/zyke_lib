@@ -255,7 +255,7 @@ function Functions.GetMoney(moneyType)
     moneyType = moneyType == nil and "cash" or moneyType -- If no moneyType is given, we're using "cash" as default
 
     if (Framework == "QBCore") then
-        return QBCore.Functions.GetPlayerData().money[moneyType] -- Untested
+        return QBCore.Functions.GetPlayerData().money[moneyType]
     elseif (Framework == "ESX") then
         moneyType = moneyType == "cash" and "money" or moneyType -- ESX uses "money" instead of "cash", so we're converting it here
         moneyType = moneyType == "dirty_cash" and "black_money" or moneyType -- ESX uses "black_money" instead of "dirty_cash", so we're converting it here

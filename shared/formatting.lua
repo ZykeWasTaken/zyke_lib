@@ -393,7 +393,7 @@ function Functions.FormatItemsFetch(tbl, disableBundling)
                 label = tbl.label,
                 weight = tbl.weight,
                 amount = tbl.count,
-                metadata = tbl.metadata -- Untested, should work if your inventory supports
+                metadata = tbl.metadata -- Should work if your inventory supports
             }
         end
     end
