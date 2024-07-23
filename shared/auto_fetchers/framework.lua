@@ -30,12 +30,11 @@ CreateThread(function()
         end
     end
 
-    -- Only ESX support at the moment
-    if (Framework == "ESX") then
-        local oxInventory = GetResourceState("ox_inventory")
-        if (oxInventory == "started") then
-            Inventory = "ox_inventory"
+    local oxInventory = GetResourceState("ox_inventory")
+    if (oxInventory == "started") then
+        Inventory = "ox_inventory"
 
+        if (Framework == "ESX") then
             ESX.Items = exports["ox_inventory"]:Items()
         end
     end
