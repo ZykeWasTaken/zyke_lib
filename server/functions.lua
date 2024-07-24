@@ -402,14 +402,18 @@ function Functions.EnoughWorkers(job, required)
     end
 end
 
-function Functions.CreateUseableItem(item, passed)
+function Functions.CreateUseableItem(item, func)
     CreateThread(function()
         while (Framework == nil) do Wait(100) end
 
         if (Framework == "QBCore") then
-            QBCore.Functions.CreateUseableItem(item, passed)
+            QBCore.Functions.CreateUseableItem(item, function(source, itemData)
+                func(source, itemData)
+            end)
         elseif (Framework == "ESX") then
-            ESX.RegisterUsableItem(item, passed)
+            ESX.RegisterUsableItem(item, function(source, itemName, itemData)
+                func(source, itemData)
+            end)
         end
     end)
 end
