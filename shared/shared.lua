@@ -559,3 +559,11 @@ function Functions.GetVehiclesInArea(coords, maxDistance, serverFetch)
         pos = coords
     })
 end
+
+function Functions.IsItemUnique(item)
+    if (Framework == "QBCore") then
+        return QBCore.Shared.Items[item].unique == true or QBCore.Shared.Items[item].stack == false
+    elseif (Framework == "ESX") then
+        return ESX.Items[item].unique
+    end
+end
