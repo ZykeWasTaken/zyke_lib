@@ -36,6 +36,8 @@ CreateThread(function()
 
         if (Framework == "ESX") then
             ESX.Items = exports["ox_inventory"]:Items()
+        else
+            QBCore.Shared.Items = exports["ox_inventory"]:Items()
         end
     end
 
