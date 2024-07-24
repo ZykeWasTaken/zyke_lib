@@ -2,7 +2,7 @@
 Download an experimental non-release version **not recommended unless you know what you are doing**. We constantly update this repository to make the development of Zyke Resources' scripts easier, and we don't always test all functionality on different servers using different frameworks. Head over to the release page for a stable release.
 
 ## Modified Servers
-Please be aware that heavily modified servers may cause our library to struggle without any adapting. Everything framework-relevant in our resources can be modified in our library, or in the unlocked files of the resource. If you are unsure if our resources will work for you, feel free to create a ticket in our Discord and we will assist you swiftly.
+Please be aware that heavily modified servers may cause our library to struggle without any adapting. Everything framework-dependant in our resources can be modified in our library, or in the unlocked files of the resource. If you are unsure if our resources will work for you, feel free to create a ticket in our Discord and we will assist you swiftly.
 
 ## Links
 -   [Documentation](https://docs.zykeresources.com/free-resources/zyke-lib)
