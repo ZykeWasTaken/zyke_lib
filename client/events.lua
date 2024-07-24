@@ -6,23 +6,23 @@ CreateThread(function()
     -- Catch inventory changes
     if (Framework == "QBCore") then
         RegisterNetEvent("QBCore:Player:SetPlayerData", function()
-            TriggerEvent("zyke_lib:InventoryUpdated")
-            TriggerServerEvent("zyke_lib:InventoryUpdated", plyId)
+            TriggerEvent("zyke_lib:InventoryUpdated", "update")
+            TriggerServerEvent("zyke_lib:InventoryUpdated", "update")
         end)
     elseif (Framework == "ESX") then
         RegisterNetEvent("esx:addInventoryItem", function()
-            TriggerEvent("zyke_lib:InventoryUpdated")
-            TriggerServerEvent("zyke_lib:InventoryUpdated", plyId)
+            TriggerEvent("zyke_lib:InventoryUpdated", "add")
+            TriggerServerEvent("zyke_lib:InventoryUpdated", "add")
         end)
 
         RegisterNetEvent("esx:removeInventoryItem", function()
-            TriggerEvent("zyke_lib:InventoryUpdated")
-            TriggerServerEvent("zyke_lib:InventoryUpdated", plyId)
+            TriggerEvent("zyke_lib:InventoryUpdated", "remove")
+            TriggerServerEvent("zyke_lib:InventoryUpdated", "remove")
         end)
 
         RegisterNetEvent("esx:setInventoryItem", function()
-            TriggerEvent("zyke_lib:InventoryUpdated")
-            TriggerServerEvent("zyke_lib:InventoryUpdated", plyId)
+            TriggerEvent("zyke_lib:InventoryUpdated", "update")
+            TriggerServerEvent("zyke_lib:InventoryUpdated", "update")
         end)
     end
 
