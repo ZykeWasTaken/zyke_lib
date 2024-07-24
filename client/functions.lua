@@ -73,7 +73,18 @@ function Functions.HasItem(item, amount)
     if (Framework == "QBCore") then
         local formatted = Functions.FormatItems(item, amount)
 
-        return QBCore.Functions.HasItem(formatted)
+        if (Inventory == "ox_inventory") then
+            for name, _amount in pairs(formatted) do
+                local hasItem = QBCore.Functions.HasItem(name, _amount)
+
+                if (hasItem == false) then return false end
+            end
+
+            return true
+        else
+            local hasItem = QBCore.Functions.HasItem(formatted)
+            return hasItem
+        end
     elseif (Framework == "ESX") then
         local formatted = Functions.FormatItems(item, amount)
         local hasItems = true
