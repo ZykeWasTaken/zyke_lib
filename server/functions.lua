@@ -141,8 +141,18 @@ function Functions.HasItem(player, item, amount)
         local source = Functions.GetSource(player)
         local formatted = Functions.FormatItems(item, amount)
 
-        local hasItem = QBCore.Functions.HasItem(source, formatted)
-        return hasItem
+        if (Inventory == "ox_inventory") then
+            for name, _amount in pairs(formatted) do
+                local hasItem = QBCore.Functions.HasItem(source, name, _amount)
+
+                if (hasItem == false) then return false end
+            end
+
+            return true
+        else
+            local hasItem = QBCore.Functions.HasItem(source, formatted)
+            return hasItem
+        end
 
         -- If your inventory doesn't support multiple items in a table, use the code below instead (Examples are c8re inventory)
         -- for name, _amount in pairs(formatted) do
