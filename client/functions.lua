@@ -312,22 +312,10 @@ function Functions.GetJob()
 
         return Functions.FormatJob(details)
     elseif (Framework == "ESX") then
-        -- TODO: Print out the ESX structure and re-make it, same as above with QB
-        local job = {}
+        local details = Functions.GetPlayerData()?.job
+        if (not details) then return nil end
 
-        if (Functions.GetPlayerData().job == nil) then
-            return nil
-        end
-
-        local playerData = Functions.GetPlayerData()
-
-        job.name = playerData?.job?.name or ""
-        job.label = playerData?.job?.label or ""
-        job.grade = playerData?.job?.grade or 0
-        job.grade_label = playerData?.job?.grade_label or ""
-        job.grade_name = playerData?.job?.grade_name or ""
-
-        return job
+        return Functions.FormatJob(details)
     end
 end
 
