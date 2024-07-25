@@ -297,6 +297,46 @@ function Functions.AddItem(player, item, amount, metadata)
     end
 end
 
+---@param plyId string | number | table -- Will convert
+---@param slot integer
+---@param metadata table
+function Functions.SetItemMetadata(plyId, slot, metadata)
+    if (type(plyId) ~= "number") then
+        plyId = Functions.GetSource(plyId)
+    end
+
+    if (not plyId) then return false, Functions.Debug("Player not found (CRITICAL!)") end
+
+    -- ox_inventory allows us to change one slot
+    if (Inventory == "ox_inventory") then
+        exports["ox_inventory"]:SetMetadata(plyId, slot, metadata)
+
+        return
+    end
+
+    -- If we are not using ox_inventory, we will have to fetch the inventory, make the modifications ourselves and set the inventory
+    if (Framework == "QBCore") then
+        -- We'll have to grab the raw QBCore inventoy and modify it, to make sure all the data is correct
+        local player = Functions.GetPlayer(plyId)
+        if (not player) then error("Player not found (CRITICAL!)") return false end
+
+        local inv = player.PlayerData.items
+
+        for i = 1, #inv do
+            if (inv[i].slot == slot) then
+                inv[i].info = metadata
+                break
+            end
+        end
+
+        player.Functions.SetPlayerData("items", inv)
+    elseif (Framework == "ESX") then
+        -- Note that ESX does not offer such a feature by default
+        -- If you are using ESX and any other inventory than ox_inventory, you will have to edit this yourself
+        error("ESX does not support setting item metadata, please use ox_inventory or implement your own inventory system")
+    end
+end
+
 function Functions.GetPlayersOnJob(job, onDuty)
     while (Framework == nil) do Wait(100) end
 
@@ -408,11 +448,11 @@ function Functions.CreateUseableItem(item, func)
 
         if (Framework == "QBCore") then
             QBCore.Functions.CreateUseableItem(item, function(source, itemData)
-                func(source, itemData)
+                func(source, Functions.FormatItemsFetch(itemData))
             end)
         elseif (Framework == "ESX") then
             ESX.RegisterUsableItem(item, function(source, itemName, itemData)
-                func(source, itemData)
+                func(source, Functions.FormatItemsFetch(itemData))
             end)
         end
     end)
