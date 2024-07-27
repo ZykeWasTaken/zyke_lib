@@ -2,9 +2,8 @@ CreateThread(function()
     while (Framework == nil) do Wait(100) end
 
     AddEventHandler("playerDropped", function()
-        local player = Functions.GetPlayer(source)
-        TriggerEvent("zyke_lib:PlayerDropped", player, "exit")  -- Old event, switched out to better name, kept for supporting older resources, also syncing client & server names
-        TriggerEvent("zyke_lib:OnCharacterLogout", player, "exit")
+        TriggerEvent("zyke_lib:PlayerDropped", source, "exit")  -- Old event, switched out to better name, kept for supporting older resources, also syncing client & server names
+        TriggerEvent("zyke_lib:OnCharacterLogout", source, "exit")
     end)
 
     if (Framework == "QBCore") then
