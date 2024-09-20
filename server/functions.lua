@@ -271,6 +271,19 @@ function Functions.RemoveItem(player, item, amount, metadata) -- TODO: Add qb-co
     end
 end
 
+---@param plyId integer
+---@param item string
+---@param amount integer
+---@param slot integer
+function Functions.RemoveFromSlot(plyId, item, amount, slot)
+    local player = Functions.GetPlayer(plyId)
+    if (not player) then return false, Functions.Debug("Player not found (CRITICAL!)") end
+
+    if (Inventory == "ox_inventory") then
+        exports["ox_inventory"]:RemoveItem(plyId, item, amount, nil, slot)
+    end
+end
+
 function Functions.AddItem(player, item, amount, metadata)
     if (type(player) ~= "table") then
         player = Functions.GetPlayer(player)
