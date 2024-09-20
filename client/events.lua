@@ -72,4 +72,21 @@ CreateThread(function()
     RegisterNetEvent("zyke_lib:Notify", function(msg, type, length)
         Functions.Notify(msg, type, length)
     end)
+
+    -- UI stuff
+    -- Same things fetched over and over from different resources, so we'll just do it here
+    RegisterNUICallback("Eventhandler", function(passed, cb)
+        local event <const> = passed.event
+        local data <const> = passed.data
+
+        local e = event
+
+        -- Event to fetch current character data for character context
+        if (e == "FetchCharacter") then
+            return cb(Functions.GetPlayerDetails())
+        end
+
+        error("Unknown event from " .. data._request .. " when attempting callback to NUI: " .. e)
+        cb(nil)
+    end)
 end)
