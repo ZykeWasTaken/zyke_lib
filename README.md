@@ -9,10 +9,10 @@ Please be aware that heavily modified servers may cause our library to struggle 
 -   [Discord](https://discord.zykeresources.com/)
 
 ## Inventory Support
+- **Note:** There may be changes for specific resources, view each resources' dependencies carefully
 - Regular ESX inventories (requires metadata)
 - Regular QBCore inventories
 - Full Support for ox_inventory
-- **Note:** There may be changes for specific resources, view each resources' dependencies carefully
 
 ## Target Support
 - ox_target
