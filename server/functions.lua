@@ -1,3 +1,9 @@
+local function inventoryCompWarning()
+    error("A function has been triggered that does not exist for your inventory, or does not exist by default.")
+    error("If you inventory supports the function, but the base of your framework does not, please manually install it in zyke_lib.")
+    error("If your inventory does not support this function, please refer to the compatibility requirements for this resource.")
+end
+
 -- This is free to change, you can see all values used if you want to change it in any way
 -- Keep in mind, we will not provide support for any changes made to the snippet below
 local logQueue = {}
@@ -276,12 +282,35 @@ end
 ---@param amount integer
 ---@param slot integer
 function Functions.RemoveFromSlot(plyId, item, amount, slot)
+    if (Inventory == "ox_inventory") then
+        exports["ox_inventory"]:RemoveItem(plyId, item, amount, nil, slot)
+
+        return
+    end
+
     local player = Functions.GetPlayer(plyId)
     if (not player) then return false, Functions.Debug("Player not found (CRITICAL!)") end
 
-    if (Inventory == "ox_inventory") then
-        exports["ox_inventory"]:RemoveItem(plyId, item, amount, nil, slot)
+    if (Framework == "QBCore") then
+        local inv = player.PlayerData.items
+
+        for i = 1, #inv do
+            if (inv[i].slot == slot) then
+                inv[i].amount = inv[i].amount - amount
+                if (inv[i].amount <= 0) then
+                    inv[i] = nil
+                end
+
+                break
+            end
+        end
+
+        player.Functions.SetPlayerData("items", inv)
+
+        return
     end
+
+    inventoryCompWarning()
 end
 
 function Functions.AddItem(player, item, amount, metadata)
