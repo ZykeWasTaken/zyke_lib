@@ -67,7 +67,9 @@ function Functions.FormatCharacterDetails(character, online)
         formatted.bank = character.PlayerData.money["bank"] or 0
         formatted.dirty_cash = character.PlayerData.money["dirty_cash"] or 0
         formatted.online = online or false
+
         -- TODO: Match ESX (Future proofing)
+        -- TODO: Add position fetching
     elseif (Framework == "ESX") then
         formatted.identifier = character.identifier
         formatted.source = character.source
@@ -98,6 +100,30 @@ function Functions.FormatCharacterDetails(character, online)
                     formatted.cash = account.money
                 end
             end
+        end
+
+        if (online) then
+            -- Will not work when handled from client
+            -- However, despite the file being shared it is never used on the client directly
+            -- Usually send from client to fetch everything server-sided to have it synced
+
+            local plyPed = GetPlayerPed(character.source)
+            local plyPos = GetEntityCoords(plyPed)
+            local w = GetEntityHeading(plyPed)
+
+            formatted.position = {
+                x = plyPos.x,
+                y = plyPos.y,
+                z = plyPos.z,
+                w = w
+            }
+        else
+            formatted.position = {
+                x = character.position.x,
+                y = character.position.y,
+                z = character.position.z,
+                w = character.position.heading
+            }
         end
     end
 
