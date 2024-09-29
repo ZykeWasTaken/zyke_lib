@@ -1315,3 +1315,19 @@ function Functions.RegisterKey(id, key, description, onPress, onRelease, keyType
         if (onRelease) then onRelease() end
     end, false)
 end
+
+-- Fading of vehicles that are queued to be removed
+AddStateBagChangeHandler("removing", nil, function(bagName, _, value)
+    local entity = GetEntityFromStateBagName(bagName)
+    if (entity == 0 or not DoesEntityExist(entity)) then return end
+
+    local isVeh = IsEntityAVehicle(entity)
+    if (not isVeh) then return end
+
+    SetEntityCollision(entity, false, true)
+    for i = 255, 0, -1 do
+        Wait(math.floor(255 / value))
+
+        SetEntityAlpha(entity, i, false)
+    end
+end)
