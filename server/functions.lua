@@ -48,16 +48,6 @@ function SendLog()
             handlerMsg = (("<@" .. handler?.discord .. ">") or "unknown") .. " | " .. (handler?.identifier or "unknown") .. " | " .. (handler?.firstname or "unknown") .. " " .. (handler?.lastname or "unknown")
         end
 
-        -- local getFileName = function()
-        --     local uniqueNumber = tostring(math.random(100000000, 999999999))
-        --     local path = "/server/logs/" .. scriptName .. "/" .. action .. "/"
-        --     local name = uniqueNumber .. ".json"
-
-        --     return path, name
-        -- end
-
-        -- local filePath, fileName = getFileName()
-
         local basicInformationStr = ""
         basicInformationStr = basicInformationStr .. "Script: " .. scriptName .. "\n"
         basicInformationStr = basicInformationStr .. "Action: " .. action .. "\n"
@@ -107,10 +97,6 @@ function SendLog()
             avatar_url = avatarUrl,
         }
 
-        -- if (Config.ExtensiveLogs == true) then
-        --     CreateExtensiveLog(filePath, fileName, rawData)
-        -- end
-
         PerformHttpRequest(webhook, function(err, text, headers) end, 'POST', json.encode(payload), { ['Content-Type'] = 'application/json' })
     end
 
@@ -125,16 +111,6 @@ function SendLog()
     end
     inLoop = false
 end
-
--- function CreateExtensiveLog(filePath, fileName, data)
---     local location = string.gsub(GetResourcePath(GetCurrentResourceName()), "^(.+\\)[^\\]+$", "%1") .. filePath
-
---     os.execute("mkdir " .. location:gsub("/", "\\"))
---     local file = io.open(location .. fileName, "w")
---     -- if (not file) then return false end
---     file:write(json.encode(data, {indent = true}))
---     file:close()
--- end
 
 function Functions.HasItem(player, item, amount)
     if (type(player) ~= "table") then
