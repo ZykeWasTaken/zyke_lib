@@ -4,112 +4,151 @@ local function inventoryCompWarning()
     error("If your inventory does not support this function, please refer to the compatibility requirements for this resource.")
 end
 
+-- Chacking player details
+-- Note that the player identifiers such as Discord id can not be guaranteed
+---@class HandlerDetails
+---@field firstname string
+---@field lastname string
+---@field identifier string
+---@field source integer
+---@field steamid string?
+---@field license string?
+---@field discord string?
+---@field xbl string?
+---@field liveid string?
+---@field ip string?
+
+---@type table<string, HandlerDetails>
+local handlers = {}
+
+---@param scriptName string
+---@param action string
+---@param handler string | integer | "server" @Identifier, player id, "server"
+---@param message string
+---@param rawData table | nil
+---@param webhook string? @Deprecated, kept for support
+local function sendLog(scriptName, action, handler, message, rawData, webhook)
+    ---@param resName string
+    ---@param _action string
+    ---@param providedUrl string? @Deprecated, storing all webhooks in zyke_lib now
+    local function getWebhook(resName, _action, providedUrl)
+        local _webhook = Webhooks?[resName]?[_action]
+        if (_webhook) then return _webhook end
+
+        return providedUrl -- Kept for older reasons
+    end
+
+    local bot = {
+        username = "Zyke Resources' Logs",
+        avatar = "https://cdn.discordapp.com/attachments/1048900415967744031/1117129086104514721/New_Logo.png",
+        webhook = getWebhook(scriptName, action, webhook)
+    }
+
+    if (not bot.webhook or #bot.webhook <= 0) then return end
+
+    local handlerMsg = ""
+    if (handler == nil or handler == "server") then
+        handlerMsg = "Server"
+    else
+        local isIdentifier = type(handler) == "string"
+        if (not isIdentifier) then
+            handler = Functions.GetIdentifier(handler)
+        end
+
+        local handlerData = handlers[handler]
+
+        handlerMsg = handlerMsg .. (handlerData.discord and ("<@%s>"):format(handlerData.discord) or "Missing Discord") .. " | "
+        handlerMsg = handlerMsg .. (handlerData.identifier and handlerData.identifier or "Missing Identifier") .. " | "
+        handlerMsg = handlerMsg .. (handlerData.firstname and handlerData.firstname or "Missing first name") .. " "
+        handlerMsg = handlerMsg .. (handlerData.lastname and handlerData.lastname or "Missing last name")
+    end
+
+    local basicInformationStr = ""
+    basicInformationStr = basicInformationStr .. "Script: " .. scriptName .. "\n"
+    basicInformationStr = basicInformationStr .. "Action: " .. action .. "\n"
+    basicInformationStr = basicInformationStr .. "Handler: " .. handlerMsg
+
+    local fields = {
+        {
+            ["name"] = "Basic Information",
+            ["value"] = basicInformationStr
+        },
+        {
+            ["name"] = "Message",
+            ["value"] = message
+        },
+    }
+
+    -- Append the raw data if it exists
+    if (rawData) then
+        fields[#fields+1] = {
+            ["name"] = "Raw Data",
+            ["value"] = "```" .. json.encode(rawData, {indent = false}) .. "```",
+        }
+    end
+
+    local embeds = {
+        {
+            ["type"] = "rich",
+            ["fields"] = fields,
+            ["color"] = "3447003", -- https://gist.github.com/thomasbnt/b6f455e2c7d743b796917fa3c205f812
+            ["footer"]=  {
+                ["icon_url"] = "https://cdn.discordapp.com/attachments/1048900415967744031/1081687600080879647/toppng.com-browser-history-clock-icon-vector-white-541x541.png",
+                ["text"] = "Sent: " .. os.date(),
+            },
+        }
+    }
+
+    local payload = {
+        embeds = embeds,
+        username = bot.username,
+        avatar_url = bot.avatar
+    }
+
+    PerformHttpRequest(bot.webhook, function(err, text, headers)
+        -- print(err, text, json.encode(headers))
+        if (err ~= 204) then
+            print(("Logging failed for webhook: %s"):format(bot.webhook))
+            Functions.Debug(("Logging failed for webhook: %s"):format(bot.webhook))
+        end
+    end, "POST",json.encode(payload), {["Content-Type"] = "application/json"})
+end
+
 -- This is free to change, you can see all values used if you want to change it in any way
 -- Keep in mind, we will not provide support for any changes made to the snippet below
 local logQueue = {}
-local inLoop = false
-local handlers = {} -- Caches handler data in order to prevent constant looping and easy access, could not find any way to natively do this in QBCore so I made my own solution
+local inLogLoop = false
+---@class LogData
+---@field scriptName string? @Not originally provided, but gets added
+---@field action string
+---@field handler string
+---@field message string
+---@field rawData table?
+---@field webhook string? @Support for old resources
+
+---@param passed LogData
 function Functions.Log(passed)
-    if (type(passed) ~= "table") then return end -- Make sure the passed argument is a table to continue
-    if (passed.logsEnabled == false) or (passed.logsEnabled == nil) then return end -- Make sure logs are enabled in that resource to continue
+    if (type(passed) ~= "table") then error("You are attempting to log invalid data") return end -- Make sure the passed argument is a table to continue
 
     passed.scriptName = GetInvokingResource() -- Get the name of the resource that called the function
-    table.insert(logQueue, passed)
+
+    logQueue[#logQueue+1] = passed
+
+    if (inLogLoop) then return end
+
+    inLogLoop = true
     CreateThread(function()
-        SendLog()
+        while (#logQueue > 0) do
+            local log = logQueue[1]
+
+            Functions.Debug("Sending log: " .. log.action, Config.Debug)
+            sendLog(log.scriptName, log.action, log.handler, log.message, log.rawData, log.webhook)
+            table.remove(logQueue, 1)
+            Wait(350) -- Prevents ratelimiting
+        end
+
+        inLogLoop = false
     end)
-end
-
--- Send queued logs
-function SendLog()
-    if (inLoop) then return end
-    local function send(passed)
-        -- Bot
-        local username = "Zyke Resources' Logs"
-        local avatarUrl = "https://cdn.discordapp.com/attachments/1048900415967744031/1117129086104514721/New_Logo.png"
-        local webhook = passed.webhook or "" -- Insert a fallback webhook here, meaning if the resource doesn't have a webhook set, it will use this one instead
-
-        -- Temp, before all resources migrate
-        local isWebhook = webhook:find("discord.com")
-        if (not isWebhook) then
-            webhook = Webhooks[passed.scriptName][passed.action]
-        end
-
-        -- Message
-        local scriptName = passed.scriptName or "Unknown Script"
-        local message = passed.message or "Empty Message"
-        local action = passed.action or "Unknown Action"
-        local handler = handlers[passed?.handler] or handlers[Functions.GetIdentifier(passed?.handler)] or "server"
-        local handlerMsg = "None"
-
-        if (type(handler) ~= "table" and string.lower(handler) == "server") then
-            handlerMsg = "Server"
-        else
-            handlerMsg = (("<@" .. handler?.discord .. ">") or "unknown") .. " | " .. (handler?.identifier or "unknown") .. " | " .. (handler?.firstname or "unknown") .. " " .. (handler?.lastname or "unknown")
-        end
-
-        local basicInformationStr = ""
-        basicInformationStr = basicInformationStr .. "Script: " .. scriptName .. "\n"
-        basicInformationStr = basicInformationStr .. "Action: " .. action .. "\n"
-        basicInformationStr = basicInformationStr .. "Handler: " .. handlerMsg
-
-        -- rawData additions
-        local rawData = passed.rawData
-        local encodedRawData = json.encode(rawData, {indent = false}) -- In large logs you may experience up to 2.5x more characters used if you indent, hence why it's disabled
-
-        if (#encodedRawData > 1000) then
-            encodedRawData = json.encode({
-                ["error"] = "Log too large, will hit the character limit.",
-                ["logSize"] = #encodedRawData,
-            }, {indent = false})
-        end
-
-        local field1 = {
-            ["name"] = "Basic Information",
-            ["value"] = basicInformationStr,
-        }
-
-        local field2 = {
-            ["name"] = "Message",
-            ["value"] = message,
-        }
-
-        local field3 = {
-            ["name"] = "Raw Data",
-            ["value"] = "```" .. encodedRawData .. "```",
-        }
-
-        local embeds = {
-            {
-                ["type"] = "rich",
-                ["fields"] = {field1, field2, field3},
-                ["color"] = "3447003", -- https://gist.github.com/thomasbnt/b6f455e2c7d743b796917fa3c205f812
-                ["footer"]=  {
-                    ["icon_url"] = "https://cdn.discordapp.com/attachments/1048900415967744031/1081687600080879647/toppng.com-browser-history-clock-icon-vector-white-541x541.png",
-                    ["text"] = "Sent: " .. os.date(),
-                },
-            }
-        }
-
-        local payload = {
-            embeds = embeds,
-            username = username,
-            avatar_url = avatarUrl,
-        }
-
-        PerformHttpRequest(webhook, function(err, text, headers) end, 'POST', json.encode(payload), { ['Content-Type'] = 'application/json' })
-    end
-
-    inLoop = true
-    while (#logQueue > 0) do
-        local log = logQueue[1]
-
-        Functions.Debug("Sending log: " .. log.action, Config.Debug)
-        send(log)
-        table.remove(logQueue, 1)
-        Wait(350) -- Prevents ratelimiting
-    end
-    inLoop = false
 end
 
 function Functions.HasItem(player, item, amount)
