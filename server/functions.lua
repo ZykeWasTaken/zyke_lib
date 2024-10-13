@@ -306,6 +306,12 @@ function Functions.RemoveFromSlot(plyId, item, amount, slot)
     local player = Functions.GetPlayer(plyId)
     if (not player) then return false, Functions.Debug("Player not found (CRITICAL!)") end
 
+    if (Inventory == "qs-inventory") then
+        player.removeInventoryItem(item, amount, nil, slot)
+
+        return
+    end
+
     if (Framework == "QBCore") then
         local inv = player.PlayerData.items
 
@@ -502,6 +508,7 @@ end
 function Functions.CreateUseableItem(item, func)
     CreateThread(function()
         while (Framework == nil) do Wait(100) end
+        while (Inventory == nil) do Wait(100) end
 
         if (Framework == "QBCore") then
             QBCore.Functions.CreateUseableItem(item, function(source, itemData)
@@ -509,7 +516,13 @@ function Functions.CreateUseableItem(item, func)
             end)
         elseif (Framework == "ESX") then
             ESX.RegisterUsableItem(item, function(source, itemName, itemData)
-                func(source, Functions.FormatItemsFetch(itemData))
+                local _itemData = itemData
+
+                if (Inventory == "qs-inventory") then
+                    _itemData = itemName
+                end
+
+                func(source, Functions.FormatItemsFetch(_itemData))
             end)
         end
     end)
