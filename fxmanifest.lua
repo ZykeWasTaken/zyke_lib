@@ -14,6 +14,7 @@ shared_scripts {
     "shared/config.lua",
     "shared/shared.lua",
     "shared/auto_fetchers/framework.lua",
+    "shared/auto_fetchers/inventory.lua",
     "shared/auto_fetchers/targeting.lua",
     "shared/auto_fetchers/gang.lua",
     "shared/auto_fetchers/death.lua",
