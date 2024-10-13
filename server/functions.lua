@@ -208,9 +208,17 @@ function Functions.GetPlayerItems(player, disableBundling)
     if (Framework == "QBCore") then
         local items = player.PlayerData.items
 
+        if (Inventory == "qs-inventory") then
+            items = exports["qs-inventory"]:GetInventory(Functions.GetSource(player))
+        end
+
         return Functions.FormatItemsFetch(items, disableBundling)
     elseif (Framework == "ESX") then
         local items = player.inventory
+
+        if (Inventory == "qs-inventory") then
+            items = exports["qs-inventory"]:GetInventory(Functions.GetSource(player))
+        end
 
         return Functions.FormatItemsFetch(items, disableBundling)
     end
@@ -373,6 +381,12 @@ function Functions.SetItemMetadata(plyId, slot, metadata)
     -- ox_inventory allows us to change one slot
     if (Inventory == "ox_inventory") then
         exports["ox_inventory"]:SetMetadata(plyId, slot, metadata)
+
+        return
+    end
+
+    if (Inventory == "qs-inventory") then
+        exports["qs-inventory"]:SetItemMetadata(plyId, slot, metadata)
 
         return
     end
