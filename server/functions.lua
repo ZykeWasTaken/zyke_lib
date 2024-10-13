@@ -57,10 +57,10 @@ local function sendLog(scriptName, action, handler, message, rawData, webhook)
 
         local handlerData = handlers[handler]
 
-        handlerMsg = handlerMsg .. (handlerData.discord and ("<@%s>"):format(handlerData.discord) or "Missing Discord") .. " | "
-        handlerMsg = handlerMsg .. (handlerData.identifier and handlerData.identifier or "Missing Identifier") .. " | "
-        handlerMsg = handlerMsg .. (handlerData.firstname and handlerData.firstname or "Missing first name") .. " "
-        handlerMsg = handlerMsg .. (handlerData.lastname and handlerData.lastname or "Missing last name")
+        handlerMsg = handlerMsg .. (handlerData?.discord and ("<@%s>"):format(handlerData.discord) or "Missing Discord") .. " | "
+        handlerMsg = handlerMsg .. (handlerData?.identifier and handlerData.identifier or "Missing Identifier") .. " | "
+        handlerMsg = handlerMsg .. (handlerData?.firstname and handlerData.firstname or "Missing first name") .. " "
+        handlerMsg = handlerMsg .. (handlerData?.lastname and handlerData.lastname or "Missing last name")
     end
 
     local basicInformationStr = ""
