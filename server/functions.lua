@@ -393,11 +393,15 @@ function Functions.SetItemMetadata(plyId, slot, metadata)
         end
 
         player.Functions.SetPlayerData("items", inv)
+
+        return
     elseif (Framework == "ESX") then
         -- Note that ESX does not offer such a feature by default
         -- If you are using ESX and any other inventory than ox_inventory, you will have to edit this yourself
         error("ESX does not support setting item metadata, please use ox_inventory or implement your own inventory system")
     end
+
+    inventoryCompWarning()
 end
 
 function Functions.GetPlayersOnJob(job, onDuty)
