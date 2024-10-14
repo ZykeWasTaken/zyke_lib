@@ -80,7 +80,7 @@ local function sendLog(scriptName, action, handler, message, rawData, webhook)
     }
 
     -- Append the raw data if it exists
-    if (rawData) then
+    if (rawData and Functions.CountTable(rawData) > 0) then
         fields[#fields+1] = {
             ["name"] = "Raw Data",
             ["value"] = "```" .. json.encode(rawData, {indent = false}) .. "```",
