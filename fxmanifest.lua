@@ -2,7 +2,7 @@ fx_version "cerulean"
 game "gta5"
 lua54 "yes"
 author "realzyke"
-version "1.0.18"
+version "1.0.19"
 
 ui_page "javascript/index.html"
 
@@ -14,6 +14,7 @@ shared_scripts {
     "shared/config.lua",
     "shared/shared.lua",
     "shared/auto_fetchers/framework.lua",
+    "shared/auto_fetchers/inventory.lua",
     "shared/auto_fetchers/targeting.lua",
     "shared/auto_fetchers/gang.lua",
     "shared/auto_fetchers/death.lua",

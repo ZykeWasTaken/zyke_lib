@@ -208,9 +208,17 @@ function Functions.GetPlayerItems(player, disableBundling)
     if (Framework == "QBCore") then
         local items = player.PlayerData.items
 
+        if (Inventory == "qs-inventory") then
+            items = exports["qs-inventory"]:GetInventory(Functions.GetSource(player))
+        end
+
         return Functions.FormatItemsFetch(items, disableBundling)
     elseif (Framework == "ESX") then
         local items = player.inventory
+
+        if (Inventory == "qs-inventory") then
+            items = exports["qs-inventory"]:GetInventory(Functions.GetSource(player))
+        end
 
         return Functions.FormatItemsFetch(items, disableBundling)
     end
@@ -306,6 +314,12 @@ function Functions.RemoveFromSlot(plyId, item, amount, slot)
     local player = Functions.GetPlayer(plyId)
     if (not player) then return false, Functions.Debug("Player not found (CRITICAL!)") end
 
+    if (Inventory == "qs-inventory") then
+        player.removeInventoryItem(item, amount, nil, slot)
+
+        return
+    end
+
     if (Framework == "QBCore") then
         local inv = player.PlayerData.items
 
@@ -371,6 +385,12 @@ function Functions.SetItemMetadata(plyId, slot, metadata)
         return
     end
 
+    if (Inventory == "qs-inventory") then
+        exports["qs-inventory"]:SetItemMetadata(plyId, slot, metadata)
+
+        return
+    end
+
     -- If we are not using ox_inventory, we will have to fetch the inventory, make the modifications ourselves and set the inventory
     if (Framework == "QBCore") then
         -- We'll have to grab the raw QBCore inventoy and modify it, to make sure all the data is correct
@@ -387,11 +407,15 @@ function Functions.SetItemMetadata(plyId, slot, metadata)
         end
 
         player.Functions.SetPlayerData("items", inv)
+
+        return
     elseif (Framework == "ESX") then
         -- Note that ESX does not offer such a feature by default
         -- If you are using ESX and any other inventory than ox_inventory, you will have to edit this yourself
         error("ESX does not support setting item metadata, please use ox_inventory or implement your own inventory system")
     end
+
+    inventoryCompWarning()
 end
 
 function Functions.GetPlayersOnJob(job, onDuty)
@@ -502,6 +526,7 @@ end
 function Functions.CreateUseableItem(item, func)
     CreateThread(function()
         while (Framework == nil) do Wait(100) end
+        while (Inventory == nil) do Wait(100) end
 
         if (Framework == "QBCore") then
             QBCore.Functions.CreateUseableItem(item, function(source, itemData)
@@ -509,7 +534,13 @@ function Functions.CreateUseableItem(item, func)
             end)
         elseif (Framework == "ESX") then
             ESX.RegisterUsableItem(item, function(source, itemName, itemData)
-                func(source, Functions.FormatItemsFetch(itemData))
+                local _itemData = itemData
+
+                if (Inventory == "qs-inventory") then
+                    _itemData = itemName
+                end
+
+                func(source, Functions.FormatItemsFetch(_itemData))
             end)
         end
     end)

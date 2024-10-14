@@ -405,6 +405,15 @@ function Functions.FormatItemsFetch(tbl, disableBundling)
             metadata = tbl.metadata,
             slot = tbl.slot
         }
+    elseif (Inventory == "qs-inventory") then
+        return {
+            name = tbl.name,
+            label = tbl.label,
+            weight = tbl.weight,
+            amount = tbl.count or tbl.amount,
+            metadata = tbl.info,
+            slot = tbl.slot
+        }
     else
         if (Framework == "QBCore") then
             formatted = {
