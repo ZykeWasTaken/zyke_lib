@@ -315,7 +315,7 @@ function Functions.RemoveFromSlot(plyId, item, amount, slot)
     if (not player) then return false, Functions.Debug("Player not found (CRITICAL!)") end
 
     if (Inventory == "qs-inventory") then
-        player.removeInventoryItem(item, amount, nil, slot)
+        exports["qs-inventory"]:RemoveItem(plyId, item, amount, slot)
 
         return
     end
