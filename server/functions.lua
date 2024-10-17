@@ -1311,6 +1311,57 @@ function Functions.GetPlayerSessionId(playerId)
     return nil
 end
 
+-- This is a multi-solution to ensuring certain metadata exists for select items
+-- If your inventory provides another solution, we encourage you to use it, to prevent needing to listen to these events
+local ensuredMetadata = {}
+
+---@param item string @Item name
+---@param metadata table
+function Functions.EnsureMetadata(item, metadata)
+    -- TODO merge old data with new, if different scripts wants to apply data
+    ensuredMetadata[item] = metadata
+end
+
+RegisterNetEvent("zyke_lib:InventoryUpdated", function(action)
+    if (not Functions.DoesTableHaveData(ensuredMetadata)) then return end
+
+    local plyId = source
+
+    if (action == "add" or action == "update") then
+        local plyInv = Functions.GetPlayerItems(plyId, true)
+
+        for i = 1, #plyInv do
+            local item = plyInv[i]
+            local name = item.name
+
+            if (ensuredMetadata[name] == nil) then goto continue end
+
+            if (not item.metadata) then item.metadata = {} end
+
+            local newMetadata = {}
+            local added = 0
+            for metaKey, metaValue in pairs(ensuredMetadata[name]) do
+                local metadata = item.metadata[metaKey]
+
+                if (not metadata) then
+                    added += 1
+                end
+
+                local newValue = metadata == nil and metaValue or metadata
+
+                newMetadata[metaKey] = newValue
+            end
+
+            if (added > 0) then
+                Functions.SetItemMetadata(plyId, item.slot, newMetadata)
+                Functions.Debug(("Ensured missing metadata for %s."):format(name))
+            end
+
+            ::continue::
+        end
+    end
+end)
+
 CreateThread(function()
     Wait(1000)
 
