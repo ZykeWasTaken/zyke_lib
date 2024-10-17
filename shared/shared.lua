@@ -31,6 +31,16 @@ function Functions.CountTable(tbl)
     return count
 end
 
+function Functions.DoesTableHaveData(tbl)
+    if (not tbl) then return false end
+
+    for k in pairs(tbl) do
+        return true
+    end
+
+    return false
+end
+
 ---@param tbl table -- Needs to be an array
 ---@param desiredString string
 ---@return boolean, number | nil
