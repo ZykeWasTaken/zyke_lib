@@ -387,7 +387,7 @@ function Functions.FormatItemsFetch(tbl, disableBundling)
                 local existingIdx = itemIdxs[item.name]
 
                 if (existingIdx) then
-                    formatted[existingIdx].amount += item.mount -- If item exists, add the amounts together
+                    formatted[existingIdx].amount += item.amount -- If item exists, add the amounts together
                 else
                     formatted[#formatted+1] = item -- Add the new item
                     itemIdxs[item.name] = #formatted -- Register the index
