@@ -2,7 +2,7 @@ fx_version "cerulean"
 game "gta5"
 lua54 "yes"
 author "realzyke"
-version "1.0.20"
+version "1.0.21"
 
 ui_page "javascript/index.html"
 
