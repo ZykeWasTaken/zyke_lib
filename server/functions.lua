@@ -428,9 +428,18 @@ function Functions.GetInventorySlot(plyId, slot)
         return Functions.FormatItemsFetch(item, true)
     end
 
-    -- TODO:
-    -- qs-inventory
-    -- qb-core
+    -- QB & Any
+    -- ESX & qs-inventory
+    if ((Framework == "QBCore") or (Framework == "ESX" and Inventory == "qs-inventory")) then
+        local playerItems = Functions.GetPlayerItems(plyId, true)
+        for i = 1, #playerItems do
+            if (playerItems[i].slot == slot) then
+                return playerItems[i]
+            end
+        end
+
+        return nil
+   end
 
     inventoryCompWarning()
 end
