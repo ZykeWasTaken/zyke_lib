@@ -418,6 +418,23 @@ function Functions.SetItemMetadata(plyId, slot, metadata)
     inventoryCompWarning()
 end
 
+---@param plyId integer
+---@param slot integer
+---@return table | nil
+function Functions.GetInventorySlot(plyId, slot)
+    if (Inventory == "ox_inventory") then
+        local item = exports["ox_inventory"]:GetSlot(plyId, slot)
+
+        return Functions.FormatItemsFetch(item, true)
+    end
+
+    -- TODO:
+    -- qs-inventory
+    -- qb-core
+
+    inventoryCompWarning()
+end
+
 function Functions.GetPlayersOnJob(job, onDuty)
     while (Framework == nil) do Wait(100) end
 
