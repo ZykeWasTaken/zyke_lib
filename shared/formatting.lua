@@ -355,86 +355,58 @@ function Functions.FormatGangDetails(details)
     return {}
 end
 
---[[
-    Supports the following structure:
-
-    {name = "test", label = "Test"}
-    {{name = "test", label = "Test"}, {name = "test2", label = "Test2"}}
-]]
+-- TODO: Verify the bundling, it seems to only be part of zyke_catalytic, which is not released yet
+---@class FormattedItem
+---@field name string
+---@field label string
+---@field amount integer
+---@field weight number
+---@field metadata table<string, any> | nil
+---@field slot integer
 
 ---@param tbl table
----@param disableBundling boolean? -- Set to false to disable amount bundling, if you leave it as is or set to true, it will bundle the amounts together for all your items
----@return table
+---@param disableBundling boolean?
+---@return FormattedItem | FormattedItem[]
 function Functions.FormatItemsFetch(tbl, disableBundling)
-    local formatted = {}
-    local itemIndexes = {} -- Key, index of items in the formatted table, keeps track and optimizes performance for bundling
-    local isStarter = #tbl > 0
-    local useBundle = disableBundling ~= true
+    local isArray = Functions.IsArray(tbl)
 
-    if (isStarter) then
-        for _, itemData in pairs(tbl) do
+    if (isArray) then
+        ---@type FormattedItem[]
+        local formatted = {}
+
+        ---@type table<string, integer> @Item name, idx
+        local itemIdxs = {}
+
+        for i, itemData in pairs(tbl) do
             local item = Functions.FormatItemsFetch(itemData, disableBundling)
-            local couldBundle = false
 
-            if (useBundle) then
-                local index = itemIndexes[item.name]
-                if (index) then
-                    formatted[index].amount = formatted[index].amount + item.amount
-                    couldBundle = true
+            if (disableBundling) then
+                formatted[#formatted+1] = item -- Simply insert if no bundling
+            else
+                -- If bundling...
+                local existingIdx = itemIdxs[item.name]
+
+                if (existingIdx) then
+                    formatted[existingIdx].amount += item.mount -- If item exists, add the amounts together
+                else
+                    formatted[#formatted+1] = item -- Add the new item
+                    itemIdxs[item.name] = #formatted -- Register the index
                 end
-            end
-
-            if (not couldBundle) then
-                if (useBundle) then
-                    itemIndexes[item.name] = #formatted + 1
-                end
-
-                formatted[#formatted+1] = item
             end
         end
 
         return formatted
     end
 
-    if (Inventory == "ox_inventory") then
-        formatted = {
-            name = tbl.name,
-            label = tbl.label,
-            weight = tbl.weight,
-            amount = tbl.count,
-            metadata = tbl.metadata,
-            slot = tbl.slot
-        }
-    elseif (Inventory == "qs-inventory") then
-        return {
-            name = tbl.name,
-            label = tbl.label,
-            weight = tbl.weight,
-            amount = tbl.count or tbl.amount,
-            metadata = tbl.info,
-            slot = tbl.slot
-        }
-    else
-        if (Framework == "QBCore") then
-            formatted = {
-                name = tbl.name,
-                label = tbl.label,
-                weight = tbl.weight,
-                amount = tbl.amount,
-                metadata = tbl.info,
-                slot = tbl.slot
-            }
-        elseif (Framework == "ESX") then
-            formatted = {
-                name = tbl.name,
-                label = tbl.label,
-                weight = tbl.weight,
-                amount = tbl.count,
-                metadata = tbl.metadata, -- Should work if your inventory supports
-                slot = tbl.slot
-            }
-        end
-    end
+    ---@type FormattedItem
+    local formatted = {
+        name = tbl.name,
+        label = tbl.label,
+        amount = tbl.amount or tbl.count,
+        weight = tbl.weight,
+        metadata = tbl.metadata or tbl.info,
+        slot = tbl.slot,
+    }
 
     return formatted
 end

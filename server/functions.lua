@@ -323,10 +323,11 @@ function Functions.RemoveFromSlot(plyId, item, amount, slot)
     if (Framework == "QBCore") then
         local inv = player.PlayerData.items
 
-        for i = 1, #inv do
-            if (inv[i].slot == slot) then
-                inv[i].amount = inv[i].amount - amount
-                if (inv[i].amount <= 0) then
+        for i, itemData in pairs(inv) do
+            if (itemData.slot == slot) then
+                itemData.amount = itemData.amount - amount
+
+                if (itemData.amount <= 0) then
                     inv[i] = nil
                 end
 
@@ -399,9 +400,10 @@ function Functions.SetItemMetadata(plyId, slot, metadata)
 
         local inv = player.PlayerData.items
 
-        for i = 1, #inv do
-            if (inv[i].slot == slot) then
-                inv[i].info = metadata
+        for i, itemData in pairs(inv) do
+            if (itemData.slot == slot) then
+                itemData.info = metadata
+
                 break
             end
         end
