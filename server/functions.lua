@@ -205,6 +205,8 @@ function Functions.GetPlayerItems(player, disableBundling)
         player = Functions.GetPlayer(player)
     end
 
+    if (not player) then return {}, Functions.Debug("Player not found when fetching items!") end
+
     if (Framework == "QBCore") then
         local items = player.PlayerData.items
 
