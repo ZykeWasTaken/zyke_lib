@@ -9,7 +9,7 @@ end)
 
 -- Set the vehicle you are currently in as a statebag
 CreateThread(function()
-    local prevVeh = 0
+    local prevVeh = nil
 
     while (true) do
         local sleep = 250
