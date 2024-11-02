@@ -1,6 +1,6 @@
 ## Important
 
-Download an experimental non-release version **not recommended unless you know what you are doing**. We constantly update this repository to make the development of Zyke Resources' scripts easier, and we don't always test all functionality on different servers using different frameworks. Head over to the release page for a stable release.
+Download an experimental & non-release version **not recommended unless you know what you are doing**. We constantly update this repository to make the development of Zyke Resources' scripts easier, and we don't always test all functionality on different servers using different frameworks. Head over to the release page for a stable release.
 
 ## Modified Servers
 
@@ -10,6 +10,7 @@ Please be aware that heavily modified servers may cause our library to struggle 
 
 -   [Documentation](https://docs.zykeresources.com/free-resources/zyke-lib)
 -   [Discord](https://discord.zykeresources.com/)
+-   [Store](https://store.zykeresources.com/)
 
 ## Inventory Support
 
@@ -25,8 +26,6 @@ Please be aware that heavily modified servers may cause our library to struggle 
 -   qb-target
 -   We also offer every script without target functionality
 
-## Progressbar Support
+## Credits
 
--   ESX Legacy's Progressbar
--   QBCore's Progressbar
--   ox_lib's Progressbar
+-   Credits to the [Overextended team](https://github.com/overextended/ox_lib) for the module structure of importing and executing functions.

@@ -1,68 +1,85 @@
-Functions = {}
+LibName = "zyke_lib" -- TEMP
+Context = IsDuplicityVersion() and "server" or "client"
 
-HoldingKeys = {}
-AddEventHandler("zyke_lib:OnKeyPress", function(id)
-    HoldingKeys[id] = true
-end)
+ResName = GetCurrentResourceName()
+TrimmedResName = ResName:sub(6, #ResName) -- Removes zyke_
 
-AddEventHandler("zyke_lib:OnKeyRelease", function(id)
-    HoldingKeys[id] = nil
-end)
+local function empty() end
 
-if (GetCurrentResourceName() ~= "zyke_lib") then
-    local resName = GetCurrentResourceName()
-    local libVersion = GetResourceMetadata("zyke_lib", "version", 0)
-    local scriptLibVersionRequired = GetResourceMetadata(resName, "z_version", 0)
+-- Load the chunk & function
+local function loadFunc(path, self, index)
+    self[index] = empty
 
-    if (scriptLibVersionRequired) then
-        if (libVersion == scriptLibVersionRequired) then goto continue end
+    local contextChunk = LoadResourceFile(LibName, ("%s/%s/%s.lua"):format(path, index, Context))
+    local sharedChunk = LoadResourceFile(LibName, ("%s/%s/shared.lua"):format(path, index))
 
-        local libVersionNums = {}
-        for value in string.gmatch(libVersion, "[^.]+") do
-            libVersionNums[#libVersionNums+1] = tonumber(value)
+    local chunk = sharedChunk or contextChunk
+    local _context = sharedChunk and "shared" or Context
+
+    if (chunk) then
+        local func, err = load(chunk, ("@@%s/%s/%s/%s.lua"):format(LibName, path, index, _context))
+
+        if (not func or err) then
+            return error(err)
         end
 
-        local scriptRequiredNums = {}
-        for value in string.gmatch(scriptLibVersionRequired, "[^.]+") do
-            scriptRequiredNums[#scriptRequiredNums+1] = tonumber(value)
-        end
+        local res = func()
+        self[index] = res or empty
 
-        for i = 1, #libVersionNums do
-            local libOutdated = libVersionNums[i] < scriptRequiredNums[i]
-
-            if (libOutdated) then
-                print("^1================================================================================")
-                print("^3" .. resName .. " requires at least v" .. scriptLibVersionRequired .. " of zyke_lib, your version is " .. libVersion .. "!")
-                print("^3This mismatch will cause the script to not work as intended, please update.")
-                print("^3You can download it here: https://github.com/ZykeWasTaken/zyke_lib/releases")
-                print("^1================================================================================^0")
-
-                CreateThread(function()
-                    Wait(1000)
-                    while (true) do
-                        print("^1Very Important!")
-                        print("^3We do not perform outside checks for script versions.")
-                        print("^3Your mismatching version of zyke_lib is due to a recent update in any zyke script.")
-                        print("^3You can download the latest and required zyke_lib here: https://github.com/ZykeWasTaken/zyke_lib/releases^0")
-
-                        Wait(3000)
-                    end
-                end)
-            end
-        end
+        return self[index]
     end
-
-    ::continue::
 end
 
-Tools = {}
-Translations = {}
-Minigames = {}
-
-function Fetch()
-    return Functions, Tools, Translations, Minigames
+-- If the function is not cached, load it and cache it
+-- Once it is cached, this will no longer run
+local function execute(path, self, index, ...)
+    return loadFunc(path, self, index)
 end
 
-exports("Fetch", Fetch)
+Functions = setmetatable({
+    name = LibName,
+}, {
+    __index = function(self, index)
+        return execute("functions", self, index)
+    end,
+    __call = function(self, index, ...)
+        return execute("functions", self, index, ...)
+    end,
+})
 
-Z, Tools, TranslationsHandler, Minigames = exports["zyke_lib"]:Fetch()
+Formatting = setmetatable({
+    name = LibName,
+}, {
+    __index = function(self, index)
+        return execute("formatting", self, index)
+    end,
+    __call = function(self, index, ...)
+        return execute("formatting", self, index, ...)
+    end,
+})
+
+-- Shorthand
+Z = Functions
+
+-- ##### Dependencies ##### --
+
+---@param fileName string
+---@return function
+local function loadSystem(fileName)
+    local chunk = LoadResourceFile(LibName, ("systems/%s.lua"):format(fileName))
+
+    return load(chunk)()
+end
+
+Framework = loadSystem("framework")
+Inventory, Items = loadSystem("inventory")
+Target = loadSystem("target")
+GangSystem = loadSystem("gang")
+FuelSystem = loadSystem("fuel")
+DeathSystem = loadSystem("death")
+
+LibConfig = load(LoadResourceFile(LibName, "config.lua"))()
+T, Translations = load(LoadResourceFile(LibName, "translations.lua"))()
+
+-- Id/name for keymapping, to track if you are still holding the button
+HoldingKeys = {}

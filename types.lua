@@ -1,0 +1,11 @@
+---@alias PlayerId integer
+---@alias Character table
+---@alias CharacterIdentifier string
+---@alias Vector3Table table{x: number, y: number, z: number}
+---@alias Vehicle integer
+---@alias Prop integer
+---@alias Ped integer
+---@alias Blip integer
+---@alias Distance number
+---@alias ScaleformHandle integer
+---@alias NetId integer

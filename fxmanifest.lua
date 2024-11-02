@@ -1,53 +1,53 @@
 fx_version "cerulean"
 game "gta5"
 lua54 "yes"
-author "realzyke"
-version "1.0.23"
-
-ui_page "javascript/index.html"
+version "2.0.0"
 
 shared_scripts {
-    -- "@es_extended/imports.lua", -- ESX Legacy's import fetch, if you wish to use this instead, but event/export should work fine
-    "imports.lua",
-    "@ox_lib/init.lua",
-
-    "shared/config.lua",
-    "shared/shared.lua",
-    "shared/auto_fetchers/framework.lua",
-    "shared/auto_fetchers/inventory.lua",
-    "shared/auto_fetchers/targeting.lua",
-    "shared/auto_fetchers/gang.lua",
-    "shared/auto_fetchers/death.lua",
-    "shared/auto_fetchers/fuel.lua",
-    "shared/locales.lua",
-    "shared/formatting.lua",
-
-    "shared/experimental/*", -- Dev & personal stuff
-}
-
-client_scripts {
-    "@PolyZone/client.lua",
-    "client/**/*",
-}
-
-server_scripts {
-    "@oxmysql/lib/MySQL.lua",
-    "server/webhooks.lua",
-
-    "server/main.lua",
-    "server/functions.lua",
-    "server/events.lua",
-    "server/callbacks.lua",
-
-    "server/experimental/*", -- Dev & personal stuff
+    "@ox_lib/init.lua", -- Progressbar
+    "config.lua",
 }
 
 files {
+    "formatting/**/shared.lua",
+    "functions/**/client.lua",
+    "functions/**/shared.lua",
+    "functions/**/server.lua",
+    "webhooks/*.lua",
+    "translations.lua",
+    "systems/*.lua",
     "javascript/index.html",
     "javascript/*.js",
 }
 
-dependencies {
-    "ox_lib",
-    "PolyZone",
+client_scripts {
+    "imports.lua",
+    "functions/callback/client.lua",
+    "functions/debug/shared.lua",
+
+    "internals/states/client.lua",
+    "internals/events/client.lua",
+}
+
+server_scripts {
+    "@oxmysql/lib/MySQL.lua",
+    "imports.lua",
+    "internals/**/server.lua",
+
+    "internals/states/server.lua",
+    "internals/events/server.lua",
+    "internals/items/server.lua",
+
+    "functions/debug/shared.lua",
+
+    -- Starting resources where client just fetches the server solution
+    "functions/createUniqueId/server.lua",
+    "functions/hasPermission/server.lua",
+    "functions/getPlayersOnJob/server.lua",
+    "functions/getJobData/server.lua",
+    "functions/getGangData/server.lua",
+    "functions/getCharacter/server.lua",
+    "functions/getVehicles/shared.lua",
+    "functions/getAccountIdentifier/server.lua",
+    "functions/getJobs/server.lua",
 }
