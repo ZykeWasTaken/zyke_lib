@@ -17,11 +17,11 @@ function Functions.instructionalButtons.register(buttons)
 
     local removedIndexes = 0
     for idx, button in pairs(buttons) do
-        local key = Functions.GetKey(button.key)
+        local key = Functions.keys.get(button.key)
         if (key) then
             -- Check if that button is pressed, if it is not pressed, go to end of loop
             if (button.activate ~= nil) then
-                local keyToPress = Functions.GetKey(button.activate)
+                local keyToPress = Functions.keys.get(button.activate)
                 if (keyToPress) then
                     if (not IsDisabledControlPressed(0, keyToPress.keyCode)) then
                         removedIndexes = removedIndexes + 1
@@ -34,7 +34,7 @@ function Functions.instructionalButtons.register(buttons)
 
             if (button.disable ~= nil) then
                 -- Check if that button is pressed, if it is pressed, go to end of loop
-                local keyToPress = Functions.GetKey(button.disable)
+                local keyToPress = Functions.keys.get(button.disable)
                 if (keyToPress) then
                     if (IsDisabledControlPressed(0, keyToPress.keyCode)) then
                         removedIndexes = removedIndexes + 1
