@@ -1,3 +1,4 @@
+-- TODO: Probably outdated?
 local resName = GetCurrentResourceName()
 
 local function isVersionOutdated(v1, v2)
