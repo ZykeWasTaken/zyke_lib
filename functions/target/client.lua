@@ -150,7 +150,9 @@ function Functions.target.remove(id)
     end
 end
 
-AddEventHandler("onResourceStop", function()
+AddEventHandler("onResourceStop", function(resName)
+    if (resName ~= ResName) then return end
+
     for id, details in pairs(targets) do
         Functions.target.remove(id)
     end
