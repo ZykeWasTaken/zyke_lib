@@ -6,7 +6,7 @@ function Functions.setItemMetadata(plyId, slot, metadata)
     if (Inventory == "QS") then exports["qs-inventory"]:SetItemMetadata(plyId, slot, metadata) return end
 
     -- If we are not using ox_inventory, we will have to fetch the inventory, make the modifications ourselves and set the inventory
-    if (Framework == "QBCore") then
+    if (Framework == "QB") then
         -- We'll have to grab the raw QBCore inventoy and modify it, to make sure all the data is correct
         local player = Functions.getPlayerData(plyId)
         if (not player) then error("Player not found (CRITICAL!)") return false end

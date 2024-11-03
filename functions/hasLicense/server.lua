@@ -4,7 +4,7 @@
 ---@return boolean
 function Functions.hasLicense(player, licenseType)
     local translations = {
-        ["QBCore"] = {
+        ["QB"] = {
             ["car"] = "driver"
         },
         ["ESX"] = {

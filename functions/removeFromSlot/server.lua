@@ -18,7 +18,7 @@ function Functions.removeFromSlot(plyId, item, amount, slot)
         return
     end
 
-    if (Framework == "QBCore") then
+    if (Framework == "QB") then
         local inv = player.PlayerData.items
 
         for i, itemData in pairs(inv) do
