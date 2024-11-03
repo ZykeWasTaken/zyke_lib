@@ -19,7 +19,7 @@ end
 -- When you select a character
 if (Framework == "QB") then
     AddEventHandler("QBCore:Server:PlayerLoaded", function(player)
-        local plyId = Functions.GetSource(player)
+        local plyId = Functions.getPlayerId(player)
         if (not plyId) then return end
 
         Player(plyId).state:set("zyke_lib:identifier", player.identifier, true)
