@@ -22,7 +22,7 @@ if (Framework == "QB") then
         local plyId = Functions.getPlayerId(player)
         if (not plyId) then return end
 
-        Player(plyId).state:set("zyke_lib:identifier", player.identifier, true)
+        Player(plyId).state:set("zyke_lib:identifier", player.citizenid, true)
         Player(plyId).state:set("zyke_lib:license", Functions.getAccountIdentifier(plyId, "license"), true)
 
         TriggerEvent("zyke_lib:OnCharacterSelect", source, player)
