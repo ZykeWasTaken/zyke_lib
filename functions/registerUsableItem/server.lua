@@ -12,7 +12,7 @@ function Functions.registerUsableItem(item, func)
             func(source, Formatting.formatItem(itemData))
         end)
     elseif (Framework == "QB") then
-        QB.Funtions.CreateUseableItem(item, function(source, itemData)
+        QB.Functions.CreateUseableItem(item, function(source, itemData)
             func(source, Formatting.formatItem(itemData))
         end)
     end
