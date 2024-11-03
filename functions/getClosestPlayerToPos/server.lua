@@ -1,5 +1,5 @@
 ---@param pos vector3 | table{x: number, y: number, z: number}
----@return PlayerId | -1, number | -1
+---@return PlayerId | -1, number | -1, boolean
 function Functions.getClosestPlayerToPos(pos)
     ---@type integer[]
     local players = Functions.getPlayers()
@@ -18,7 +18,7 @@ function Functions.getClosestPlayerToPos(pos)
         end
     end
 
-    return closestPly, closestDst
+    return closestPly, closestDst, closestDst < 400
 end
 
 return Functions.getClosestPlayerToPos
