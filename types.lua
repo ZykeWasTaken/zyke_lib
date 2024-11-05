@@ -2,6 +2,7 @@
 ---@alias Character table
 ---@alias CharacterIdentifier string
 ---@alias Vector3Table table{x: number, y: number, z: number}
+---@alias Vector2Table table{x: number, y: number}
 ---@alias Vehicle integer
 ---@alias Prop integer
 ---@alias Ped integer
