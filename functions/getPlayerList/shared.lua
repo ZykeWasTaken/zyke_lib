@@ -61,8 +61,8 @@ function Functions.getPlayerList(players, options)
             plyId = ply.source,
 
             -- Extras
-            steamName = options?.extras.steamName and GetPlayerName(GetPlayerFromServerId(ply.source)) or nil,
-            license = options?.extras.license and Player(ply.source).state["zyke_lib:license"],
+            steamName = options?.extras?.steamName and GetPlayerName(GetPlayerFromServerId(ply.source)) or nil,
+            license = options?.extras?.license and Player(ply.source).state["zyke_lib:license"],
         }
 
         ::continue::
