@@ -143,7 +143,7 @@ function Functions.target.remove(id)
 
     if (zoneType == "entity") then
         if (Target == "OX") then return exports["ox_target"]:removeLocalEntity(id) end
-        if (Target == "QB") then return exports["qb-target"]:removeTargetEntity(id) end
+        if (Target == "QB") then return exports["qb-target"]:RemoveTargetEntity(id) end
     elseif (zoneType == "zone") then
         if (Target == "OX") then return exports["ox_target"]:removeZone(id) end
         if (Target == "QB") then return exports["qb-target"]:RemoveZone(id) end
