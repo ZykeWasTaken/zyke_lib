@@ -44,8 +44,8 @@ if (Framework == "QB") then
     end)
 
     RegisterNetEvent("QBCore:Server:OnGangUpdate", function(source, gang)
-        TriggerEvent("zyke_lib:OnGangUpdate", source, Formatting.formatGang(gang))
-        TriggerClientEvent("zyke_lib:OnGangUpdate", source, Formatting.formatGang(gang))
+        TriggerEvent("zyke_lib:OnGangUpdate", source, Formatting.formatPlayerGang(gang))
+        TriggerClientEvent("zyke_lib:OnGangUpdate", source, Formatting.formatPlayerGang(gang))
     end)
 elseif (Framework == "ESX") then
     RegisterNetEvent("esx:setJob", function(source, job)
