@@ -4,7 +4,7 @@ local items = {}
 
 local systems = {
     {fileName = "ox_inventory", variable = "OX"},
-    {fileName = "qs-inventory", varialbe = "QS"},
+    {fileName = "qs-inventory", variable = "QS"},
     {fileName = "DEFAULT_INVENTORY", variable = "DEFAULT"}
 }
 
