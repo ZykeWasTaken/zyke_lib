@@ -5,7 +5,7 @@ function Functions.getGang(player)
     local player = Functions.getPlayerData(player)
     if (not player) then return nil end
 
-    if (Framework == "QB") then return Formatting.formatPlayerGang(player.gang) end
+    if (Framework == "QB") then return Formatting.formatPlayerGang(player.PlayerData.gang) end
 
     if (Framework == "ESX") then
         if (GangSystem == "zyke_gangphone") then
