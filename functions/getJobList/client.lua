@@ -14,10 +14,14 @@ function Functions.getJobList(labelPrefix, labelSuffix, includeGrades)
     local jobList = {}
     local jobs = Functions.getJobs()
 
-    for _, jobData in pairs(jobs) do
+    for _jobName, jobData in pairs(jobs) do
         local formattedJob = Formatting.formatJob(jobData)
 
         if (formattedJob) then
+            if (not formattedJob.name) then -- QB
+                formattedJob.name = _jobName
+            end
+
             jobList[#jobList+1] = {
                 name = formattedJob.name,
                 label = (labelPrefix or "") .. formattedJob.label .. (labelSuffix or ""),
