@@ -150,4 +150,62 @@ function Functions.table.doesTableHaveEntries(tbl)
     return false
 end
 
+-- Experimental metatable testing
+---@param value table
+---@return metatable
+function Functions.table.new(value)
+    local tbl = value or {}
+
+    local methods = {
+        ---@param toAppend table
+        append = function(self, toAppend)
+            for _, val in ipairs(toAppend) do
+                table.insert(self, val)
+            end
+        end,
+
+        ---@param name string
+        contains = function(self, name)
+            for k, v in pairs(self) do
+                if (v == name) then
+                    return true
+                end
+            end
+
+            return false
+        end,
+
+        forEach = function(self, func)
+            for k, v in pairs(self) do
+                func(v, k)
+            end
+        end,
+
+        ---@return integer
+        count = function(self)
+            local num = 0
+
+            for _ in pairs(self) do num += 1 end
+
+            return num
+        end,
+
+        ---@return boolean
+        isArray = function(self)
+            return Functions.table.isArray(self)
+        end,
+
+        ---@return boolean
+        isEmpty = function(self)
+            return not Functions.table.doesTableHaveEntries(self)
+        end
+    }
+
+    setmetatable(tbl, {
+        __index = methods
+    })
+
+    return tbl
+end
+
 return Functions.table
