@@ -98,4 +98,16 @@ function Functions.keys.getAll()
     return availableKeys
 end
 
+---@param keys string[]
+---@return table<string, integer>
+function Functions.keys.getTranslations(keys)
+    local translatedKeys = {}
+
+    for i = 1, #keys do
+        translatedKeys[keys[i]] = availableKeys[keys[i]].keyCode
+    end
+
+    return translatedKeys
+end
+
 return Functions.keys
