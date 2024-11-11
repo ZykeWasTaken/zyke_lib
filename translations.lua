@@ -7,6 +7,8 @@ local translations = {}
 ---@param formatting table[]?
 ---@return string | table, string | nil
 function Translate(key, formatting)
+    if (key == nil) then return "MISSING KEY" end
+
     local translation = translations[key]
     if (not translation) then return "MISSING TRANSLATION: " .. key end
 
