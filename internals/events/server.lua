@@ -25,7 +25,7 @@ if (Framework == "QB") then
         Player(plyId).state:set("zyke_lib:identifier", player.PlayerData.citizenid, true)
         Player(plyId).state:set("zyke_lib:license", Functions.getAccountIdentifier(plyId, "license"), true)
 
-        TriggerEvent("zyke_lib:OnCharacterSelect", source, player)
+        TriggerEvent("zyke_lib:OnCharacterSelect", plyId, player)
     end)
 elseif (Framework == "ESX") then
     AddEventHandler("esx:playerLoaded", function(plyId, player)

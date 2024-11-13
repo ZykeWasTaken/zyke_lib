@@ -42,7 +42,7 @@ local function insertIntoIdentifiers(player)
     end
 end
 
-AddEventHandler("zyke_lib:OnCharacterSelect", function(player)
+AddEventHandler("zyke_lib:OnCharacterSelect", function(plyId, player)
     insertIntoIdentifiers(player)
 end)
 
