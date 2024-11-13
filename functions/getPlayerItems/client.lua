@@ -11,7 +11,7 @@ function Functions.getPlayerItems(toInclude)
     if (Framework == "ESX") then
         inventory = player.inventory
     elseif (Framework == "QB") then
-        inventory = player.PlayerData.items
+        inventory = player.items
     end
 
     ---@type table<string, true>
