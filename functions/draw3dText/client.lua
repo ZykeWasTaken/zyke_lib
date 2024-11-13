@@ -27,6 +27,7 @@ function Functions.draw3dText(pos, text, scale, rgba, font)
     SetTextFont(font)
     SetTextColour(r, g, b, a)
     SetTextEntry("STRING")
+    SetTextCentre(true)
     AddTextComponentString(text)
     DrawText(screenX, screenY)
 end
