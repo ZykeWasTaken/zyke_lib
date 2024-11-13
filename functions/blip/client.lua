@@ -1,7 +1,7 @@
 Functions.blip = {}
 
 ---@class BlipDetails
----@field type string @"coord" | "entity" | "radius"
+---@field type "coord" | "entity" | "radius"
 ---@field pos vector3 | table
 ---@field entity number? @Entity handle
 ---@field sprite number?
