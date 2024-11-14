@@ -1,9 +1,17 @@
----@param gang string
+---@param gangName string
 ---@return Gang | nil
 ---@diagnostic disable-next-line: duplicate-set-field
-function Functions.getGangData(gang)
-    if (Framework == "QB") then return Formatting.formatGang(QB.Shared.Gangs[gang]) end
-    if (Framework == "ESX") then return Formatting.formatGang(Functions.callback.await(LibName .. ":GetJobData")) end
+function Functions.getGangData(gangName)
+    local gang
+    if (Framework == "ESX") then
+        return Functions.callback.await(LibName .. ":GetJobData", gangName) -- Already formatted from server
+    elseif (Framework == "QB") then
+        gang = QB.Shared.Gangs[gangName]
+    end
+
+    if (not gang) then return nil end
+
+    return Formatting.formatGang(gang)
 end
 
 return Functions.getGangData

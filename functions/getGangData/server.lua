@@ -1,20 +1,23 @@
----@param gang string
+---@param gangName string
 ---@return Gang | nil
 ---@diagnostic disable-next-line: duplicate-set-field
-function Functions.getGangData(gang)
-    if (Framework == "QB") then return Formatting.formatGang(QB.Shared.Gangs[gang]) end
-
-    if (Framework == "ESX") then
+function Functions.getGangData(gangName)
+    local gang
+    if (Framework == "QB") then
+        gang = QB.Shared.Gangs[gangName]
+    elseif (Framework == "ESX") then
         if (GangSystem == "zyke_gangphone") then
-            return Formatting.formatGang(exports["zyke_gangphone"]:GetGang(gang))
+            gang = exports["zyke_gangphone"]:GetGang(gangName)
         end
     end
 
-    return nil
+    if (not gang) then return nil end
+
+    return Formatting.formatGang(gang)
 end
 
-Functions.callback.register(LibName .. ":GetGangData", function(_, gang)
-    return Functions.getGangData(gang)
+Functions.callback.register(LibName .. ":GetGangData", function(_, gangName)
+    return Functions.getGangData(gangName)
 end)
 
 return Functions.getGangData
