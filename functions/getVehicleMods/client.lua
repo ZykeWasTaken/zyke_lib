@@ -30,7 +30,7 @@ function Functions.getVehicleMods(veh)
         maxPerformanceMods[mod.name] = mod.name == "turbo" and 1 or GetNumVehicleMods(veh, mod.idx)
     end
 
-    mods.maxPerformanceMods = {maxPerformanceMods}
+    mods.maxPerformanceMods = maxPerformanceMods
 
     return mods
 end
