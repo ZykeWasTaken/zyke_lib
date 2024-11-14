@@ -35,3 +35,18 @@ AddStateBagChangeHandler("removing", nil, function(bagName, _, value)
         SetEntityAlpha(entity, i, false)
     end
 end)
+
+-- Verify your client has properly loaded into the game
+CreateThread(function()
+    while (1) do
+        local hasLoaded = NetworkIsPlayerActive(PlayerId())
+
+        if (hasLoaded) then
+            LocalPlayer.state:set("z:hasLoaded", true, true)
+
+            break
+        end
+
+        Wait(500)
+    end
+end)
