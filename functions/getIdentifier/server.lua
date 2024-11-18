@@ -2,9 +2,13 @@
 ---@return CharacterIdentifier | nil
 ---@diagnostic disable-next-line: duplicate-set-field
 function Functions.getIdentifier(player)
-    local playerId = Functions.getPlayerId(player)
+    local player = Functions.getPlayerData(player)
+    if (not player) then return nil end
 
-    return playerId and Player(playerId).state["zyke_lib:identifier"] or nil
+    if (Framework == "ESX") then return player.identifier end
+    if (Framework == "QB") then return player.PlayerData.citizenid end
+
+    return nil
 end
 
 return Functions.getIdentifier
