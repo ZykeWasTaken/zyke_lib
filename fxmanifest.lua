@@ -34,10 +34,6 @@ server_scripts {
     "imports.lua",
     "internals/**/server.lua",
 
-    "internals/states/server.lua",
-    "internals/events/server.lua",
-    "internals/items/server.lua",
-
     "functions/debug/shared.lua",
 
     -- Starting resources where client just fetches the server solution
