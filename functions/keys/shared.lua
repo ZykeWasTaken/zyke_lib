@@ -88,7 +88,7 @@ function Functions.keys.get(key)
 
     local keys = {}
     for i = 1, #key do
-        keys[i] = key[i]
+        keys[i] = Functions.keys.get(key[i])
     end
 
     return keys
