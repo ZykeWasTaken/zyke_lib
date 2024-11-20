@@ -41,7 +41,7 @@ function Functions.sessions.setPlayer(playerId, sessionId)
 
     local prevId = GetPlayerRoutingBucket(tostring(playerId))
     if (prevId and prevId ~= 0) then
-        Functions.sessions.clearPlayer(playerId)
+        Functions.sessions.clearPlayer(playerId, true)
     end
 
     sessions[sessionId].players[#sessions[sessionId].players+1] = playerId
@@ -58,7 +58,7 @@ function Functions.sessions.setEntity(netId, sessionId)
 
     local prevId = GetEntityRoutingBucket(entity)
     if (prevId and prevId ~= 0) then
-        Functions.sessions.clearEntity(entity)
+        Functions.sessions.clearEntity(entity, true)
     end
 
     sessions[sessionId].entities[#sessions[sessionId].entities+1] = netId
@@ -67,7 +67,8 @@ function Functions.sessions.setEntity(netId, sessionId)
 end
 
 ---@param playerId PlayerId
-function Functions.sessions.clearPlayer(playerId)
+---@param blockRelieve? boolean @When chaining multiple together, sometimes you want to wait to relieve
+function Functions.sessions.clearPlayer(playerId, blockRelieve)
     local id = GetPlayerRoutingBucket(tostring(playerId))
     if (not id or id == 0 or not sessions[id]) then return end
 
@@ -79,11 +80,15 @@ function Functions.sessions.clearPlayer(playerId)
     end
 
     SetPlayerRoutingBucket(tostring(playerId), 0)
-    relieveSession(id)
+
+    if (not blockRelieve) then
+        relieveSession(id)
+    end
 end
 
 ---@param netId NetId
-function Functions.sessions.clearEntity(netId)
+---@param blockRelieve? boolean @When chaining multiple together, sometimes you want to wait to relieve
+function Functions.sessions.clearEntity(netId, blockRelieve)
     local entity = NetworkGetEntityFromNetworkId(netId)
     local id = GetEntityRoutingBucket(entity)
     if (not id or id == 0 or not sessions[id]) then return end
@@ -96,7 +101,10 @@ function Functions.sessions.clearEntity(netId)
     end
 
     SetEntityRoutingBucket(entity, 0)
-    relieveSession(id)
+
+    if (not blockRelieve) then
+        relieveSession(id)
+    end
 end
 
 ---@param sessionId integer
