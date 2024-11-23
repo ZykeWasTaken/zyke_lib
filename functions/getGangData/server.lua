@@ -6,8 +6,8 @@ function Functions.getGangData(gangName)
     if (Framework == "QB") then
         gang = QB.Shared.Gangs[gangName]
     elseif (Framework == "ESX") then
-        if (GangSystem == "zyke_gangphone") then
-            gang = exports["zyke_gangphone"]:GetGang(gangName)
+        if (GangSystem == "zyke") then
+            gang = exports["zyke_gangs"]:GetGang(gangName)
         end
     end
 

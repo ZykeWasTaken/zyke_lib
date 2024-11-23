@@ -8,8 +8,8 @@ function Functions.getGang(player)
     if (Framework == "QB") then return Formatting.formatPlayerGang(player.PlayerData.gang) end
 
     if (Framework == "ESX") then
-        if (GangSystem == "zyke_gangphone") then
-            local gang = exports["zyke_gangphone"]:GetPlayerGangId(Functions.getPlayerId(player))
+        if (GangSystem == "zyke") then
+            local gang = exports["zyke_gangs"]:GetPlayerGangDetails(Functions.getPlayerId(player))
             if (not gang) then return nil end
 
             return Formatting.formatPlayerGang(gang)

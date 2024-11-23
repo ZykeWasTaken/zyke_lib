@@ -6,8 +6,8 @@ function Functions.getGangs()
     if (Framework == "QB") then return QB.Shared.Gangs or {} end
 
     if (Framework == "ESX") then
-        if (GangSystem == "zyke_gangphone") then
-            return exports["zyke_gangphone"]:GetGangList() or {}
+        if (GangSystem == "zyke") then
+            return exports["zyke_gangs"]:GetGangList() or {}
         end
     end
 

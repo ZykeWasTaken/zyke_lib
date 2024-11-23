@@ -7,8 +7,8 @@ function Functions.getGang()
 
     -- No native support for gangs, add your own resource in here
     if (Framework == "ESX") then
-        if (GangSystem == "zyke_gangphone") then
-            local gang = exports["zyke_gangphone"]:GetPlayerGangDetails()
+        if (GangSystem == "zyke") then
+            local gang = exports["zyke_gangs"]:GetPlayerGangDetails()
             if (not gang) then return nil end
 
             return Formatting.formatPlayerGang(gang)

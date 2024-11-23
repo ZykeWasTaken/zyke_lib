@@ -39,7 +39,7 @@ function Formatting.formatGang(rawGang)
             bossRanks = bossRanks
         }
     elseif (Framework == "ESX") then
-        if (GangSystem == "zyke_gangphone") then
+        if (GangSystem == "zyke") then
             ---@type GangGrade[]
             local grades = {}
 

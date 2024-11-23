@@ -52,11 +52,10 @@ elseif (Framework == "ESX") then
         TriggerEvent("zyke_lib:OnJobUpdate", source, Formatting.formatPlayerJob(job))
         TriggerClientEvent("zyke_lib:OnJobUpdate", source, Formatting.formatPlayerJob(job))
     end)
-
-    if (GangSystem == "zyke_gangphone") then
-        RegisterNetEvent("zyke_gangphone:OnGangUpdate", function(source, gang)
-            TriggerEvent("zyke_lib:OnGangUpdate", source, gang) -- Already formatted
-            TriggerClientEvent("zyke_lib:OnGangUpdate", source, gang) -- Already formatted
-        end)
-    end
 end
+
+-- GangSystem "zyke"
+RegisterNetEvent("zyke_gangs:OnGangUpdate", function(source, gang)
+    TriggerEvent("zyke_lib:OnGangUpdate", source, gang) -- Already formatted
+    TriggerClientEvent("zyke_lib:OnGangUpdate", source, gang) -- Already formatted
+end)
