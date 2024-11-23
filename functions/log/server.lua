@@ -91,7 +91,6 @@ local inLogLoop = false
 ---@field handler string
 ---@field message string
 ---@field rawData table?
----@field webhook string? @Support for old resources
 
 ---@param passed LogData
 function Functions.log(passed)
