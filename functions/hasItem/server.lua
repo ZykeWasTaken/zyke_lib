@@ -4,7 +4,7 @@
 ---@field amount string
 
 ---@param player Character | CharacterIdentifier | PlayerId
----@param item HasItemFetch[] | HasItemFetch
+---@param item HasItemFetch[] | HasItemFetch | string
 ---@param amount integer
 ---@diagnostic disable-next-line: duplicate-set-field
 function Functions.hasItem(player, item, amount)

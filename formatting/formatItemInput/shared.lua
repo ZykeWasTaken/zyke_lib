@@ -14,6 +14,8 @@
 function Formatting.formatItemInput(item, amount, metadata)
     ---@type InputtedItem[] | Item[]
     local formattedItems = {}
+
+    ---@type string[] @Array of included item names
     local included = {}
 
     if (type(item) == "string") then -- Simple add to the table and return
