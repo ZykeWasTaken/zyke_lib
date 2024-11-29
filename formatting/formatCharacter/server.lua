@@ -14,8 +14,6 @@
 function Formatting.formatCharacter(player, online)
     if (not player) then return nil end
 
-    local job = Functions.getJob(player)
-
     if (Framework == "ESX") then
         local character = {
             identifier = player.identifier,
@@ -25,7 +23,6 @@ function Formatting.formatCharacter(player, online)
             dateofbirth = player.dateofbirth or player?.variables?.dateofbirth,
             phonenumber = player.phone_number or player?.variables?.phoneNumber,
             backstory = nil, -- By default there is none
-            job = job,
             online = online or false,
 
             -- Unused, future proofing
@@ -35,6 +32,7 @@ function Formatting.formatCharacter(player, online)
 
             -- To Add:
             -- Accounts
+            -- Job
         }
 
         return character
@@ -48,11 +46,11 @@ function Formatting.formatCharacter(player, online)
             phonenumber = player.PlayerData.charinfo.phone,
             nationality = player.PlayerData.charinfo.nationality,
             backstory = player.PlayerData.charinfo.backstory,
-            job = job,
             online = online or false,
 
             -- To Add:
             -- Accounts
+            -- Job
             -- Match ESX future proofing
         }
 
