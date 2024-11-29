@@ -10,3 +10,4 @@
 ---@alias Distance number
 ---@alias ScaleformHandle integer
 ---@alias NetId integer
+---@alias Entity integer
