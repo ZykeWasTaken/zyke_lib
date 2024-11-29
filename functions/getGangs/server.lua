@@ -7,7 +7,7 @@ function Functions.getGangs()
 
     if (Framework == "ESX") then
         if (GangSystem == "zyke") then
-            return exports["zyke_gangs"]:GetGangList() or {}
+            return exports["zyke_gangs"]:GetDetailedGangList() or {}
         end
     end
 
