@@ -1,5 +1,5 @@
----@param item HasItemFetch[] | HasItemFetch
----@param amount integer
+---@param item HasItemFetch[] | HasItemFetch | {name: string, amount: integer} | string
+---@param amount? integer
 ---@diagnostic disable-next-line: duplicate-set-field
 function Functions.hasItem(item, amount)
     local items, included = Formatting.formatItemInput(item, amount)
