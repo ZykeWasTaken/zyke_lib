@@ -9,10 +9,14 @@ function Functions.getPlayerItems(player, toInclude)
     local inventory = {}
     if (not player) then return {} end
 
-    if (Framework == "ESX") then
-        inventory = player.inventory
-    elseif (Framework == "QB") then
-        inventory = player.PlayerData.items
+    if (Inventory == "QS") then
+        inventory = exports['qs-inventory']:GetInventory(Z.getPlayerId(player))
+    else
+        if (Framework == "ESX") then
+            inventory = player.inventory
+        elseif (Framework == "QB") then
+            inventory = player.PlayerData.items
+        end
     end
 
     ---@type table<string, true>
