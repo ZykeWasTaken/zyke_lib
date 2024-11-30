@@ -2,7 +2,7 @@
 -- This is mainly for notification purposes to easily clarify needed items for the user
 
 ---@param player Character | CharacterIdentifier | PlayerId
----@param requiredItems table
+---@param requiredItems {name: string, amount: number}[]
 function Functions.getMissingItems(player, requiredItems)
     local player = Z.getPlayerData(player)
     if (not player) then return false, "MISSING PLAYER" end
