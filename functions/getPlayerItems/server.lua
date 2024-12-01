@@ -1,8 +1,10 @@
 ---@param player Character | CharacterIdentifier | PlayerId
----@param toInclude string[] | nil @List of items to include
+---@param toInclude string[] | string | nil @List of items to include
 ---@return Item[]
 ---@diagnostic disable-next-line: duplicate-set-field
 function Functions.getPlayerItems(player, toInclude)
+    if (type(toInclude) == "string") then toInclude = {toInclude} end
+
     local player = Functions.getPlayerData(player)
     if (not player) then return {} end
 
