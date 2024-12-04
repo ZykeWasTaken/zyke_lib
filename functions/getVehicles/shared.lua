@@ -14,7 +14,7 @@
 ---@class GetVehicleOptions
 ---@field maxDistance number | false | nil @Use number, if false (or -1) it will go as far as you can render, nil will default to 350.0
 ---@field pos vector3 | vector4 | table @Position to check distance with, if not provided it will use your player position if client
----@field states table? @States to filter by, example: {locked = true, engine = true}, note that you can also set the value to "none" to solely filter based on the state existing
+---@field states table? @States to filter by, example: {locked = true, engine = true}, note that you can also set the value to "none" to solely filter based on the state existing, set as "optional" to include if includeStates is true, but not required
 ---@field detailed GetVehicleOptionsDetails | boolean? @Will give you class DetailedVehicle when set to true, if set to a table it will act as a boolean, but also allows you to add more details
 ---@field netId integer? @If passed in, it will only return the vehicle with the matching netId (Will perform a break for next iteration)
 
@@ -63,6 +63,7 @@ function Functions.getVehicles(serverFetch, options)
 
     -- Verifying states
     local filterByStates = type(options.states) == "table"
+    print("filterByStates", filterByStates)
 
     ---@diagnostic disable-next-line: param-type-mismatch @GetAllVehicles() always returns a table, not an integer as far as my testing went
     for _, veh in pairs(vehicles) do
@@ -81,6 +82,7 @@ function Functions.getVehicles(serverFetch, options)
 
                 if (requiredValue == "none") then
                     if (entityStateValue == nil) then goto continue end
+                elseif (requiredValue == "optional") then
                 else
                     if (requiredValue ~= entityStateValue) then goto continue end
                 end
