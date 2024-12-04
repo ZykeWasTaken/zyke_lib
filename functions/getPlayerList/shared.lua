@@ -56,7 +56,8 @@ function Functions.getPlayerList(players, options)
 
         playerList[#playerList+1] = {
             label = label,
-            name = ply.identifier,
+            name = ply.identifier, -- Deprecated
+            identifier = ply.identifier,
             value = ply.identifier, -- Easy UI component compatibility
             plyId = ply.source,
 
