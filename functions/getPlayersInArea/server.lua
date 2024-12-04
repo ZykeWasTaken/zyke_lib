@@ -1,20 +1,18 @@
 -- Returns an array of all player entities in the area
 -- Ignores self
 
----@param useServer? boolean
+---@param plyId PlayerId
 ---@param pos vector3 | Vector3Table
 ---@param maxDst number @400 default
 ---@return Entity[]
 ---@diagnostic disable-next-line: duplicate-set-field
-function Functions.getPlayersInArea(useServer, pos, maxDst)
-    if (useServer) then return Functions.callback.await(LibName .. ":GetPlayersInArea", pos, maxDst) end
-
-    if (not pos) then pos = GetEntityCoords(PlayerPedId()) end
+function Functions.getPlayersInArea(plyId, pos, maxDst)
+    if (not pos) then pos = GetEntityCoords(GetPlayerPed(plyId)) end
     if (not maxDst) then maxDst = 400 end
 
     local x, y, z = pos.x, pos.y, pos.z
     local players = GetActivePlayers()
-    local selfPed = PlayerPedId()
+    local selfPed = GetPlayerPed(plyId)
 
     local inArea = {}
     for i = 1, #players do
@@ -29,5 +27,7 @@ function Functions.getPlayersInArea(useServer, pos, maxDst)
 
     return inArea
 end
+
+Functions.callback.register(LibName .. ":GetPlayersInArea", Functions.getPlayersInArea)
 
 return Functions.getPlayersInArea

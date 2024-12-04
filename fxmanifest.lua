@@ -46,4 +46,6 @@ server_scripts {
     "functions/getVehicles/shared.lua",
     "functions/getAccountIdentifier/server.lua",
     "functions/getJobs/server.lua",
+    "functions/getPlayers/server.lua",
+    "functions/getPlayersInArea/server.lua",
 }
