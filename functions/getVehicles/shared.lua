@@ -63,7 +63,6 @@ function Functions.getVehicles(serverFetch, options)
 
     -- Verifying states
     local filterByStates = type(options.states) == "table"
-    print("filterByStates", filterByStates)
 
     ---@diagnostic disable-next-line: param-type-mismatch @GetAllVehicles() always returns a table, not an integer as far as my testing went
     for _, veh in pairs(vehicles) do
