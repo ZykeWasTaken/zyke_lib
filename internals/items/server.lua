@@ -8,8 +8,6 @@ local ensuredMetadata = {}
 ---@type string[]
 local itemsToFetch = Functions.table.new({})
 
--- TODO: Fix this bs for zyke_smoking cigarette packs, it seems that they are not using the ensure functionality, and just catching the event
-
 ---@param changes? table @Ox only
 RegisterNetEvent("zyke_lib:InventoryUpdated", function(changes)
     if (#itemsToFetch <= 0) then return end
