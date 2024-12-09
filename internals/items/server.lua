@@ -38,7 +38,6 @@ RegisterNetEvent("zyke_lib:InventoryUpdated", function(changes)
         local name = item.name
 
         if (modifySlots and not modifiedSlots[tostring(item.slot)]) then goto continue end
-        if (ensuredMetadata[name] == nil) then goto continue end
 
         if (not item.metadata) then item.metadata = {} end
 
