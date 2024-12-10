@@ -33,9 +33,7 @@ function Functions.getPlayerItems(player, toInclude)
     for _, _item in pairs(inventory) do
         local item = Formatting.formatItem(_item)
 
-        if (toInclude) then
-            if (not _toInclude[item.name]) then goto continue end
-        end
+        if (toInclude and not _toInclude[item.name]) then goto continue end
 
         formattedInventory[#formattedInventory+1] = item
 
