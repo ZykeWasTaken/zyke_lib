@@ -18,6 +18,8 @@ return {
 
     -- Job specific
     ["ImpoundedVehicle"] = "",
+    ["EditedImpound"] = "",
+    ["DeletedImpound"] = "",
     ["SavedVehicle"] = "",
 
     -- Garage builder
