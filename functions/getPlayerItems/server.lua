@@ -5,11 +5,10 @@
 function Functions.getPlayerItems(player, toInclude)
     if (type(toInclude) == "string") then toInclude = {toInclude} end
 
-    local player = Functions.getPlayerData(player)
-    if (not player) then return {} end
-
     local inventory = {}
-    if (not player) then return {} end
+
+    local player = Functions.getPlayerData(player)
+    if (not player) then return inventory end
 
     if (Inventory == "QS") then
         inventory = exports['qs-inventory']:GetInventory(Z.getPlayerId(player))
