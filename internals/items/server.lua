@@ -6,7 +6,7 @@ local ensuredMetadata = {}
 -- Cache a basic array to send into the item fetcher
 -- This will ensure only necessary items are included and processed
 ---@type string[]
-local itemsToFetch = Functions.table.new({})
+local itemsToFetch = {}
 
 ---@param changes? table @Ox only
 RegisterNetEvent("zyke_lib:InventoryUpdated", function(changes)
