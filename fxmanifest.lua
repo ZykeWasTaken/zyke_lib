@@ -27,6 +27,7 @@ client_scripts {
 
     "internals/states/client.lua",
     "internals/events/client.lua",
+    "internals/items/client.lua",
 }
 
 server_scripts {
