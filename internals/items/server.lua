@@ -41,6 +41,9 @@ end)
 exports("EnsureMetadata", function(item, metadata)
     -- TODO merge old data with new, if different scripts wants to apply data, not needed yet
 
+    -- Some people need this check, others don't
+    if (not GlobalState.ensuredMetadata) then GlobalState.ensuredMetadata = {} end
+
     if (not GlobalState.ensuredMetadata[item]) then
         itemsToFetch[#itemsToFetch+1] = item
     end
