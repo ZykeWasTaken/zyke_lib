@@ -42,7 +42,12 @@ exports("EnsureMetadata", function(item, metadata)
     -- TODO merge old data with new, if different scripts wants to apply data, not needed yet
 
     -- Some people need this check, others don't
-    if (not GlobalState.ensuredMetadata) then GlobalState.ensuredMetadata = {} end
+    -- Not sure where the delay occurs, but there might be one for some people
+    while (not GlobalState.ensuredMetadata) do
+        GlobalState.ensuredMetadata = {}
+
+        Wait(10)
+    end
 
     if (not GlobalState.ensuredMetadata[item]) then
         itemsToFetch[#itemsToFetch+1] = item
