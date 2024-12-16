@@ -23,7 +23,7 @@ function Functions.hasLicense(player, licenseType)
 
         return licenses[licenseType] or false
     elseif (Framework == "ESX") then
-        local playerId = Functions.getPalyerId(player)
+        local playerId = Functions.getPlayerId(player)
         if (not playerId) then return false end
 
         local p = promise.new()
