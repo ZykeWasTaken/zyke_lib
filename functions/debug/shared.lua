@@ -4,7 +4,12 @@
 function Functions.debug(...)
     if (not Config.Settings.debug == true) then return end
 
-    print("^4[Debug]: ^7" .. ...)
+    local str = ""
+    for _, arg in pairs({...}) do
+        str = str .. tostring(arg) .. " "
+    end
+
+    print("^4[Debug]: ^7" .. str:sub(1, #str - 1))
 end
 
 ---@param ... string
