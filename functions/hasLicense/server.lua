@@ -6,9 +6,12 @@ function Functions.hasLicense(player, licenseType)
     local translations = {
         ["QB"] = {
             ["car"] = "driver"
+            -- TODO: Match ESX
         },
         ["ESX"] = {
-            ["car"] = "drive"
+            ["car"] = "drive",
+            ["bike"] = "drive_bike",
+            ["truck"] = "drive_truck"
         }
     }
 
