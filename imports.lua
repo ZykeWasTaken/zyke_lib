@@ -83,3 +83,28 @@ T, Translations = load(LoadResourceFile(LibName, "translations.lua"))()
 
 -- Id/name for keymapping, to track if you are still holding the button
 HoldingKeys = {}
+
+-- ##### Force Loading ##### --
+
+-- Force loading to ensure both contexts are started
+local forceLoad = {
+    "notify/client.lua",
+    "createUniqueId/server.lua",
+    "hasPermission/server.lua",
+    "getPlayersOnJob/server.lua",
+    "getJobData/server.lua",
+    "getGangData/server.lua",
+    "getCharacter/server.lua",
+    "getVehicles/shared.lua",
+    "getAccountIdentifier/server.lua",
+    "getJobs/server.lua",
+    "getPlayers/server.lua",
+    "getPlayersInArea/server.lua"
+}
+
+for i = 1, #forceLoad do
+    local start = forceLoad[i]:find("/")
+    local name = forceLoad[i]:sub(1, start - 1)
+
+    loadFunc("functions", Functions, name)
+end

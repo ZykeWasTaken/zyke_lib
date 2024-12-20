@@ -6,9 +6,11 @@ version "2.0.30"
 shared_scripts {
     "@ox_lib/init.lua", -- Progressbar
     "config.lua",
+    "imports.lua",
 }
 
 files {
+    -- "imports.lua",
     "formatting/**/shared.lua",
     "functions/**/client.lua",
     "functions/**/shared.lua",
@@ -21,32 +23,14 @@ files {
 }
 
 client_scripts {
-    "imports.lua",
     "functions/callback/client.lua",
     "functions/debug/shared.lua",
-
-    "internals/states/client.lua",
-    "internals/events/client.lua",
-    "internals/items/client.lua",
+    "internals/**/client.lua"
 }
 
 server_scripts {
     "@oxmysql/lib/MySQL.lua",
-    "imports.lua",
     "internals/**/server.lua",
 
     "functions/debug/shared.lua",
-
-    -- Starting resources where client just fetches the server solution
-    "functions/createUniqueId/server.lua",
-    "functions/hasPermission/server.lua",
-    "functions/getPlayersOnJob/server.lua",
-    "functions/getJobData/server.lua",
-    "functions/getGangData/server.lua",
-    "functions/getCharacter/server.lua",
-    "functions/getVehicles/shared.lua",
-    "functions/getAccountIdentifier/server.lua",
-    "functions/getJobs/server.lua",
-    "functions/getPlayers/server.lua",
-    "functions/getPlayersInArea/server.lua",
 }
