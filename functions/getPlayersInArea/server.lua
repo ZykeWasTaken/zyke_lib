@@ -28,6 +28,6 @@ function Functions.getPlayersInArea(plyId, pos, maxDst)
     return inArea
 end
 
-Functions.callback.register(LibName .. ":GetPlayersInArea", Functions.getPlayersInArea)
+Functions.callback.register(ResName .. ":GetPlayersInArea", Functions.getPlayersInArea)
 
 return Functions.getPlayersInArea

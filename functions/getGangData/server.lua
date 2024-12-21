@@ -16,7 +16,7 @@ function Functions.getGangData(gangName)
     return Formatting.formatGang(gang)
 end
 
-Functions.callback.register(LibName .. ":GetGangData", function(_, gangName)
+Functions.callback.register(ResName .. ":GetGangData", function(_, gangName)
     return Functions.getGangData(gangName)
 end)
 

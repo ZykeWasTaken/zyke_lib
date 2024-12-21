@@ -4,7 +4,7 @@
 function Functions.getGangData(gangName)
     local gang
     if (Framework == "ESX") then
-        return Functions.callback.await(LibName .. ":GetJobData", gangName) -- Already formatted from server
+        return Functions.callback.await(ResName .. ":GetJobData", gangName) -- Already formatted from server
     elseif (Framework == "QB") then
         gang = QB.Shared.Gangs[gangName]
     end

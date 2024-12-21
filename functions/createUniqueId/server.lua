@@ -28,7 +28,7 @@ function Functions.createUniqueId(length, uppercase)
     return id
 end
 
-Z.callback.register(LibName .. ":CreateUniqueId", function(_, length, uppercase)
+Z.callback.register(ResName .. ":CreateUniqueId", function(_, length, uppercase)
     return Functions.createUniqueId(length, uppercase)
 end)
 

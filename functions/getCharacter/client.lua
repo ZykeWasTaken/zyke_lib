@@ -7,7 +7,7 @@ function Functions.getCharacter(identifier)
         identifier = Z.getIdentifier()
     end
 
-    return Functions.callback.await(LibName .. ":GetCharacter", identifier)
+    return Functions.callback.await(ResName .. ":GetCharacter", identifier)
 end
 
 return Functions.getCharacter

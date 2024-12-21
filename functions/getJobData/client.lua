@@ -4,7 +4,7 @@
 function Functions.getJobData(jobName)
     local _job
     if (Framework == "ESX") then
-        return Functions.callback.await(LibName .. ":GetJobData", jobName)
+        return Functions.callback.await(ResName .. ":GetJobData", jobName)
     elseif (Framework == "QB") then
         _job = QB.Shared.Jobs[jobName]
     end

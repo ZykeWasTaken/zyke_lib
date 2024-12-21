@@ -2,7 +2,7 @@
 ---@return PlayerId[]
 ---@diagnostic disable-next-line: duplicate-set-field
 function Functions.getPlayers(useServer)
-    if (useServer) then return Functions.callback.await(LibName .. ":GetPlayers") end
+    if (useServer) then return Functions.callback.await(ResName .. ":GetPlayers") end
 
     local players = {}
     local _players = GetActivePlayers()

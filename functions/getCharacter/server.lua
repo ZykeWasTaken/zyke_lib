@@ -27,7 +27,7 @@ function Functions.getCharacter(identifier)
     return formattedCharacter
 end
 
-Functions.callback.register(LibName .. ":GetCharacter", function(_, identifier)
+Functions.callback.register(ResName .. ":GetCharacter", function(_, identifier)
     return Functions.getCharacter(identifier)
 end)
 

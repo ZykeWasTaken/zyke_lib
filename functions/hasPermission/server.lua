@@ -9,7 +9,7 @@ function Functions.hasPermission(player, permission)
     return IsPlayerAceAllowed(tostring(plyId), permission)
 end
 
-Z.callback.register(LibName .. ":HasPermission", function(plyId, permission)
+Z.callback.register(ResName .. ":HasPermission", function(plyId, permission)
     return Functions.hasPermission(plyId, permission)
 end)
 

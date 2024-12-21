@@ -28,11 +28,11 @@ else
     -- ESX items only exist on the server side for some reason
     if (Framework == "ESX") then
         if (Context == "server") then
-            Z.callback.register("zyke_lib2:FetchItems", function()
+            Z.callback.register("zyke_lib:FetchItems", function()
                 return ESX.Items
             end)
         else
-            items = Z.callback.await("zyke_lib2:FetchItems")
+            items = Z.callback.await("zyke_lib:FetchItems")
         end
     elseif (Framework == "QB") then
         items = QB.Shared.Items

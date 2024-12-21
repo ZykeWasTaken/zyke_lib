@@ -39,7 +39,7 @@ function Functions.getPlayersOnJob(jobName, getRanks)
     return playersOnJob, ranks
 end
 
-Functions.callback.register(LibName .. ":GetPlayersOnJob", function(_, job)
+Functions.callback.register(ResName .. ":GetPlayersOnJob", function(_, job)
     return Functions.getPlayersOnJob(job)
 end)
 

@@ -17,7 +17,7 @@ function Functions.getJobData(jobName)
     return formatted
 end
 
-Functions.callback.register(LibName .. ":GetJobData", function(_, job)
+Functions.callback.register(ResName .. ":GetJobData", function(_, job)
     return Functions.getJobData(job)
 end)
 

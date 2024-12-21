@@ -9,7 +9,7 @@ function Functions.getJobs()
     return {}
 end
 
-Functions.callback.register(LibName .. ":GetJobs", function()
+Functions.callback.register(ResName .. ":GetJobs", function()
     return Functions.getJobs()
 end)
 

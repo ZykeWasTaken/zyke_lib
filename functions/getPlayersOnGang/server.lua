@@ -39,7 +39,7 @@ function Functions.getPlayersOnGang(gang, getRanks)
     return playersOnGang, ranks
 end
 
-Functions.callback.register(LibName .. ":GetPlayersOnGang", function(_, job)
+Functions.callback.register(ResName .. ":GetPlayersOnGang", function(_, job)
     return Functions.getPlayersOnGang(job)
 end)
 

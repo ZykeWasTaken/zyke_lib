@@ -14,7 +14,7 @@ function Functions.getPlayers()
     return players
 end
 
-Functions.callback.register(LibName .. ":GetPlayers", function()
+Functions.callback.register(ResName .. ":GetPlayers", function()
     return Functions.getPlayers()
 end)
 

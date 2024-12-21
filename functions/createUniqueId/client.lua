@@ -5,7 +5,7 @@
 function Functions.createUniqueId(length, uppercase)
     if (not length) then length = 10 end
 
-    return Functions.callback.await(LibName .. ":CreateUniqueId", length, uppercase)
+    return Functions.callback.await(ResName .. ":CreateUniqueId", length, uppercase)
 end
 
 return Functions.createUniqueId
