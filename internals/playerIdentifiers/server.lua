@@ -1,6 +1,4 @@
 ---@class PlayerIdentifiers
----@field firstname string
----@field lastname string
 ---@field identifier string
 ---@field source integer
 ---@field steamid string?
@@ -20,12 +18,7 @@ local function insertIntoIdentifiers(player)
     local playerId, identifier = Functions.getPlayerId(player), Functions.getIdentifier(player)
     if (not playerId or not identifier) then return end
 
-    local character = Functions.getCharacter(identifier)
-    if (not character) then return end
-
     playerIdentifiers[identifier] = {
-        firstname = character.firstname,
-        lastname = character.lastname,
         identifier = identifier,
         source = playerId,
     }
