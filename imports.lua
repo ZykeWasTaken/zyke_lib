@@ -1,4 +1,4 @@
-LibName = "zyke_lib" -- TEMP
+LibName = "zyke_lib"
 Context = IsDuplicityVersion() and "server" or "client"
 
 ResName = GetCurrentResourceName()
@@ -33,7 +33,21 @@ end
 -- If the function is not cached, load it and cache it
 -- Once it is cached, this will no longer run
 local function execute(path, self, index, ...)
-    return loadFunc(path, self, index)
+    local module = loadFunc(path, self, index)
+
+    if (not module) then
+        local function export(...)
+            return exports[LibName][index](nil, ...)
+        end
+
+        if (not ...) then
+            self[index] = export
+        end
+
+        return export
+    end
+
+    return module
 end
 
 Functions = setmetatable({

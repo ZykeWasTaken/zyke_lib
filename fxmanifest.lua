@@ -6,11 +6,13 @@ version "2.0.30"
 shared_scripts {
     "@ox_lib/init.lua", -- Progressbar
     "config.lua",
-    "imports.lua",
+    "internals/internals.lua",
 }
 
+ui_page "javascript/index.html"
+
 files {
-    -- "imports.lua",
+    "imports.lua",
     "formatting/**/shared.lua",
     "functions/**/client.lua",
     "functions/**/shared.lua",
@@ -18,19 +20,21 @@ files {
     "webhooks/*.lua",
     "translations.lua",
     "systems/*.lua",
+
     "javascript/index.html",
     "javascript/*.js",
+}
+
+server_scripts {
+    "@oxmysql/lib/MySQL.lua",
+    "functions/callback/server.lua",
+    "internals/**/server.lua",
+
+    "functions/debug/shared.lua",
 }
 
 client_scripts {
     "functions/callback/client.lua",
     "functions/debug/shared.lua",
     "internals/**/client.lua"
-}
-
-server_scripts {
-    "@oxmysql/lib/MySQL.lua",
-    "internals/**/server.lua",
-
-    "functions/debug/shared.lua",
 }
