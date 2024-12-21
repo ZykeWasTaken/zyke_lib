@@ -46,4 +46,4 @@ if (not latestVersion.version) then
     print("Could not access resource repository, contact the developer of this resource! Code: " .. latestVersion.code)
 end
 
-return isVersionOutdated(currVersion, latestVersion.version)
+return isVersionOutdated(currVersion, latestVersion.version), currVersion, latestVersion.version
