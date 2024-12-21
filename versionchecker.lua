@@ -1,6 +1,3 @@
--- TODO: Probably outdated?
-local resName = GetCurrentResourceName()
-
 local function isVersionOutdated(v1, v2)
     local v1Nums = {}
     for value in string.gmatch(v1, "[^.]+") do
@@ -26,39 +23,27 @@ end
 ---@return table{version: string, code: number}
 local function getLatestVersion()
     local p = promise.new()
-    local repoName = resName
-    local endpoint = ("http://localhost:3000/fxmanifest?repo=%s"):format(repoName)
+    local username, repoName = "ZykeWasTaken", ResName
+    local endpoint = ("https://api.github.com/repos/%s/%s/releases/latest"):format(username, repoName)
 
-    PerformHttpRequest(endpoint, function(resCode, resultData)
-        -- print("resCode", resCode)
-        -- print("resultData", resultData)
+    PerformHttpRequest(endpoint, function(status, result)
+        if (status ~= 200) then p:resolve({code = status}) return end -- Could not find repo
 
-        -- Found repo & got info
-        if (resCode == 200) then
-            local latestVersion = resultData:match("version%s\"(%d+%.%d+%.%d+)\"")
-            p:resolve({version = latestVersion, code = resCode})
-        else
-            -- Could not find repository or file during version check
-            p:resolve({version = nil, code = resCode})
-        end
-    end)
+        p:resolve({version = json.decode(result).tag_name:match("%d+%.%d+%.%d+")})
+    end, "GET")
 
     return Citizen.Await(p)
 end
 
 ---@return string
 local function getCurrentVersion()
-    return GetResourceMetadata(resName, "version", 0)
+    return GetResourceMetadata(ResName, "version", 0)
 end
 
-CreateThread(function()
-    local currVersion = getCurrentVersion()
+local currVersion = getCurrentVersion()
+local latestVersion = getLatestVersion()
+if (not latestVersion.version) then
+    print("Could not access resource repository, contact the developer of this resource! Code: " .. latestVersion.code)
+end
 
-    local latestVersion = getLatestVersion()
-    if (not latestVersion.version) then
-        error("Could not access resource repository, contact the developer of this resource! Code: " .. latestVersion.code)
-    end
-
-    local isOutdated = isVersionOutdated(currVersion, latestVersion.version)
-    print("isOutdated", isOutdated)
-end)
+return isVersionOutdated(currVersion, latestVersion.version)

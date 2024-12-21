@@ -1,4 +1,5 @@
 LibName = "zyke_lib"
+ResName = "zyke_lib"
 Context = IsDuplicityVersion() and "server" or "client"
 
 local function empty() end
@@ -50,3 +51,11 @@ Target = loadSystem("target")
 GangSystem = loadSystem("gang")
 FuelSystem = loadSystem("fuel")
 DeathSystem = loadSystem("death")
+
+-- ##### Verify Version ##### --
+
+if (Context == "server") then
+    local isOutdated = load(LoadResourceFile(LibName, ("versionchecker.lua")), ("@@%s/versionchecker.lua"):format(LibName))()
+
+    print("isOutdated", isOutdated)
+end
