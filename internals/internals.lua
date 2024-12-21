@@ -33,3 +33,20 @@ Functions = setmetatable({
         end
     end
 })
+
+-- ##### Dependencies ##### --
+
+---@param fileName string
+---@return function
+local function loadSystem(fileName)
+    local chunk = LoadResourceFile(LibName, ("systems/%s.lua"):format(fileName))
+
+    return load(chunk)()
+end
+
+Framework = loadSystem("framework")
+Inventory, Items = loadSystem("inventory")
+Target = loadSystem("target")
+GangSystem = loadSystem("gang")
+FuelSystem = loadSystem("fuel")
+DeathSystem = loadSystem("death")
