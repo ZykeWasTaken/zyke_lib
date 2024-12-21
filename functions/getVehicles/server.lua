@@ -20,22 +20,11 @@
 
 -- TODO: Make sure you're fetching from the correct routing session
 -- Note that you can only use limited options when only using the client, such as states not always being synced the same (but usually is), getting routing buckets, etc
----@param serverFetch boolean? @Used client-side to allow for server-sided vehicle fetch, allows reach beyond your render
+---@param _ boolean? @DEPRECATED
 ---@param options? GetVehicleOptions
-function Functions.getVehicles(serverFetch, options)
-    local isServer = IsDuplicityVersion()
-    serverFetch = isServer or serverFetch == true
-
-    if (not isServer and serverFetch) then
-        return Functions.callback.await("zyke_lib:GetVehicles", options) -- Will callback and run the same complete function on the server side
-    end
-
-    local vehicles
-    if (serverFetch) then
-        vehicles = GetAllVehicles()
-    else
-        vehicles = GetGamePool("CVehicle")
-    end
+---@diagnostic disable-next-line: duplicate-set-field
+function Functions.getVehicles(_, options)
+    local vehicles = GetAllVehicles()
 
     ---@diagnostic disable-next-line: return-type-mismatch @GetAllVehicles() always returns a table, not an integer as far as my testing went
     if (not options) then return vehicles end
@@ -52,9 +41,6 @@ function Functions.getVehicles(serverFetch, options)
 
     -- Verifying positions
     local pos = options.pos
-    if (not pos) then
-        if (not isServer) then pos = GetEntityCoords(PlayerPedId()) end
-    end
 
     -- Make sure you have a position to check distance with if you are utilizing maxDistance
     if (maxDistance and maxDistance > 0 and not pos) then
@@ -129,6 +115,7 @@ function Functions.getVehicles(serverFetch, options)
 end
 
 Functions.callback.register("zyke_lib:GetVehicles", function(source, data)
+    print("pluhing 2")
     return Functions.getVehicles(true, data)
 end)
 
