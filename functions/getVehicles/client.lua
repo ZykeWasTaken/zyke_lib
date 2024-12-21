@@ -6,7 +6,6 @@
 ---@diagnostic disable-next-line: duplicate-set-field
 function Functions.getVehicles(serverFetch, options)
     if (serverFetch) then
-        print("pluhing 1")
         return Functions.callback.await("zyke_lib:GetVehicles", options) -- Will callback and run the same complete function on the server side
     end
 

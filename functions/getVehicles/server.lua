@@ -115,7 +115,6 @@ function Functions.getVehicles(_, options)
 end
 
 Functions.callback.register("zyke_lib:GetVehicles", function(source, data)
-    print("pluhing 2")
     return Functions.getVehicles(true, data)
 end)
 
