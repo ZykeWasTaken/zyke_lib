@@ -5,5 +5,3 @@ function Functions.copy(text)
         text = text,
     })
 end
-
-return Functions.copy
