@@ -9,6 +9,8 @@ function Functions.setVehicleMods(veh, mods)
         QB.Functions.SetVehicleProperties(veh, mods)
     end
 
+    Functions.setFuel(veh, mods.fuel)
+
     -- Extra since depending on your ESX/QB version, this may not work as they use strings instead of integers, which is incorrect
     if (mods.windowStatus) then
         for windowId, isIntact in pairs(mods.windowStatus) do
