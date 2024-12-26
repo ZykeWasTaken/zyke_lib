@@ -95,7 +95,7 @@ function Functions.sessions.clearEntity(netId, blockRelieve)
 
     for i = 1, #sessions[id].entities do
         if (sessions[id].entities[i] == netId) then
-            table.remove(sessions[id].players, i)
+            table.remove(sessions[id].entities, i)
             break
         end
     end
