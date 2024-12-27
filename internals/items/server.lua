@@ -58,3 +58,7 @@ exports("EnsureMetadata", function(item, metadata)
 
     GlobalState:set("ensuredMetadata", prev, true)
 end)
+
+AddEventHandler("playerJoining", function()
+    TriggerClientEvent("zyke_lib:EnsureMetadataOnConnect", source, GlobalState.ensuredMetadata)
+end)

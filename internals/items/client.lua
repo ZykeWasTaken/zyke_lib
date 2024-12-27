@@ -59,11 +59,20 @@ RegisterNetEvent("zyke_lib:InventoryUpdated", function(changes)
     end
 end)
 
-AddStateBagChangeHandler("ensuredMetadata", nil, function(bagName, key, value)
-    ensuredMetadata = value
+AddStateBagChangeHandler("ensuredMetadata", nil, function(bagName, key, val)
+    ensuredMetadata = val
 
     itemsToFetch = {}
-    for k in pairs(value) do
+    for k in pairs(val) do
+        itemsToFetch[#itemsToFetch+1] = k
+    end
+end)
+
+RegisterNetEvent("zyke_lib:EnsureMetadataOnConnect", function(val)
+    ensuredMetadata = val
+
+    itemsToFetch = {}
+    for k in pairs(val) do
         itemsToFetch[#itemsToFetch+1] = k
     end
 end)
