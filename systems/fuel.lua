@@ -1,7 +1,8 @@
 local fuel = nil
 
 local systems = {
-    {fileName = "LegacyFuel", variable = "LegacyFuel"}
+    {fileName = "ox_fuel", variable = "OX"},
+    {fileName = "LegacyFuel", variable = "LegacyFuel"},
 }
 
 for i = 1, #systems do
