@@ -1,5 +1,6 @@
 ---@param plate string
----@return integer | nil
+---@return Vehicle | nil
+---@diagnostic disable-next-line: duplicate-set-field
 function Functions.getVehicleByPlate(plate)
     local vehicles = GetGamePool("CVehicle")
 
