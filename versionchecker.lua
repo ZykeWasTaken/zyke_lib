@@ -27,6 +27,7 @@ local function getLatestVersion()
     local endpoint = ("https://api.github.com/repos/%s/%s/releases/latest"):format(username, repoName)
 
     PerformHttpRequest(endpoint, function(status, result)
+        if (status == 403 or status == 429) then p:resolve({code = status}) return end -- Rate limit
         if (status ~= 200) then p:resolve({code = status}) return end -- Could not find repo
 
         p:resolve({version = json.decode(result).tag_name:match("%d+%.%d+%.%d+")})
@@ -42,8 +43,5 @@ end
 
 local currVersion = getCurrentVersion()
 local latestVersion = getLatestVersion()
-if (not latestVersion.version) then
-    print("Could not access resource repository, contact the developer of this resource! Code: " .. latestVersion.code)
-end
 
 return isVersionOutdated(currVersion, latestVersion.version), currVersion, latestVersion.version
