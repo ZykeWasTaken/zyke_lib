@@ -41,7 +41,7 @@ local function dirExists()
         end
     end
 
-    return true
+    return false
 end
 
 local function notFound()
