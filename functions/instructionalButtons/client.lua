@@ -1,6 +1,12 @@
 Functions.instructionalButtons = {}
 
----@param buttons table
+---@class ButtonProps
+---@field label string
+---@field key string
+---@field activate? string @Key to enable this option
+---@field disable? string @Key to disable this option
+
+---@param buttons ButtonProps[]
 ---@return ScaleformHandle
 function Functions.instructionalButtons.register(buttons)
     local scaleform = RequestScaleformMovie("instructional_buttons")
