@@ -14,7 +14,7 @@ function Functions.getJobData(jobName)
     local formatted = Formatting.formatJob(_job)
     formatted.name = jobName
 
-    return nil
+    return formatted
 end
 
 return Functions.getJobData
