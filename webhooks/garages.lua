@@ -18,6 +18,7 @@ return {
 
     -- Job specific
     ["ImpoundedVehicle"] = "",
+    ["ImpoundedVehiclePublic"] = "", -- To notify players
     ["EditedImpound"] = "",
     ["DeletedImpound"] = "",
     ["SavedVehicle"] = "",
