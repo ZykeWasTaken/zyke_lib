@@ -8,10 +8,14 @@ function Functions.getPlayerItems(toInclude)
     local inventory = {}
     if (not player) then return {} end
 
-    if (Framework == "ESX") then
-        inventory = player.inventory
-    elseif (Framework == "QB") then
-        inventory = player.items
+    if (Inventory == "QS") then
+        inventory = exports['qs-inventory']:getUserInventory() or {}
+    else
+        if (Framework == "ESX") then
+            inventory = player.inventory
+        elseif (Framework == "QB") then
+            inventory = player.items
+        end
     end
 
     ---@type table<string, true>

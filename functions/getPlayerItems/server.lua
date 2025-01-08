@@ -11,7 +11,7 @@ function Functions.getPlayerItems(player, toInclude)
     if (not player) then return inventory end
 
     if (Inventory == "QS") then
-        inventory = exports['qs-inventory']:GetInventory(Z.getPlayerId(player))
+        inventory = exports['qs-inventory']:GetInventory(Z.getPlayerId(player)) or {}
     else
         if (Framework == "ESX") then
             inventory = player.inventory
