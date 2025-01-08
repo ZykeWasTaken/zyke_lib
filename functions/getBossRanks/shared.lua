@@ -3,15 +3,9 @@
 ---@return table<string, true>
 function Functions.getBossRanks(name, professionType)
     if (professionType == "job") then
-        local jobData = Functions.getJobData(name)
-        if (not jobData) then return {} end
-
-        return Formatting.formatJob(jobData).bossRanks
+        return Functions.getJobData(name)?.bossRanks or {}
     elseif (professionType == "gang") then
-        local gangData = Functions.getGangData(name)
-        if (not gangData) then return {} end
-
-        return Formatting.formatGang(gangData).bossRanks
+        return Functions.getGangData(name)?.bossRanks or {}
     end
 
     return {}
