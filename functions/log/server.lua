@@ -3,11 +3,15 @@ if (not chunk) then return error(("Failed to load webhooks/%s.lua. Missing webho
 
 local webhooks = load(chunk)()
 
+---@alias DiscordId string @Use ROLE:x or USER:x to format, to tag properly
+
 ---@param action string
 ---@param handler string | integer | "server" @Identifier, player id, "server"
 ---@param message string
 ---@param rawData table | nil
-local function sendLog(action, handler, message, rawData)
+---@param tag? DiscordId
+---@param removeHeader? boolean
+local function sendLog(action, handler, message, rawData, tag, removeHeader, messageLabel)
     local bot = {
         username = "Zyke Resources' Logs",
         avatar = "https://cdn.discordapp.com/attachments/1048900415967744031/1117129086104514721/New_Logo.png",
@@ -33,21 +37,24 @@ local function sendLog(action, handler, message, rawData)
         handlerMsg = handlerMsg .. (handlerData?.lastname and handlerData.lastname or "Missing last name")
     end
 
-    local basicInformationStr = ""
-    basicInformationStr = basicInformationStr .. "Script: " .. ResName .. "\n"
-    basicInformationStr = basicInformationStr .. "Action: " .. action .. "\n"
-    basicInformationStr = basicInformationStr .. "Handler: " .. handlerMsg
-
     local fields = {
         {
-            ["name"] = "Basic Information",
-            ["value"] = basicInformationStr
-        },
-        {
-            ["name"] = "Message",
+            ["name"] = messageLabel or "Message",
             ["value"] = message
         },
     }
+
+    if (not removeHeader) then
+        local basicInformationStr = ""
+        basicInformationStr = basicInformationStr .. "Script: " .. ResName .. "\n"
+        basicInformationStr = basicInformationStr .. "Action: " .. action .. "\n"
+        basicInformationStr = basicInformationStr .. "Handler: " .. handlerMsg
+
+        table.insert(fields, 1, {
+            ["name"] = "Basic Information",
+            ["value"] = basicInformationStr
+        })
+    end
 
     -- Append the raw data if it exists
     if (rawData and Functions.table.count(rawData) > 0) then
@@ -55,6 +62,19 @@ local function sendLog(action, handler, message, rawData)
             ["name"] = "Raw Data",
             ["value"] = "```" .. json.encode(rawData, {indent = false}) .. "```",
         }
+    end
+
+    local content = ""
+    if (tag) then
+        for i = 1, #tag do
+            local isRank = tag[i]:find("ROLE:")
+
+            if (isRank) then
+                content = content .. "<@&" .. tag[i]:sub(#"ROLE:" + 1, #tag[i]) .. ">"
+            else
+                content = content .. "<@" .. tag[i]:sub(#"USER:" + 1, #tag[i]) .. ">"
+            end
+        end
     end
 
     local embeds = {
@@ -72,7 +92,8 @@ local function sendLog(action, handler, message, rawData)
     local payload = {
         embeds = embeds,
         username = bot.username,
-        avatar_url = bot.avatar
+        avatar_url = bot.avatar,
+        content = content,
     }
 
     PerformHttpRequest(bot.webhook, function(statusCode)
@@ -88,9 +109,12 @@ local logQueue = {}
 local inLogLoop = false
 ---@class LogData
 ---@field action string
----@field handler string
+---@field handler? string
 ---@field message string
 ---@field rawData table?
+---@field tag? integer[] @Tags the provided discord ids
+---@field removeHeader? boolean
+---@field messageLabel? string
 
 ---@param passed LogData
 function Functions.log(passed)
@@ -105,7 +129,7 @@ function Functions.log(passed)
         while (#logQueue > 0) do
             local log = logQueue[1]
 
-            sendLog(log.action, log.handler, log.message, log.rawData)
+            sendLog(log.action, log.handler, log.message, log.rawData, log.tag, log.removeHeader, log.messageLabel)
             table.remove(logQueue, 1)
 
             Wait(350) -- Ratelimit
