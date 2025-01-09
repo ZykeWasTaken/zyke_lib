@@ -1,7 +1,34 @@
 if (ResName == LibName) then return end
 
+---@return boolean
+local function dirExists()
+    local num = GetNumResourceMetadata(ResName, "file")
+    if (num == 0) then return false end
+
+    for i = 1, num do
+        local str = GetResourceMetadata(ResName, "file", i - 1)
+
+        if (str:sub(1, 8) == "locales/") then
+            return true
+        end
+    end
+
+    return false
+end
+
+if (not dirExists()) then return nil end
+
 local language = LibConfig.language
+local baseLanguage = "en"
 local translations = {}
+
+local function notFound()
+    print(("^1[ERROR] Translation \"%s\" not found. (locales/%s.lua)^1"):format(language, language))
+end
+
+if (language == nil) then
+    language = baseLanguage
+end
 
 ---@param key string | table
 ---@param formatting table[]?
@@ -28,32 +55,22 @@ function Translate(key, formatting)
     return msg, notiType
 end
 
----@return boolean
-local function dirExists()
-    local num = GetNumResourceMetadata(ResName, "file")
-    if (num == 0) then return false end
+---@param langCode string
+local function loadTranslation(langCode)
+    return LoadResourceFile(ResName, ("locales/%s.lua"):format(langCode))
+end
 
-    for i = 1, num do
-        local str = GetResourceMetadata(ResName, "file", i - 1)
+local foundTranslations = loadTranslation(language)
+if (not foundTranslations) then
+    notFound()
 
-        if (str:sub(1, 8) == "locales/") then
-            return true
-        end
+    -- Attempt to run the base language instead
+    language = baseLanguage
+    foundTranslations = loadTranslation(language)
+    if (not foundTranslations) then
+        return notFound()
     end
-
-    return false
 end
-
-local function notFound()
-    error(("Translation \"%s\" not found. (locales/%s.lua)"):format(language, language))
-end
-
-if (language == nil) then return notFound() end
-
-if (not dirExists()) then return nil end
-
-local foundTranslations = LoadResourceFile(ResName, ("locales/%s.lua"):format(language))
-if (not foundTranslations) then return notFound() end
 
 local func, err = load(foundTranslations, ("@@%s/locales/%s.lua"):format(ResName, language))
 if (not func or err) then return notFound() end
