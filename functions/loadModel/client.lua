@@ -1,8 +1,10 @@
 ---@param model string
 ---@param skipError? boolean
+---@param timeout? integer @ms
 ---@return boolean
-function Functions.loadModel(model, skipError)
-    local isValid = IsModelValid(model)
+function Functions.loadModel(model, skipError, timeout)
+    local isValid = IsModelValid(model) and IsModelInCdimage(model)
+
     if (not isValid) then
         if (not skipError) then
             error("Tried to load invalid model: " .. model)
@@ -11,8 +13,14 @@ function Functions.loadModel(model, skipError)
         return false
     end
 
+    local started = timeout and GetGameTimer() or nil
+
     RequestModel(model)
-    while (not HasModelLoaded(model)) do Wait(0) end
+    while (not HasModelLoaded(model)) do
+        Wait(0)
+
+        if (timeout and GetGameTimer() - started > timeout) then return false end
+    end
 
     return true
 end
