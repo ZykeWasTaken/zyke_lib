@@ -39,3 +39,7 @@ client_scripts {
     "functions/debug/shared.lua",
     "internals/**/client.lua"
 }
+
+dependencies {
+    "ox_lib", -- Skillcheck
+}
