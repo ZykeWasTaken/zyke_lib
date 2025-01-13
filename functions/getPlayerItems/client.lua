@@ -12,9 +12,9 @@ function Functions.getPlayerItems(toInclude)
         inventory = exports['qs-inventory']:getUserInventory() or {}
     else
         if (Framework == "ESX") then
-            inventory = player.inventory
+            inventory = player.inventory or {}
         elseif (Framework == "QB") then
-            inventory = player.items
+            inventory = player.items or {}
         end
     end
 
