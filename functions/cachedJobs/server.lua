@@ -64,9 +64,7 @@ end
 
 local cachedJobs = initCachedJobs()
 
----@param plyId PlayerId
----@param jobData PlayerJob
-AddEventHandler("zyke_lib:OnJobUpdate", function(plyId, jobData)
+local function ensurePlayer(plyId, jobData)
     if (not cachedJobs[jobData.name]) then cachedJobs[jobData.name] = {} end
 
     local identifier = Z.getIdentifier(plyId)
@@ -78,11 +76,15 @@ AddEventHandler("zyke_lib:OnJobUpdate", function(plyId, jobData)
         cachedJobs[prevJobs[identifier].name][identifier] = nil
     end
 
-
     cachedJobs[jobData.name][identifier] = jobData.grade.name
 
-
     prevJobs[identifier] = {name = jobData.name, rank = jobData.grade.name}
+end
+
+---@param plyId PlayerId
+---@param jobData PlayerJob
+AddEventHandler("zyke_lib:OnJobUpdate", function(plyId, jobData)
+    ensurePlayer(plyId, jobData)
 end)
 
 -- The default framework logout doesn't supply identifier
@@ -97,6 +99,15 @@ AddEventHandler("zyke_lib:OnCharacterLogout", function(plyId)
     cachedJobs[prevJobs[identifier]][identifier] = nil
     prevJobs[identifier] = nil
 end)
+
+local currPlayers = Z.getPlayers()
+for i = 1, #currPlayers do
+    local plyJob = Z.getJob(currPlayers[i])
+
+    if (plyJob) then
+        ensurePlayer(currPlayers[i], plyJob)
+    end
+end
 
 -- Direct funcction calls to return contents
 setmetatable(Functions.cachedJobs, {
