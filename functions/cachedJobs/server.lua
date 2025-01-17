@@ -87,6 +87,14 @@ AddEventHandler("zyke_lib:OnJobUpdate", function(plyId, jobData)
     ensurePlayer(plyId, jobData)
 end)
 
+AddEventHandler("zyke_lib:OnCharacterSelect", function(plyId)
+    local plyJob = Z.getJob(plyId)
+
+    if (plyJob) then
+        ensurePlayer(plyId, plyJob)
+    end
+end)
+
 -- The default framework logout doesn't supply identifier
 -- So it is a matter of timing if we can clear the old cache until we implement our own method for this
 ---@param plyId PlayerId
@@ -95,6 +103,7 @@ AddEventHandler("zyke_lib:OnCharacterLogout", function(plyId)
     if (not identifier) then return false end
 
     if (not prevJobs[identifier]) then return end
+    if (not cachedJobs[prevJobs[identifier]]) then return end
 
     cachedJobs[prevJobs[identifier]][identifier] = nil
     prevJobs[identifier] = nil
