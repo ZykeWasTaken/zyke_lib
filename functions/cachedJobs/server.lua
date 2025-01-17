@@ -10,7 +10,8 @@ local function initCachedJobs()
     ---@type table<JobName, table<CharacterIdentifier, RankName>>
     local data = {}
 
-    local onChangeCb = nil
+    ---@type function[]
+    local onChangeCbs = {}
 
     -- Wrapping subtables with a metatable for change tracking
     ---@param tbl table
@@ -21,15 +22,17 @@ local function initCachedJobs()
                 rawset(t, key, value) -- Apply the value
 
                 -- Run the onChange for the new values, and provide the cached values too
-                if (onChangeCb) then
-                    onChangeCb(
-                        key, -- CharacterIdentifier
-                        {name = parentKey, rank = value},
-                        prevJobs[key] and {
-                            name = prevJobs[key].name,
-                            rank = prevJobs[key].rank
-                        }
-                    )
+                if (#onChangeCbs > 0) then
+                    for i = 1, #onChangeCbs do
+                        onChangeCbs[i](
+                            key, -- CharacterIdentifier
+                            {name = parentKey, rank = value},
+                            prevJobs[key] and {
+                                name = prevJobs[key].name,
+                                rank = prevJobs[key].rank
+                            }
+                        )
+                    end
                 end
             end
         })
@@ -52,7 +55,7 @@ local function initCachedJobs()
     })
 
     function proxy.onChange(cb)
-        onChangeCb = cb
+        onChangeCbs[#onChangeCbs+1] = cb
         return proxy
     end
 
