@@ -150,6 +150,13 @@ function Functions.target.remove(id)
     end
 end
 
+---@return boolean
+function Functions.target.isTargeting()
+    local key = 19
+
+    return IsControlPressed(0, key) or IsDisabledControlPressed(0, key)
+end
+
 AddEventHandler("onResourceStop", function(resName)
     if (resName ~= ResName) then return end
 
