@@ -31,6 +31,8 @@ local function insertIntoIdentifiers(player)
             local value = id:sub(separator + 1)
 
             playerIdentifiers[identifier][key] = value
+
+            Player(playerId).state:set("identifier:" .. key, value, true)
         end
     end
 end
