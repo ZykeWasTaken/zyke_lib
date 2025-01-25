@@ -1,6 +1,6 @@
 ---@param plyId PlayerId
 ---@param item string
----@param amount? integer @1 default
+---@param amount integer
 ---@param slot integer
 function Functions.removeFromSlot(plyId, item, amount, slot)
     if (Inventory == "OX") then
