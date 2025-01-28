@@ -58,8 +58,7 @@ if (Context == "server") then
     local isOutdated, cVer, lVer = load(LoadResourceFile(LibName, ("versionchecker.lua")), ("@@%s/versionchecker.lua"):format(LibName))()
     if (isOutdated) then
         print("^3====================================================")
-        print("Your zyke_lib is outdated! Please consider updating.")
-        print("")
+        print("Your zyke_lib is outdated! Please consider updating.\n")
         print(("^1Current: %s"):format(cVer))
         print(("^2Latest: %s"):format(lVer))
         print("^3====================================================^7")
