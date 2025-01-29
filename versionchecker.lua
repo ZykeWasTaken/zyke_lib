@@ -44,4 +44,6 @@ end
 local currVersion = getCurrentVersion()
 local latestVersion = getLatestVersion()
 
+if (not latestVersion.version) then return latestVersion.code end
+
 return isVersionOutdated(currVersion, latestVersion.version), currVersion, latestVersion.version
