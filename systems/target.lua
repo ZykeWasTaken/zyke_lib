@@ -1,6 +1,3 @@
----@type string
-local target = nil
-
 local systems = {
     {fileName = "ox_target", variable = "OX"},
     {fileName = "qb-target", variable = "QB"},
@@ -8,15 +5,17 @@ local systems = {
 
 -- Check if the resource is already started, and if so, set it as active
 for i = 1, #systems do
-    local isStarted = GetResourceState(systems[i].fileName) == "started"
-
-    if (isStarted) then
-        target = systems[i].variable
-
-        -- Functions.internalDebug("Found", target)
+    if (GetResourceState(systems[i].fileName) == "started") then
+        Target = systems[i].variable
 
         break
     end
 end
 
-return target
+for i = 1, #systems do
+    AddEventHandler("onResourceStart", function(resName)
+        if (resName == systems[i].fileName) then
+            Target = systems[i].variable
+        end
+    end)
+end

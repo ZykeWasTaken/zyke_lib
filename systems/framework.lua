@@ -1,6 +1,3 @@
----@type string
-local framework = nil
-
 local systems = {
     {fileName = "es_extended", variable = "ESX", fetching = function(fileName)
         ESX = exports[fileName]:getSharedObject()
@@ -11,16 +8,12 @@ local systems = {
 }
 
 for i = 1, #systems do
-    local isStarted = GetResourceState(systems[i].fileName) == "started"
-
-    if (isStarted) then
+    if (GetResourceState(systems[i].fileName) == "started") then
         systems[i].fetching(systems[i].fileName)
-        framework = systems[i].variable
-
-        -- Functions.internalDebug("Found", framework)
+        Framework = systems[i].variable
 
         break
     end
 end
 
-return framework
+-- No event catching, since this should definitely be started properly

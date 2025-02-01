@@ -85,12 +85,12 @@ local function loadSystem(fileName)
     return load(chunk)()
 end
 
-Framework = loadSystem("framework")
-Inventory, Items = loadSystem("inventory")
-Target = loadSystem("target")
-GangSystem = loadSystem("gang")
-FuelSystem = loadSystem("fuel")
-DeathSystem = loadSystem("death")
+loadSystem("framework")
+loadSystem("inventory")
+loadSystem("target")
+loadSystem("gang")
+loadSystem("fuel")
+loadSystem("death")
 
 LibConfig = load(LoadResourceFile(LibName, "config.lua"))()
 T, Translations = load(LoadResourceFile(LibName, "translations.lua"))()

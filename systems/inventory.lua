@@ -1,7 +1,3 @@
----@type string
-local inventory = nil
-local items = {}
-
 local systems = {
     {fileName = "ox_inventory", variable = "OX"},
     {fileName = "qs-inventory", variable = "QS"},
@@ -9,12 +5,8 @@ local systems = {
 }
 
 for i = 1, #systems do
-    local isStarted = GetResourceState(systems[i].fileName) == "started"
-
-    if (isStarted) then
-        inventory = systems[i].variable
-
-        -- Functions.internalDebug("Found", inventory)
+    if (GetResourceState(systems[i].fileName) == "started") then
+        Inventory = systems[i].variable
 
         break
     end
@@ -22,8 +14,8 @@ end
 
 -- Correctly fetch items based on various factors
 
-if (inventory == "OX") then
-    items = exports["ox_inventory"]:Items()
+if (Inventory == "OX") then
+    Items = exports["ox_inventory"]:Items()
 else
     -- ESX items only exist on the server side for some reason
     if (Framework == "ESX") then
@@ -32,15 +24,15 @@ else
                 return ESX.Items
             end)
         else
-            items = Z.callback.await("zyke_lib:FetchItems")
+            Items = Z.callback.await("zyke_lib:FetchItems")
         end
     elseif (Framework == "QB") then
-        items = QB.Shared.Items
+        Items = QB.Shared.Items
     end
 end
 
-if (not inventory) then
-    inventory = "DEFAULT"
+if (not Inventory) then
+    Inventory = "DEFAULT"
 end
 
-return inventory, items
+-- No event catching, since this should definitely be started properly
