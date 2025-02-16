@@ -24,6 +24,7 @@ Functions.progressBar = {}
 ---@field propTwo table? @Unused within our resources
 ---@field onFinish function?
 ---@field onCancel function?
+---@field allowSwimming? boolean
 
 ---@param data ProgressBarData
 ---@return boolean @If finished
@@ -35,6 +36,7 @@ function Functions.progressBar.start(data)
         label = data.label,
         useWhileDead = data.useWhileDead,
         canCancel = data.canCancel,
+        allowSwimming = data.allowSwimming,
         anim = {
             dict = data?.animation?.animDict,
             clip = data?.animation?.anim,
