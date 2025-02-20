@@ -16,6 +16,10 @@ for i = 1, #systems do
     AddEventHandler("onResourceStart", function(resName)
         if (resName == systems[i].fileName) then
             Target = systems[i].variable
+
+            if (Context == "server") then
+                TriggerClientEvent("zyke_lib:OnSystemStart:target", -1)
+            end
         end
     end)
 end
