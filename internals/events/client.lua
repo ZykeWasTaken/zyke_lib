@@ -9,7 +9,21 @@ if (Inventory == "OX") then
     end)
 else
     if (Framework == "QB") then
+        -- Create a slight delay, because all player updates triggers this event (hunger, thirst, stress, inventory etc)
+        -- For example, updating hunger, water & stress at the same time will trigger 3 updates, and probably a fourth if you ate
+        local lastUpdate = GetGameTimer()
+        local awaitingSync = false
+
         RegisterNetEvent("QBCore:Player:SetPlayerData", function()
+            if (awaitingSync == true) then return end
+
+            awaitingSync = true
+
+            lastUpdate = GetGameTimer()
+            while (GetGameTimer() - lastUpdate < 200) do Wait(25) end
+
+            awaitingSync = false
+
             TriggerEvent("zyke_lib:InventoryUpdated")
             TriggerServerEvent("zyke_lib:InventoryUpdated")
         end)
