@@ -7,7 +7,7 @@ All of our resources are built on top of this library, and is a requirement to u
 
 ## Important
 
-Download an experimental & non-release version **not recommended unless you know what you are doing**. We constantly update this repository to make the development of Zyke Resources' scripts easier, and we don't always test all functionality on different servers using different frameworks. Head over to the release page for a stable release.
+Downloading an experimental & non-release version is **not recommended unless you know what you are doing**. We constantly update this repository to make the development of Zyke Resources' scripts easier, and we don't always test all functionality on different servers using different frameworks. **Head over to the release page for a stable release.**
 
 ## Modified Servers
 
