@@ -1,7 +1,7 @@
 ---@class MetadataRequirement
 ---@field name string
----@field value string | number | integer
 ---@field match? string | number | integer
+---@field exclude? string | number | integer
 
 ---@param player Character | CharacterIdentifier | PlayerId
 ---@param itemName string
@@ -26,6 +26,8 @@ function Functions.getPlayerItem(player, itemName, firstOnly, bundle, metadata)
 
                     if (metadata[j].match ~= nil) then
                         if (metadata[j].match ~= itemVal) then hasAllMetadata = false break end
+                    elseif (metadata[j].exclude ~= nil) then
+                        if (metadata[j].exclude == itemVal) then hasAllMetadata = false break end
                     else
                         error("Missing metadata search type.")
                     end
