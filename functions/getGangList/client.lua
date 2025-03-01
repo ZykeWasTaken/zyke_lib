@@ -14,8 +14,9 @@ function Functions.getGangList(labelPrefix, labelSuffix, includeGrades)
     local gangList = {}
     local gangs = Functions.getGangs()
 
-    for _, gangData in pairs(gangs) do
+    for gangName, gangData in pairs(gangs) do
         local formattedGang = Formatting.formatGang(gangData)
+        formattedGang.name = formattedGang?.name or gangName
 
         if (formattedGang) then
             gangList[#gangList+1] = {
