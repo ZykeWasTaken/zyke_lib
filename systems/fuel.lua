@@ -1,6 +1,7 @@
 local systems = {
     {fileName = "ox_fuel", variable = "OX"},
     {fileName = "LegacyFuel", variable = "LegacyFuel"},
+    {fileName = "cdn-fuel", variable = "CDNFuel"},
 }
 
 for i = 1, #systems do
