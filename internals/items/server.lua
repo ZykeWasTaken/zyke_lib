@@ -2,12 +2,7 @@
 -- If your inventory provides another solution, we encourage you to use it, to prevent needing to listen to these events & process items all the time
 
 ---@type table<string, table>
-GlobalState.ensuredMetadata = {}
-
--- Cache a basic array to send into the item fetcher
--- This will ensure only necessary items are included and processed
----@type string[]
-local itemsToFetch = {}
+local ensuredMetadata = {}
 
 ---@param slot integer
 RegisterNetEvent("zyke_lib:MissingMetadata", function(slot)
@@ -16,7 +11,7 @@ RegisterNetEvent("zyke_lib:MissingMetadata", function(slot)
 
     local newMetadata = {}
     local added = 0
-    for metaKey, metaValue in pairs(GlobalState.ensuredMetadata[item.name]) do
+    for metaKey, metaValue in pairs(ensuredMetadata[item.name]) do
         local metadata = item.metadata[metaKey]
 
         if (not metadata) then
@@ -39,26 +34,14 @@ end)
 ---@param item string
 ---@param metadata table<string, any>
 exports("EnsureMetadata", function(item, metadata)
-    -- TODO merge old data with new, if different scripts wants to apply data, not needed yet
+    ensuredMetadata[item] = metadata
 
-    -- Some people need this check, others don't
-    -- Not sure where the delay occurs, but there might be one for some people
-    while (not GlobalState.ensuredMetadata) do
-        GlobalState.ensuredMetadata = {}
-
-        Wait(10)
-    end
-
-    if (not GlobalState.ensuredMetadata[item]) then
-        itemsToFetch[#itemsToFetch+1] = item
-    end
-
-    local prev = GlobalState.ensuredMetadata
-    prev[item] = metadata
-
-    GlobalState:set("ensuredMetadata", prev, true)
+    TriggerClientEvent("zyke_lib:EnsuredMetadata", -1, ensuredMetadata)
 end)
 
-AddEventHandler("playerJoining", function()
-    TriggerClientEvent("zyke_lib:EnsureMetadataOnConnect", source, GlobalState.ensuredMetadata)
+AddStateBagChangeHandler("z:hasLoaded", nil, function(bagName)
+    local plyId = GetPlayerFromStateBagName(bagName)
+    if (not plyId) then return end
+
+    TriggerClientEvent("zyke_lib:EnsuredMetadata", plyId, ensuredMetadata)
 end)

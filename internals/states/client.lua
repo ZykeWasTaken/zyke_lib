@@ -38,6 +38,8 @@ end)
 
 -- Verify your client has properly loaded into the game
 CreateThread(function()
+    LocalPlayer.state:set("z:hasLoaded", false, true) -- Needs resetting if script is restarted
+
     while (1) do
         local hasLoaded = NetworkIsPlayerActive(PlayerId())
 
