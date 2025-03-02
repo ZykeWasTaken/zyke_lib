@@ -7,7 +7,7 @@ CreateThread(function()
         local veh = GetVehiclePedIsIn(PlayerPedId(), false)
 
         if (prevVeh ~= veh) then
-            LocalPlayer.state:set("currentVehicle", veh, false)
+            LocalPlayer.state:set("currentVehicle", veh ~= 0 and veh or nil, false)
 
             local netId = veh and veh ~= 0 and VehToNet(veh) or nil
             LocalPlayer.state:set("currentVehicleNetId", netId, true)
