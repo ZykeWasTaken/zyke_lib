@@ -1,6 +1,3 @@
--- Borrowed from https://github.com/esx-framework/esx_core/blob/main/%5Bcore%5D/es_extended/client/functions.lua
--- Previously refered to their function in the base, but to skip that extra steps we pasted it into here
-
 local performanceMods = {
     {name = "engine", idx = 11},
     {name = "brakes", idx = 12},
