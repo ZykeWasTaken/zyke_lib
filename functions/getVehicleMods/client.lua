@@ -19,6 +19,8 @@ function Functions.getVehicleMods(veh)
         mods = QB.Functions.GetVehicleProperties(veh)
     end
 
+    mods.modelName = GetEntityArchetypeName(veh)
+
     local maxPerformanceMods = {}
 
     SetVehicleModKit(veh, 0)
