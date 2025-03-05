@@ -1,6 +1,3 @@
--- Borrowed from https://github.com/esx-framework/esx_core/blob/main/%5Bcore%5D/es_extended/client/functions.lua
--- Previously refered to their function in the base, but to skip that extra steps we pasted it into here
-
 local performanceMods = {
     {name = "engine", idx = 11},
     {name = "brakes", idx = 12},
@@ -21,6 +18,8 @@ function Functions.getVehicleMods(veh)
     elseif (Framework == "QB") then
         mods = QB.Functions.GetVehicleProperties(veh)
     end
+
+    mods.modelName = GetEntityArchetypeName(veh)
 
     local maxPerformanceMods = {}
 
