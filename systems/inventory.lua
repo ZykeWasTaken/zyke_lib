@@ -1,6 +1,7 @@
 local systems = {
     {fileName = "ox_inventory", variable = "OX"},
     {fileName = "qs-inventory", variable = "QS"},
+    {fileName = "tgiann-inventory", variable = "TGIANN"},
     {fileName = "DEFAULT_INVENTORY", variable = "DEFAULT"}
 }
 

@@ -9,6 +9,11 @@ function Functions.removeFromSlot(plyId, item, amount, slot)
         return
     end
 
+    if (Inventory == "TGIANN") then
+        exports["tgiann-inventory"]:RemoveItem(plyId, item, amount, slot)
+        return
+    end
+
     local player = Functions.getPlayerData(plyId)
     if (not player) then return false, Functions.internalDebug("Player not found (CRITICAL!)") end
 
