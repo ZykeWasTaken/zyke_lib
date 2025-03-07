@@ -17,6 +17,8 @@ end
 
 if (Inventory == "OX") then
     Items = exports["ox_inventory"]:Items()
+elseif (Inventory == "TGIANN") then
+    Items = exports["tgiann-inventory"]:Items()
 else
     -- ESX items only exist on the server side for some reason
     if (Framework == "ESX") then
