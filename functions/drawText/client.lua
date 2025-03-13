@@ -3,7 +3,8 @@
 ---@param y number? @default 0.96
 ---@param scale number? @default 0.5
 ---@param font integer? 0 | 1 | 2 | 4 | 6 | 7 @default 4
-function Functions.drawText(text, x, y, scale, font)
+---@param justify? "center" | "right" | "left"
+function Functions.drawText(text, x, y, scale, font, justify)
     local length = x or 0.5 -- Bottom
     local height = y or 0.96 -- Center
 
@@ -18,7 +19,15 @@ function Functions.drawText(text, x, y, scale, font)
 
     SetTextEdge(2, 0, 0, 0, 150)
     SetTextEntry("STRING")
-    SetTextCentre(true)
+
+    if (justify == "right") then
+        SetTextRightJustify(true)
+    elseif (justify == "left") then
+        SetTextRightJustify(true)
+    else
+        SetTextCentre(true)
+    end
+
     SetTextOutline()
     AddTextComponentString(text)
     DrawText(length, height)
