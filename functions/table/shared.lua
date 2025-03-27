@@ -150,6 +150,14 @@ function Functions.table.doesTableHaveEntries(tbl)
     return false
 end
 
+---@param tbl table
+---@return string | number | nil
+function Functions.table.getFirstDictionaryKey(tbl)
+    for key in pairs (tbl) do return key end
+
+    return nil
+end
+
 -- Experimental metatable testing
 ---@param value table
 ---@return metatable
