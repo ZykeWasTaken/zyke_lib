@@ -12,7 +12,7 @@ function Functions.getInventorySlot(plyId, slot)
         local playerItems = Functions.getPlayerItems(plyId)
         for i = 1, #playerItems do
             if (playerItems[i].slot == slot) then
-                return Formatting.formatItem(playerItems[i])
+                return playerItems[i]
             end
         end
 
