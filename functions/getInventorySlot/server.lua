@@ -1,6 +1,6 @@
 ---@param plyId integer
 ---@param slot integer
----@return table | nil
+---@return Item | nil
 function Functions.getInventorySlot(plyId, slot)
     if (Inventory == "OX") then
         return Formatting.formatItem(exports["ox_inventory"]:GetSlot(plyId, slot))
