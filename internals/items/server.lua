@@ -9,7 +9,7 @@ RegisterNetEvent("zyke_lib:MissingMetadata", function(slot)
     local item = Functions.getInventorySlot(source, slot)
     if (not item) then return end
 
-    local newMetadata = {}
+    local newMetadata = item.metadata or {}
     local added = 0
     for metaKey, metaValue in pairs(ensuredMetadata[item.name]) do
         local metadata = item.metadata[metaKey]
