@@ -1,6 +1,8 @@
 -- Uses the normal hasItem function, but is combined with getItem to return a string of missing items
 -- This is mainly for notification purposes to easily clarify needed items for the user
 
+-- ["missingItems"] = {msg = "You are missing items (%s)."}, -- %s = list of items
+
 ---@param requiredItems {name: string, amount: integer}[]
 ---@diagnostic disable-next-line: duplicate-set-field
 function Functions.getMissingItems(requiredItems)
