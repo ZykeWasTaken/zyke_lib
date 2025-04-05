@@ -1,8 +1,16 @@
+---@class SpecificJob
+---@field name string
+---@field minGrade number
+
+---@param player Character | CharacterIdentifier | PlayerId
 ---@param jobs string[] | string | SpecificJob[] | SpecificJob
 ---@return boolean
 ---@diagnostic disable-next-line: duplicate-set-field
-function Functions.isJob(jobs)
-    local plyJob = Functions.getJob()
+function Functions.isJob(player, jobs)
+    local player = Functions.getPlayerData(player)
+    if (not player) then return false end
+
+    local plyJob = Functions.getJob(player)
     if (not plyJob) then return false end
 
     if (type(jobs) == "string") then -- Single job name string
