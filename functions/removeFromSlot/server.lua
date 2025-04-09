@@ -5,23 +5,22 @@
 function Functions.removeFromSlot(plyId, item, amount, slot)
     if (Inventory == "OX") then
         exports["ox_inventory"]:RemoveItem(plyId, item, amount, nil, slot)
-
         return
-    end
-
-    if (Inventory == "TGIANN") then
+    elseif (Inventory == "TGIANN") then
         exports["tgiann-inventory"]:RemoveItem(plyId, item, amount, slot)
+        return
+    elseif (Inventory == "QS") then
+        exports["qs-inventory"]:RemoveItem(plyId, item, amount, slot)
+        return
+    elseif (Inventory == "C8RE") then
+        local itemId = exports["core_inventory"]:getItemBySlot(plyId, slot).id
+
+        exports["core_inventory"]:removeItemExact("content-" .. Z.getidentifier(plyId), itemId, amount)
         return
     end
 
     local player = Functions.getPlayerData(plyId)
     if (not player) then return false, Functions.internalDebug("Player not found (CRITICAL!)") end
-
-    if (Inventory == "QS") then
-        exports["qs-inventory"]:RemoveItem(plyId, item, amount, slot)
-
-        return
-    end
 
     if (Framework == "QB") then
         local inv = player.PlayerData.items
