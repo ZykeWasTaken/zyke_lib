@@ -5,7 +5,7 @@
 
 ---@class InputtedItem
 ---@field name string
----@field amount integer
+---@field amount? integer
 ---@field metadata table?
 
 ---@param item string | table
@@ -19,7 +19,7 @@ function Formatting.formatItemInput(item, amount, metadata)
     local included = {}
 
     if (type(item) == "string") then -- Simple add to the table and return
-        formattedItems[#formattedItems+1] = Formatting.formatItem({name = item, amount = amount, metadata = metadata})
+        formattedItems[#formattedItems+1] = Formatting.formatItem({name = item, amount = amount or 1, metadata = metadata})
     else
         -- Check for various table structures
         local isArray = Functions.table.isArray(item)
