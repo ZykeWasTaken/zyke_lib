@@ -1,7 +1,7 @@
 ---@class Item
 ---@field name string
 ---@field label string
----@field amount number
+---@field amount integer
 ---@field weight number
 ---@field metadata table<string, any> | nil
 ---@field slot integer
