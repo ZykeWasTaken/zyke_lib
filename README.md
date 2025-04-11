@@ -29,7 +29,7 @@ Please be aware that heavily modified servers may cause our library to struggle 
 -   Regular QBCore inventories
 -   Full support for ox_inventory
 -   Full support for qs-inventory
--   Full QBCore support for TGIANN-inventory (> v2.0.50)
+-   Full QBCore support for TGIANN-inventory (> v2.0.47)
 -   Full QBCore support for c8re_inventory (> v2.0.50)
 
 ## Target Support
