@@ -6,8 +6,8 @@
 ---@param player Character | CharacterIdentifier | PlayerId
 ---@param itemName string
 ---@param firstOnly? boolean @Return first item only
----@param bundle boolean? @Bundle all the items into one, to stack the amount
----@param metadata MetadataRequirement[]
+---@param bundle? boolean @Bundle all the items into one, to stack the amount
+---@param metadata? MetadataRequirement[]
 ---@return Item[] | Item | nil @Not array when firstOnly
 function Functions.getPlayerItem(player, itemName, firstOnly, bundle, metadata)
     local items = Functions.getPlayerItems(player)
