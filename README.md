@@ -1,4 +1,7 @@
-## What Is This?
+# [> Download](https://github.com/ZykeWasTaken/zyke_lib/releases/latest)
+
+# What Is This?
+
 Our library acts as a bridge for dependencies, such as frameworks, progressbars, dispatch systems, inventories etc. Our resources call functions within the library, which then calls the automatically selected dependency to streamline the entire process. Despite it's name, it is not the same as other libraries such as ox_lib.
 
 There are a few similar resources from other creators, but unfortunately no centralized solution that everyone can use exists. This is because these libraries are usually constructed differently, consume and return different information etc.
@@ -16,7 +19,7 @@ Please be aware that heavily modified servers may cause our library to struggle 
 ## Links
 
 -   [Documentation](https://docs.zykeresources.com/free-resources/zyke-lib)
--   [Discord](https://discord.zykeresources.com/)
+-   [Discord Community](https://discord.zykeresources.com/)
 -   [Store](https://store.zykeresources.com/)
 
 ## Inventory Support
@@ -26,12 +29,18 @@ Please be aware that heavily modified servers may cause our library to struggle 
 -   Regular QBCore inventories
 -   Full support for ox_inventory
 -   Full support for qs-inventory
+-   Full QBCore support for TGIANN-inventory (> v2.0.50)
+-   Full QBCore support for c8re_inventory (> v2.0.50)
 
 ## Target Support
 
 -   ox_target
 -   qb-target
 -   We also offer every script without target functionality
+
+## Dependencies
+
+-   [ox_lib Progressbar & Skillcheck](https://github.com/overextended/ox_lib)
 
 ## Credits
 
