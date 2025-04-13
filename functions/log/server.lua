@@ -32,9 +32,9 @@ local function sendLog(action, handler, message, rawData, tag, removeHeader, mes
         local handlerData = exports[LibName]:GetPlayerIdentifiers(handler)
 
         handlerMsg = handlerMsg .. (handlerData?.discord and ("<@%s>"):format(handlerData.discord) or "Missing Discord") .. " | "
-        handlerMsg = handlerMsg .. (handlerData?.identifier and handlerData.identifier or "Missing Identifier") .. " | "
         handlerMsg = handlerMsg .. (handlerData?.firstname and handlerData.firstname or "Missing first name") .. " "
-        handlerMsg = handlerMsg .. (handlerData?.lastname and handlerData.lastname or "Missing last name")
+        handlerMsg = handlerMsg .. (handlerData?.lastname and handlerData.lastname or "Missing last name") .. " | "
+        handlerMsg = handlerMsg .. (handlerData?.identifier and handlerData.identifier or "Missing Identifier")
     end
 
     local fields = {
