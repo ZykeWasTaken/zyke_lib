@@ -7,10 +7,13 @@
 ---@field xbl string?
 ---@field liveid string?
 ---@field ip string?
+---@field firstname? string
+---@field lastname? string
 
 ---@type table<string, PlayerIdentifiers>
 local playerIdentifiers = {}
 
+---@param player Character | CharacterIdentifier
 local function insertIntoIdentifiers(player)
     local player = Functions.getPlayerData(player)
     if (not player) then return end
@@ -18,9 +21,13 @@ local function insertIntoIdentifiers(player)
     local playerId, identifier = Functions.getPlayerId(player), Functions.getIdentifier(player)
     if (not playerId or not identifier) then return end
 
+    local character = Functions.getCharacter(identifier)
+
     playerIdentifiers[identifier] = {
         identifier = identifier,
         source = playerId,
+        firstname = character?.firstname,
+        lastname = character?.lastname,
     }
 
     -- https://docs.fivem.net/docs/scripting-reference/runtimes/lua/functions/GetPlayerIdentifiers/
@@ -48,11 +55,16 @@ AddEventHandler("onResourceStart", function(resource)
 
     local players = Functions.getPlayers()
     for i = 1, #players do
-        insertIntoIdentifiers(Functions.getIdentifier(players[i]))
+        local player = Functions.getIdentifier(players[i])
+        if (not player) then goto continue end
+
+        insertIntoIdentifiers(player)
+
+        ::continue::
     end
 end)
 
----@param identifier string
+---@param identifier CharacterIdentifier
 ---@return PlayerIdentifiers | nil
 exports("GetPlayerIdentifiers", function(identifier)
     return playerIdentifiers[identifier] or {}
