@@ -158,6 +158,24 @@ function Functions.table.getFirstDictionaryKey(tbl)
     return nil
 end
 
+-- Filter out keys in a table without modifying the original reference
+-- Mainly used to construct new metadata and remove keys such as long descriptions
+---@param newTbl table
+---@param orgTbl table
+---@param keys string[]
+function Functions.table.filterKeys(newTbl, orgTbl, keys)
+    for key, value in pairs(orgTbl) do
+        if (not Z.table.contains(keys, key)) then
+            if type(value) == "table" then
+                newTbl[key] = {}
+                Functions.table.filterKeys(newTbl[key], value, keys)
+            else
+                newTbl[key] = value
+            end
+        end
+    end
+end
+
 -- Experimental metatable testing
 ---@param value table
 ---@return metatable
