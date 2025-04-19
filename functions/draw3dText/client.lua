@@ -41,6 +41,7 @@ function Functions.draw3dText(pos, text, scale, rgba, font, animateAppearance)
     SetTextEntry("STRING")
     SetTextCentre(true)
     AddTextComponentString(text)
+    ClearDrawOrigin()
     DrawText(screenX, screenY)
 end
 
