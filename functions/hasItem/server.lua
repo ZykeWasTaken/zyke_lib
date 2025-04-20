@@ -11,6 +11,24 @@ function Functions.hasItem(player, item, amount)
     local items, included = Formatting.formatItemInput(item, amount)
     local playerItems = Functions.getPlayerItems(player, included)
 
+    if (Inventory == "TGIANN") then
+        local plyId = Functions.getPlayerId(player)
+
+        local formattedItems = {}
+        for i = 1, #playerItems do
+            local name = playerItems[i].name
+            local _amount = playerItems[i].amount or 1
+
+            if (not formattedItems[name]) then
+                formattedItems[name] = _amount
+            else
+                formattedItems[name] += _amount
+            end
+        end
+
+        return exports["tgiann-inventory"]:HasItem(plyId, formattedItems)
+    end
+
     -- Iterate our items we are checking for
     -- Remove the amount as they are found in our inventory
     -- If the items end up empty, return true

@@ -10,6 +10,8 @@ function Functions.getPlayerItems(toInclude)
 
     if (Inventory == "QS") then
         inventory = exports['qs-inventory']:getUserInventory() or {}
+    elseif (Inventory == "TGIANN") then
+        inventory = exports["tgiann-inventory"]:GetPlayerItems() or {}
     else
         if (Framework == "ESX") then
             inventory = player.inventory or {}

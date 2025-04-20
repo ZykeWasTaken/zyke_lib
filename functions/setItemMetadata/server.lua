@@ -2,8 +2,16 @@
 ---@param slot integer
 ---@param metadata table<string, any>
 function Functions.setItemMetadata(plyId, slot, metadata)
-    if (Inventory == "OX") then return exports["ox_inventory"]:SetMetadata(plyId, slot, metadata) end
-    if (Inventory == "QS") then exports["qs-inventory"]:SetItemMetadata(plyId, slot, metadata) return end
+    if (Inventory == "OX") then
+        return exports["ox_inventory"]:SetMetadata(plyId, slot, metadata)
+    elseif (Inventory == "QS") then
+        return exports["qs-inventory"]:SetItemMetadata(plyId, slot, metadata)
+    elseif (Inventory == "TGIANN") then
+        local item = Functions.getInventorySlot(plyId, slot)
+        if (not item) then return false end
+
+        return exports["tgiann-inventory"]:SetItemData(plyId, item.name, slot, metadata)
+    end
 
     -- If we are not using ox_inventory, we will have to fetch the inventory, make the modifications ourselves and set the inventory
     if (Framework == "QB") then

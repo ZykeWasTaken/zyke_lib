@@ -3,9 +3,14 @@
 -- Framework updates
 -- For QB there is no event dispatched, has to catch the SetPlayerData event
 if (Inventory == "OX") then
-    AddEventHandler('ox_inventory:updateInventory', function(changes)
+    AddEventHandler("ox_inventory:updateInventory", function(changes)
         TriggerEvent("zyke_lib:InventoryUpdated", changes)
         TriggerServerEvent("zyke_lib:InventoryUpdated", changes)
+    end)
+elseif (Inventory == "TGIANN") then
+    RegisterNetEvent("tgiann-inventory:updateInventory", function()
+        TriggerEvent("zyke_lib:InventoryUpdated")
+        TriggerServerEvent("zyke_lib:InventoryUpdated")
     end)
 else
     if (Framework == "QB") then

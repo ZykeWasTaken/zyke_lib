@@ -7,6 +7,8 @@ function Functions.registerUsableItem(item, func)
         ESX.RegisterUsableItem(item, function(source, itemName, itemData)
             if (Inventory == "QS") then
                 itemData = itemName
+            elseif (Inventory == "TGIANN") then
+                itemData = itemName
             end
 
             func(source, Formatting.formatItem(itemData))

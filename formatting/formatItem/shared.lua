@@ -9,7 +9,7 @@
 ---@param item table
 ---@return Item
 function Formatting.formatItem(item)
-    return {
+    local formatted = {
         name = item.name or item.item,
         label = item.label,
         amount = item.amount or item.count or item.value or 1,
@@ -17,6 +17,13 @@ function Formatting.formatItem(item)
         metadata = item.metadata or item.info,
         slot = item.slot
     }
+
+    -- TGIANN stores both metadata & info, we need to use info here for the correct data
+    if (Inventory == "TGIANN") then
+        formatted.metadata = item.info
+    end
+
+    return formatted
 end
 
 return Formatting.formatItem
