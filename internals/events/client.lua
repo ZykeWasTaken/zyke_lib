@@ -9,6 +9,8 @@ if (Inventory == "OX") then
     end)
 elseif (Inventory == "TGIANN") then
     RegisterNetEvent("tgiann-inventory:updateInventory", function()
+        Wait(250) -- There is a delay for the items to actually update and exist, so we wait a bit before triggering the event
+
         TriggerEvent("zyke_lib:InventoryUpdated")
         TriggerServerEvent("zyke_lib:InventoryUpdated")
     end)
