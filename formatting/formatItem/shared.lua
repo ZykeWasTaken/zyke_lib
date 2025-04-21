@@ -19,7 +19,8 @@ function Formatting.formatItem(item)
     }
 
     -- TGIANN stores both metadata & info, we need to use info here for the correct data
-    if (Inventory == "TGIANN") then
+    -- Also check if .info exists, because if it is an internal call we may have already translated it
+    if (Inventory == "TGIANN" and item.info) then
         formatted.metadata = item.info
     end
 
