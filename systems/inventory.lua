@@ -2,6 +2,7 @@ local systems = {
     {fileName = "ox_inventory", variable = "OX"},
     {fileName = "qs-inventory", variable = "QS"},
     {fileName = "tgiann-inventory", variable = "TGIANN"},
+    {fileName = "codem-inventory", variable = "CODEM"},
     {fileName = "core_inventory", variable = "C8RE"},
     {fileName = "DEFAULT_INVENTORY", variable = "DEFAULT"}
 }
@@ -20,6 +21,8 @@ if (Inventory == "OX") then
     Items = exports["ox_inventory"]:Items()
 elseif (Inventory == "TGIANN") then
     Items = exports["tgiann-inventory"]:Items()
+elseif (Inventory == "CODEM") then
+    Items = exports["codem-inventory"]:GetItemList()
 else
     -- ESX items only exist on the server side for some reason
     if (Framework == "ESX") then

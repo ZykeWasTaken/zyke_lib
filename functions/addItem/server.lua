@@ -7,13 +7,14 @@ function Functions.addItem(player, item, amount, metadata)
     if (not player) then return end
 
     local items = Formatting.formatItemInput(item, amount, metadata)
+    local plyId = Inventory == "CODEM" and Functions.getPlayerId(player)
 
-    if (Framework == "ESX") then
-        for i = 1, #items do
+    for i = 1, #items do
+        if (Inventory == "CODEM") then
+            exports["codem-inventory"]:AddItem(plyId, item, amount, nil, items[i].metadata)
+        elseif (Framework == "ESX") then
             player.addInventoryItem(items[i].name, items[i].amount, items[i].metadata)
-        end
-    elseif (Framework == "QB") then
-        for i = 1, #items do
+        elseif (Framework == "QB") then
             player.Functions.AddItem(items[i].name, items[i].amount, nil, items[i].metadata)
         end
     end

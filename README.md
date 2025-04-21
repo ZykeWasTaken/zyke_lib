@@ -32,6 +32,7 @@ Please be aware that heavily modified servers may cause our library to struggle 
 -   Full support for ox_inventory
 -   Full support for qs-inventory
 -   Full support for TGIANN-inventory (> v2.0.51)
+-   Full support for codem-inventory (> v2.0.51)
 -   Full QBCore support for core_inventory (> v2.0.50)
 
 ## Target Support

@@ -12,6 +12,20 @@ elseif (Inventory == "TGIANN") then
         TriggerEvent("zyke_lib:InventoryUpdated")
         TriggerServerEvent("zyke_lib:InventoryUpdated")
     end)
+elseif (Inventory == "CODEM") then
+    local events = {
+        "codem-inventory:removeitemtoclientInventory",
+        "codem-inventory:client:additem",
+    }
+
+    for i = 1, #events do
+        RegisterNetEvent(events[i], function()
+            Wait(250) -- There is a delay for the items to actually update and exist, so we wait a bit before triggering the event
+
+            TriggerEvent("zyke_lib:InventoryUpdated")
+            TriggerServerEvent("zyke_lib:InventoryUpdated")
+        end)
+    end
 else
     if (Framework == "QB") then
         -- Create a slight delay, because all player updates triggers this event (hunger, thirst, stress, inventory etc)

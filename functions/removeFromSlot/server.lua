@@ -17,6 +17,8 @@ function Functions.removeFromSlot(plyId, item, amount, slot)
 
         exports["core_inventory"]:removeItemExact("content-" .. Z.getidentifier(plyId), itemId, amount)
         return
+    elseif (Inventory == "CODEM") then
+        return exports["codem-inventory"]:RemoveItem(plyId, item, amount, slot)
     end
 
     local player = Functions.getPlayerData(plyId)

@@ -6,6 +6,8 @@ function Functions.getInventorySlot(plyId, slot)
         return Formatting.formatItem(exports["ox_inventory"]:GetSlot(plyId, slot))
     elseif (Inventory == "TGIANN") then
         return Formatting.formatItem(exports["tgiann-inventory"]:GetItemBySlot(plyId, slot, nil))
+    elseif (Inventory == "CODEM") then
+        return Formatting.formatItem(exports["codem-inventory"]:GetItemBySlot(plyId, slot))
     end
 
     -- QB & Any
