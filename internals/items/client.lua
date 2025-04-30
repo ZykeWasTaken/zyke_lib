@@ -45,7 +45,10 @@ RegisterNetEvent("zyke_lib:InventoryUpdated", function(changes)
         local missingMetadata = false
         if (item.metadata) then
             for metaKey in pairs(ensuredMetadata[name]) do
-                if (not item.metadata[metaKey]) then missingMetadata = true break end
+                if (item.metadata[metaKey] == nil) then
+                    missingMetadata = true
+                    break
+                end
             end
         else
             missingMetadata = true
