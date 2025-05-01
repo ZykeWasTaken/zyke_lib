@@ -18,9 +18,14 @@ RegisterNetEvent("zyke_lib:MissingMetadata", function(slot)
             added += 1
         end
 
-        local newValue = metadata == nil and metaValue or metadata
+        local newVal
+        if (metadata == nil) then
+            newVal = metaValue
+        else
+            newVal = metadata
+        end
 
-        newMetadata[metaKey] = newValue
+        newMetadata[metaKey] = newVal
     end
 
     if (added > 0) then
