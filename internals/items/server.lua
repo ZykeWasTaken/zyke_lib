@@ -41,9 +41,10 @@ end)
 exports("EnsureMetadata", function(item, metadata)
     ensuredMetadata[item] = metadata
 
-    TriggerClientEvent("zyke_lib:EnsuredMetadata", -1, ensuredMetadata)
+    TriggerClientEvent("zyke_lib:EnsureSingleMetadata", -1, item, metadata)
 end)
 
+---@diagnostic disable-next-line: param-type-mismatch
 AddStateBagChangeHandler("z:hasLoaded", nil, function(bagName)
     local plyId = GetPlayerFromStateBagName(bagName)
     if (not plyId) then return end

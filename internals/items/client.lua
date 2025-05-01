@@ -70,3 +70,20 @@ RegisterNetEvent("zyke_lib:EnsuredMetadata", function(_ensuredMetadata)
         itemsToFetch[#itemsToFetch+1] = k
     end
 end)
+
+-- More restart friendly, syncing one at a time instead of the previous bulk method
+RegisterNetEvent("zyke_lib:EnsureSingleMetadata", function(item, metadata)
+    ensuredMetadata[item] = metadata
+
+    local found = false
+    for i = 1, #itemsToFetch do
+        if (itemsToFetch[i] == item) then
+            found = true
+            break
+        end
+    end
+
+    if (not found) then
+        itemsToFetch[#itemsToFetch+1] = item
+    end
+end)
