@@ -150,6 +150,22 @@ function Functions.target.remove(id)
     end
 end
 
+---@param targetDetails EntityTargetDetails
+function Functions.target.addModel(model, targetDetails)
+    ---@type EntityTargetDetails
+    ---@diagnostic disable-next-line: assign-type-mismatch
+    targetDetails = ensureTargetDetails(targetDetails)
+
+    if (Target == "OX") then
+        exports["ox_target"]:addModel(model, targetDetails.options)
+    elseif (Target == "QB") then
+        exports["qb-target"]:AddTargetModel(model, {
+            options = targetDetails.options,
+            distance = targetDetails.distance
+        })
+    end
+end
+
 ---@return boolean
 function Functions.target.isTargeting()
     local key = 19
