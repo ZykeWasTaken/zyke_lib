@@ -1,7 +1,7 @@
 fx_version "cerulean"
 game "gta5"
 lua54 "yes"
-version "2.1.4"
+version "2.1.5"
 
 shared_scripts {
     "@ox_lib/init.lua", -- Progressbar
