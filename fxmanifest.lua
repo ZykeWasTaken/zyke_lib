@@ -17,8 +17,6 @@ files {
     "formatting/**/shared.lua",
     "functions/**/client.lua",
     "functions/**/shared.lua",
-    "functions/**/server.lua",
-    "webhooks/*.lua",
     "translations.lua",
     "systems/*.lua",
 
