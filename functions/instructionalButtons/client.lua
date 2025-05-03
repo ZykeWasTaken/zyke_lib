@@ -7,6 +7,8 @@ Functions.instructionalButtons = {}
 ---@field disable? string @Key to disable this option
 ---@field forceRender? boolean @If pressed, forcefully re-register the buttons
 ---@field func fun(keyCode: integer, key: string, active: string?, disable: string?)
+---@field inactive? boolean @Set by isInactive
+---@field isInactive fun(): boolean @Function to check if the button should be set as inactive
 
 local keys = Functions.keys.getAll()
 
@@ -29,6 +31,14 @@ function scaleforms:registerButtons(buttons)
     for i = 1, #buttons do
         local key = Functions.keys.get(buttons[i].key)
         if (not key) then error("Attempted to register an instruction with an invalid key: " .. buttons[i].key) return end
+
+        if (buttons[i].isInactive and buttons[i].isInactive()) then
+            buttons[i].inactive = true
+            removedIndexes = removedIndexes + 1
+            goto continue
+        else
+            buttons[i].inactive = false
+        end
 
         -- Handle activator key
         if (buttons[i].activate ~= nil) then
@@ -100,6 +110,7 @@ end
 function scaleforms:handleButtons()
     for i = 1, #self.buttons do
         local isMulti = type(self.buttons[i].key) == "table"
+        if (self.buttons[i].inactive) then goto continue end
 
         if (isMulti) then
             for j = 1, #self.buttons[i].key do
@@ -118,6 +129,8 @@ function scaleforms:handleButtons()
                 self.buttons[i].func(keyCode, self.buttons[i].key, self.buttons[i].activate, self.buttons[i].disable)
             end
         end
+
+        ::continue::
     end
 end
 
