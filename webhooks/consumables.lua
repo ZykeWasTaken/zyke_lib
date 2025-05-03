@@ -22,4 +22,5 @@ return {
 	["ItemPlaced"] = "",
 	["ItemPickup"] = "",
 	["ItemTransfer"] = "",
+	["ItemDiscarded"] = "",
 }
