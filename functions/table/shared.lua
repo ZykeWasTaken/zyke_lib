@@ -56,14 +56,22 @@ function Functions.table.count(tbl)
 end
 
 ---@param tbl table -- Needs to be an array
----@param desiredString string
+---@param desiredString string | string[]
 ---@return boolean, number | nil
 function Functions.table.contains(tbl, desiredString)
     if (not tbl) then error("Attempt to scan non-existent table") end
+    if (#tbl == 0) then return false, nil end
+    if (not desiredString or #desiredString == 0) then return false, nil end
 
-    for idx, string in pairs(tbl) do
-        if (desiredString == string) then
-            return true, idx
+    if (type(desiredString) == "string") then
+        desiredString = {desiredString}
+    end
+
+    for i = 1, #tbl do
+        for j = i, #desiredString do
+            if (tbl[i] == desiredString[j]) then
+                return true, i
+            end
         end
     end
 
