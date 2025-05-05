@@ -3,6 +3,8 @@
 ---@return boolean
 ---@diagnostic disable-next-line: duplicate-set-field
 function Functions.hasPermission(player, permission)
+    if (player == 0) then return true end -- Server request
+
     local plyId = Functions.getPlayerId(player)
     if (not plyId) then return false end
 
