@@ -21,7 +21,7 @@ RegisterNetEvent(cbEvent:format(ResName), function(reqId, ...)
 end)
 
 ---@diagnostic disable-next-line: duplicate-set-field
-function Functions.callback.await(plyId, event, data)
+function Functions.callback.await(plyId, event, ...)
     local promise = promise.new()
     local reqId = getKey()
 
@@ -31,7 +31,7 @@ function Functions.callback.await(plyId, event, data)
         promise:resolve(res)
     end
 
-    TriggerClientEvent(cbEvent:format(event), plyId, reqId, data)
+    TriggerClientEvent(cbEvent:format(event), plyId, reqId, ...)
 
     return table.unpack(Citizen.Await(promise))
 end

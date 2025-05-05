@@ -38,8 +38,8 @@ end
 
 ---@diagnostic disable-next-line: duplicate-set-field
 function Functions.callback.register(event, cb)
-    RegisterNetEvent(cbEvent:format(event), function(reqId, data)
-        TriggerServerEvent(cbEvent:format(ResName), reqId, cb(data))
+    RegisterNetEvent(cbEvent:format(event), function(reqId, ...)
+        TriggerServerEvent(cbEvent:format(ResName), reqId, cb(...))
     end)
 end
 
