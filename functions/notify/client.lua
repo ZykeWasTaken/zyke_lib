@@ -9,6 +9,7 @@ function Functions.notify(key, formatting, length)
 
     if (Framework == "ESX") then
         if (notifyType == "primary") then notifyType = "info" end
+        if (notifyType == "warning") then notifyType = "error" end
 
         ESX.ShowNotification(notifyStr, notifyType, length)
         return
