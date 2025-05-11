@@ -2,6 +2,9 @@ Functions.stash = {}
 
 -- If your inventory requires you to register the stash, it is done in here
 ---@param id string
+---@param label string
+---@param slots integer
+---@param weight integer @ Grams
 function Functions.stash.register(id, label, slots, weight)
     if (Inventory == "OX") then
         local stash = Functions.stash.get(id)
@@ -14,8 +17,8 @@ function Functions.stash.register(id, label, slots, weight)
     end
 end
 
--- Unused
 ---@param id string
+---@param plyId integer
 ---@diagnostic disable-next-line: duplicate-set-field
 function Functions.stash.open(id, plyId)
     if (Inventory == "OX") then
