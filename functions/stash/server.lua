@@ -19,7 +19,7 @@ end
 ---@diagnostic disable-next-line: duplicate-set-field
 function Functions.stash.open(id, plyId)
     if (Inventory == "OX") then
-        return exports["ox_inventory"]:forceOpenInventory(plyId, id)
+        return exports["ox_inventory"]:forceOpenInventory(plyId, "stash", id)
     end
 end
 
