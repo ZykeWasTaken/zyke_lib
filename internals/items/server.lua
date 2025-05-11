@@ -41,7 +41,13 @@ end)
 exports("EnsureMetadata", function(item, metadata)
     ensuredMetadata[item] = metadata
 
-    TriggerClientEvent("zyke_lib:EnsureSingleMetadata", -1, item, metadata)
+    ---@type table<string, boolean>
+    local clientData = {}
+    for k in pairs(metadata) do
+        clientData[k] = true
+    end
+
+    TriggerClientEvent("zyke_lib:EnsureSingleMetadata", -1, item, clientData)
 end)
 
 ---@diagnostic disable-next-line: param-type-mismatch

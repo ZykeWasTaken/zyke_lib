@@ -4,7 +4,7 @@
 
 -- This is a multi-solution to ensuring certain metadata exists for select items for all inventories and frameworks
 -- If your inventory provides another solution, we encourage you to use it, to prevent needing to listen to these events & process items all the time
----@type table<string, table>
+---@type table<string, table<string, boolean>>
 local ensuredMetadata = {}
 
 -- Cache a basic array to send into the item fetcher
@@ -62,6 +62,7 @@ RegisterNetEvent("zyke_lib:InventoryUpdated", function(changes)
     end
 end)
 
+---@param _ensuredMetadata table<string, table<string, boolean>>
 RegisterNetEvent("zyke_lib:EnsuredMetadata", function(_ensuredMetadata)
     ensuredMetadata = _ensuredMetadata
 
@@ -72,6 +73,8 @@ RegisterNetEvent("zyke_lib:EnsuredMetadata", function(_ensuredMetadata)
 end)
 
 -- More restart friendly, syncing one at a time instead of the previous bulk method
+---@param item string
+---@param metadata table<string, boolean>
 RegisterNetEvent("zyke_lib:EnsureSingleMetadata", function(item, metadata)
     ensuredMetadata[item] = metadata
 
