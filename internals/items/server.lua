@@ -14,13 +14,10 @@ RegisterNetEvent("zyke_lib:MissingMetadata", function(slot)
     for metaKey, metaValue in pairs(ensuredMetadata[item.name]) do
         local metadata = item.metadata[metaKey]
 
-        if (not metadata) then
-            added += 1
-        end
-
         local newVal
         if (metadata == nil) then
             newVal = metaValue
+            added += 1
         else
             newVal = metadata
         end
