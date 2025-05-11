@@ -1,7 +1,14 @@
 -- This is a multi-solution to ensuring certain metadata exists for select items for all inventories and frameworks
 -- If your inventory provides another solution, we encourage you to use it, to prevent needing to listen to these events & process items all the time
 
----@type table<string, table>
+---@param val any
+local function isFuncRef(val)
+    if (type(val) ~= "table") then return false end
+
+    return val["__cfx_functionReference"] ~= nil
+end
+
+---@type table<string, table | fun(): table>
 local ensuredMetadata = {}
 
 ---@param slot integer
@@ -11,7 +18,15 @@ RegisterNetEvent("zyke_lib:MissingMetadata", function(slot)
 
     local newMetadata = item.metadata or {}
     local added = 0
-    for metaKey, metaValue in pairs(ensuredMetadata[item.name]) do
+
+    local desiredMetadata = ensuredMetadata[item.name]
+
+    if (isFuncRef(desiredMetadata)) then
+        desiredMetadata = desiredMetadata()
+    end
+
+    ---@diagnostic disable-next-line: param-type-mismatch
+    for metaKey, metaValue in pairs(desiredMetadata) do
         local metadata = item.metadata[metaKey]
 
         local newVal
@@ -34,12 +49,17 @@ end)
 -- We provide a lib function to each resource
 -- However, we want to sync all the metadata in our lib, as it does not need to be replicated and synced in every resource
 ---@param item string
----@param metadata table<string, any>
+---@param metadata table<string, any> | fun(): table<string, any>
 exports("EnsureMetadata", function(item, metadata)
     ensuredMetadata[item] = metadata
 
+    if (isFuncRef(metadata)) then
+        metadata = metadata()
+    end
+
     ---@type table<string, boolean>
     local clientData = {}
+    ---@diagnostic disable-next-line: param-type-mismatch
     for k in pairs(metadata) do
         clientData[k] = true
     end
