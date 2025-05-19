@@ -15,7 +15,7 @@ function Functions.removeFromSlot(plyId, item, amount, slot)
     elseif (Inventory == "C8RE") then
         local itemId = exports["core_inventory"]:getItemBySlot(plyId, slot).id
 
-        exports["core_inventory"]:removeItemExact("content-" .. Z.getidentifier(plyId), itemId, amount)
+        exports["core_inventory"]:removeItemExact("content-" .. Z.getIdentifier(plyId), itemId, amount)
         return
     elseif (Inventory == "CODEM") then
         return exports["codem-inventory"]:RemoveItem(plyId, item, amount, slot)
