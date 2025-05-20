@@ -175,13 +175,17 @@ local keyMapping = {
 ---@field keyCode integer
 
 ---@param key string
----@return FullKeyData
+---@return FullKeyData | nil
 function Functions.keys.getKeyMapping(key)
     local isSpecialCharacter = keyMapping[key] ~= nil
     if (isSpecialCharacter) then
         local keyData =
             availableKeys[keyMapping[key].keyMappingKey]
             or availableKeys[keyMappingTranslation[keyMapping[key].keyMappingKey]]
+
+        if (keyData == nil) then
+            return nil
+        end
 
         return {
             key = keyMapping[key].key,
@@ -194,6 +198,10 @@ function Functions.keys.getKeyMapping(key)
         local trimmedKey = key:sub(3)
         local keyData = availableKeys[trimmedKey]
 
+        if (keyData == nil) then
+            return nil
+        end
+
         return {
             key = trimmedKey,
             type = keyData.keyMapping.type,
@@ -204,7 +212,7 @@ function Functions.keys.getKeyMapping(key)
 end
 
 ---@param command string
----@return KeyMapping
+---@return KeyMapping | nil
 function Functions.keys.getKeyDataForCommand(command)
     local hash = joaat(command) | 0x80000000
     local button = GetControlInstructionalButton(0, hash, true)
