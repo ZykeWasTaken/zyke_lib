@@ -23,6 +23,8 @@ elseif (Inventory == "TGIANN") then
     Items = exports["tgiann-inventory"]:Items()
 elseif (Inventory == "CODEM") then
     Items = exports["codem-inventory"]:GetItemList()
+elseif (Inventory == "QS") then
+    Items = exports['qs-inventory']:GetItemList()
 else
     -- ESX items only exist on the server side for some reason
     if (Framework == "ESX") then
