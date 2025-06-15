@@ -1,7 +1,5 @@
--- Import this manually earlier in the imports file or something
-
 ---@param ... string
-function Functions.debug(...)
+local function debug(...)
     if (not Config.Settings.debug == true) then return end
 
     local str = ""
@@ -12,11 +10,22 @@ function Functions.debug(...)
     print("^4[Debug]: ^7" .. str:sub(1, #str - 1))
 end
 
+Functions.debug = setmetatable({}, {
+    __call = function(_, ...)
+        debug(...)
+    end
+})
+
 ---@param ... string
-function Functions.internalDebug(...)
+function Functions.debug.internal(...)
     if (not LibConfig.debug == true) then return end
 
-    print("^4[Debug]: ^7" .. ...)
+    local str = ""
+    for _, arg in pairs({...}) do
+        str = str .. tostring(arg) .. " "
+    end
+
+    print("^4[Debug]: ^7" .. str:sub(1, #str - 1))
 end
 
 return Functions.debug
