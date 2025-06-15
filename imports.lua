@@ -122,3 +122,15 @@ for i = 1, #forceLoad do
 
     loadFunc("functions", Functions, name)
 end
+
+-- Verify UI build
+local hasUISrc = LoadResourceFile(GetCurrentResourceName(), "nui_source/index.html")
+local hasUIBuild = LoadResourceFile(GetCurrentResourceName(), "nui/index.html")
+if (hasUISrc and not hasUIBuild) then
+    while (1) do
+        print("^1UI source files found, but no UI build found. Please build the UI or download the build version from the GitHub repository.^7")
+        print("https://docs.zykeresources.com/common-issues/downloading-source-files")
+
+        Wait(1000)
+    end
+end
