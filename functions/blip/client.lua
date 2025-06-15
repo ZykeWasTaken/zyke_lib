@@ -27,7 +27,7 @@ function Functions.blip.add(data)
         blip = AddBlipForRadius(data.pos.x, data.pos.y, data.pos.z, data.scale)
     end
 
-    if (not blip) then Functions.internalDebug("No blip type was specified") return nil end
+    if (not blip) then Functions.debug.internal("No blip type was specified") return nil end
 
     local sprite = (data.type == "radius" and 9) or data.sprite or 1
 

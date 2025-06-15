@@ -42,7 +42,7 @@ RegisterNetEvent("zyke_lib:MissingMetadata", function(slot)
 
     if (added > 0) then
         Functions.setItemMetadata(source, item.slot, newMetadata)
-        Functions.internalDebug(("Ensured missing metadata for %s."):format(item.name))
+        Functions.debug.internal(("Ensured missing metadata for %s."):format(item.name))
     end
 end)
 

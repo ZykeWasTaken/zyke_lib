@@ -22,7 +22,7 @@ function Functions.removeFromSlot(plyId, item, amount, slot)
     end
 
     local player = Functions.getPlayerData(plyId)
-    if (not player) then return false, Functions.internalDebug("Player not found (CRITICAL!)") end
+    if (not player) then return false, Functions.debug.internal("Player not found (CRITICAL!)") end
 
     if (Framework == "QB") then
         local inv = player.PlayerData.items

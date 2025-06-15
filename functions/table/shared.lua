@@ -41,7 +41,7 @@ end
 ---@return integer
 function Functions.table.count(tbl)
     if (not tbl) then
-        Functions.internalDebug("Attempted to count", type(tbl), "table.")
+        Functions.debug.internal("Attempted to count", type(tbl), "table.")
 
         return 0
     end
