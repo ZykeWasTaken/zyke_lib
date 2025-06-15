@@ -85,15 +85,26 @@ local function loadSystem(fileName)
     return load(chunk)()
 end
 
-loadSystem("framework")
-loadSystem("inventory")
-loadSystem("target")
-loadSystem("gang")
-loadSystem("fuel")
-loadSystem("death")
-
 LibConfig = load(LoadResourceFile(LibName, "config.lua"))()
 T, Translations = load(LoadResourceFile(LibName, "translations.lua"))()
+
+loadSystem("framework")
+Functions.debug.internal("Loaded framework", Framework)
+
+loadSystem("inventory")
+Functions.debug.internal("Loaded inventory", Inventory)
+
+loadSystem("target")
+Functions.debug.internal("Loaded target", Target)
+
+loadSystem("gang")
+Functions.debug.internal("Loaded gang", GangSystem)
+
+loadSystem("fuel")
+Functions.debug.internal("Loaded fuel", FuelSystem)
+
+loadSystem("death")
+Functions.debug.internal("Loaded death", DeathSystem)
 
 -- Id/name for keymapping, to track if you are still holding the button
 HoldingKeys = {}
@@ -128,8 +139,8 @@ local hasUISrc = LoadResourceFile(GetCurrentResourceName(), "nui_source/index.ht
 local hasUIBuild = LoadResourceFile(GetCurrentResourceName(), "nui/index.html")
 if (hasUISrc and not hasUIBuild) then
     while (1) do
-        print("^1UI source files found, but no UI build found. Please build the UI or download the build version from the GitHub repository.^7")
-        print("https://docs.zykeresources.com/common-issues/downloading-source-files")
+        -- print("^1UI source files found, but no UI build found. Please build the UI or download the build version from the GitHub repository.^7")
+        -- print("https://docs.zykeresources.com/common-issues/downloading-source-files")
 
         Wait(1000)
     end
