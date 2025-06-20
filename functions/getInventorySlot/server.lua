@@ -8,11 +8,17 @@ function Functions.getInventorySlot(plyId, slot)
         return Formatting.formatItem(exports["tgiann-inventory"]:GetItemBySlot(plyId, slot, nil))
     elseif (Inventory == "CODEM") then
         return Formatting.formatItem(exports["codem-inventory"]:GetItemBySlot(plyId, slot))
+    elseif (Inventory == "QS") then
+        local playerItems = Functions.getPlayerItems(plyId)
+        for i = 1, #playerItems do
+            if (playerItems[i].slot == slot) then
+                return playerItems[i]
+            end
+        end
     end
 
-    -- QB & Any
-    -- ESX & qs-inventory
-    if ((Framework == "QB") or (Framework == "ESX" and Inventory == "QS")) then
+    -- QB default or fallback
+    if (Framework == "QB") then
         local playerItems = Functions.getPlayerItems(plyId)
         for i = 1, #playerItems do
             if (playerItems[i].slot == slot) then
