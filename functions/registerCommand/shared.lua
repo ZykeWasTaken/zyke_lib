@@ -4,8 +4,14 @@
 ---@param fn function
 ---@param helperMsg? string
 ---@param args? table<string[]>
-function Functions.registerCommand(commands, fn, helperMsg, args)
+---@param permission? {permission: string[] | string, errorMsg: string}
+function Functions.registerCommand(commands, fn, helperMsg, args, permission)
     if (type(commands) ~= "table") then commands = {commands} end
+
+    if (permission and type(permission.permission) ~= "table") then
+        ---@diagnostic disable-next-line: assign-type-mismatch -- Linter is just stupid
+        permission.permission = {permission.permission}
+    end
 
     local function getArgs()
         if (not args or #args == 0) then return {} end
@@ -30,7 +36,31 @@ function Functions.registerCommand(commands, fn, helperMsg, args)
     end
 
     for i = 1, #commands do
-        RegisterCommand(commands[i], fn, false)
+        -- If we have a permission to check, do so before we trigger the input function
+        if (permission) then
+            if (Context == "server") then
+                RegisterCommand(commands[i], function(plyId, ...)
+                    if (Functions.hasPermission(plyId, permission.permission)) then
+                        fn(plyId, ...)
+                    else
+                        ---@diagnostic disable-next-line: param-type-mismatch
+                        Functions.notify(plyId, permission.errorMsg)
+                    end
+                end, false)
+            else
+                RegisterCommand(commands[i], function(plyId, ...)
+                    if (Functions.hasPermission(plyId, permission.permission)) then
+                        fn(plyId, ...)
+                    else
+                        ---@diagnostic disable-next-line: missing-parameter
+                        Functions.notify(permission.errorMsg)
+                    end
+                end, false)
+            end
+        else
+            RegisterCommand(commands[i], fn, false)
+        end
+
 
         addSuggestion(commands[i])
     end
