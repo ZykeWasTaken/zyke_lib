@@ -1,5 +1,5 @@
 ---@param player Character | CharacterIdentifier | PlayerId
----@param permission string @Usually "command"
+---@param permission string[] | string @Usually "command", array only checks if you have at least one of the permissions, not all
 ---@return boolean
 ---@diagnostic disable-next-line: duplicate-set-field
 function Functions.hasPermission(player, permission)
@@ -8,7 +8,17 @@ function Functions.hasPermission(player, permission)
     local plyId = Functions.getPlayerId(player)
     if (not plyId) then return false end
 
-    return IsPlayerAceAllowed(tostring(plyId), permission)
+    if (type(permission) == "table") then
+        for i = 1, #permission do
+            if (IsPlayerAceAllowed(tostring(plyId), permission[i])) then
+                return true
+            end
+        end
+    else
+        return IsPlayerAceAllowed(tostring(plyId), permission)
+    end
+
+    return false
 end
 
 Z.callback.register(ResName .. ":HasPermission", function(plyId, permission)
