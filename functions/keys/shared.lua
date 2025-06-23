@@ -3,6 +3,7 @@ Functions.keys = {}
 ---@class KeyMapping
 ---@field type "keyboard" | "mouse_button" | "mouse_wheel"
 ---@field keyMappingKey string
+---@field label? string @We override some labels to fit them better in menus
 
 ---@class Key
 ---@field keyCode integer
@@ -31,9 +32,9 @@ local availableKeys = {
     ["S"] = {keyCode = 8, name = "~INPUT_SCRIPTED_FLY_UD~", keyMapping = {type = "keyboard", keyMappingKey = "S"}},
     ["D"] = {keyCode = 9, name = "~INPUT_SCRIPTED_FLY_LR~", keyMapping = {type = "keyboard", keyMappingKey = "D"}},
     ["PAGEUP"] = {keyCode = 10, name = "~INPUT_SCRIPTED_FLY_ZUP~", keyMapping = {type = "keyboard", keyMappingKey = "PAGEUP"}},
-    ["PAGEDOWN"] = {keyCode = 11, name = "~INPUT_SCRIPTED_FLY_ZDOWN~", keyMapping = {type = "keyboard", keyMappingKey = "PAGEDOWN"}},
-    ["SCROLLDOWN"] = {keyCode = 14, name = "~INPUT_WEAPON_WHEEL_NEXT~", keyMapping = {type = "mouse_wheel", keyMappingKey = "IOM_WHEEL_DOWN"}},
-    ["SCROLLUP"] = {keyCode = 15, name = "~INPUT_WEAPON_WHEEL_PREV~", keyMapping = {type = "mouse_wheel", keyMappingKey = "IOM_WHEEL_UP"}},
+    ["PAGEDOWN"] = {keyCode = 11, name = "~INPUT_SCRIPTED_FLY_ZDOWN~", keyMapping = {type = "keyboard", keyMappingKey = "PAGEDOWN",}},
+    ["SCROLLDOWN"] = {keyCode = 14, name = "~INPUT_WEAPON_WHEEL_NEXT~", keyMapping = {type = "mouse_wheel", keyMappingKey = "IOM_WHEEL_DOWN", label = "S.Down"}},
+    ["SCROLLUP"] = {keyCode = 15, name = "~INPUT_WEAPON_WHEEL_PREV~", keyMapping = {type = "mouse_wheel", keyMappingKey = "IOM_WHEEL_UP", label = "S.Up"}},
     ["ENTER"] = {keyCode = 201, name = "~INPUT_FRONTEND_ACCEPT~", keyMapping = {type = "keyboard", keyMappingKey = "RETURN"}},
     ["LEFTALT"] = {keyCode = 19, name = "~INPUT_CHARACTER_WHEE~", keyMapping = {type = "keyboard", keyMappingKey = "LMENU"}},
     ["Z"] = {keyCode = 20, name = "~INPUT_MULTIPLAYER_INFO~", keyMapping = {type = "keyboard", keyMappingKey = "Z"}},
@@ -78,10 +79,10 @@ local availableKeys = {
     ["F7"] = {keyCode = 168, name = "~INPUT_SELECT_CHARACTER_TREVOR~", keyMapping = {type = "keyboard", keyMappingKey = "F7"}},
     ["F8"] = {keyCode = 169, name = "~INPUT_SELECT_CHARACTER_MULTIPLAYER~", keyMapping = {type = "keyboard", keyMappingKey = "F8"}},
     ["F3"] = {keyCode = 170, name = "~INPUT_SAVE_REPLAY_CLIP~", keyMapping = {type = "keyboard", keyMappingKey = "F3"}},
-    ["UP"] = {keyCode = 172, name = "~INPUT_CELLPHONE_UP~", keyMapping = {type = "keyboard", keyMappingKey = "UP"}},
-    ["DOWN"] = {keyCode = 173, name = "~INPUT_CELLPHONE_DOWN~", keyMapping = {type = "keyboard", keyMappingKey = "DOWN"}},
-    ["LEFT"] = {keyCode = 174, name = "~INPUT_CELLPHONE_LEFT~", keyMapping = {type = "keyboard", keyMappingKey = "LEFT"}},
-    ["RIGHT"] = {keyCode = 175, name = "~INPUT_CELLPHONE_RIGHT~", keyMapping = {type = "keyboard", keyMappingKey = "RIGHT"}},
+    ["UP"] = {keyCode = 172, name = "~INPUT_CELLPHONE_UP~", keyMapping = {type = "keyboard", keyMappingKey = "UP", label = "A.Up"}},
+    ["DOWN"] = {keyCode = 173, name = "~INPUT_CELLPHONE_DOWN~", keyMapping = {type = "keyboard", keyMappingKey = "DOWN", label = "A.Down"}},
+    ["LEFT"] = {keyCode = 174, name = "~INPUT_CELLPHONE_LEFT~", keyMapping = {type = "keyboard", keyMappingKey = "LEFT", label = "A.Left"}},
+    ["RIGHT"] = {keyCode = 175, name = "~INPUT_CELLPHONE_RIGHT~", keyMapping = {type = "keyboard", keyMappingKey = "RIGHT", label = "A.Right"}},
     ["CANCEL"] = {keyCode = 177, name = "~INPUT_CELLPHONE_CANCEL~", keyMapping = {type = "keyboard", keyMappingKey = "BACK"}}, -- BACKSPACE / ESC / RIGHT MOUSE BUTTON
     ["DELETE"] = {keyCode = 178, name = "~INPUT_CELLPHONE_OPTION~", keyMapping = {type = "keyboard", keyMappingKey = "DELETE"}},
     ["L"] = {keyCode = 182, name = "~INPUT_CELLPHONE_CAMERA_FOCUS_LOCK~", keyMapping = {type = "keyboard", keyMappingKey = "L"}},
@@ -191,7 +192,8 @@ function Functions.keys.getKeyMapping(key)
             key = keyMapping[key].key,
             type = keyData.keyMapping.type,
             keyMappingKey = keyData.keyMapping.keyMappingKey,
-            keyCode = keyData.keyCode
+            keyCode = keyData.keyCode,
+            label = keyData.keyMapping.label or keyMapping[key].key
         }
     else
         -- For non-speical leys on your keyboard
@@ -207,6 +209,7 @@ function Functions.keys.getKeyMapping(key)
             type = keyData.keyMapping.type,
             keyMappingKey = keyData.keyMapping.keyMappingKey,
             keyCode = keyData.keyCode,
+            label = keyData.keyMapping.label or trimmedKey
         }
     end
 end
