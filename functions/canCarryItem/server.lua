@@ -10,6 +10,7 @@ function Functions.canCarryItem(player, itemName, itemAmount)
 
     if (Inventory == "OX") then return exports["ox_inventory"]:CanCarryItem(plyId, itemName, itemAmount) and true or false end
     if (Inventory == "TGIANN") then return exports["tgiann-inventory"]:CanCarryItem(plyId, itemName, itemAmount) and true or false end
+    if (Inventory == "QS") then return exports['qs-inventory']:CanCarryItem(plyId, itemName, itemAmount) and true or false end
 
     return true
 end

@@ -11,7 +11,9 @@ function Functions.addItem(player, item, amount, metadata)
 
     for i = 1, #items do
         if (Inventory == "CODEM") then
-            exports["codem-inventory"]:AddItem(plyId, item, amount, nil, items[i].metadata)
+            exports["codem-inventory"]:AddItem(plyId, items[i].name, items[i].amount, nil, items[i].metadata)
+        elseif (Inventory == "QS") then
+            exports['qs-inventory']:AddItem(player, items[i].name, items[i].amount, nil, items[i].metadata)
         elseif (Framework == "ESX") then
             player.addInventoryItem(items[i].name, items[i].amount, items[i].metadata)
         elseif (Framework == "QB") then
