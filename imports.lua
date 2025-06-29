@@ -81,8 +81,13 @@ Z = Functions
 ---@return function
 local function loadSystem(fileName)
     local chunk = LoadResourceFile(LibName, ("systems/%s.lua"):format(fileName))
+    local func, err = load(chunk, ("@@%s/systems/%s.lua"):format(LibName, fileName))
 
-    return load(chunk)()
+    if (not func or err) then
+        error(err)
+    end
+
+    return func()
 end
 
 LibConfig = load(LoadResourceFile(LibName, "config.lua"))()
