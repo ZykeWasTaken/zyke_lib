@@ -1,3 +1,4 @@
+HasLoaderFinished = false
 LibName = "zyke_lib"
 Context = IsDuplicityVersion() and "server" or "client"
 
@@ -150,3 +151,12 @@ if (hasUISrc and not hasUIBuild) then
         Wait(1000)
     end
 end
+
+local loaderChunk = LoadResourceFile(LibName, "loader.lua")
+local loaderFunc, err = load(loaderChunk, ("@@%s/loader.lua"):format(LibName))
+if (not loaderFunc or err) then
+    error(err)
+end
+
+loaderFunc()
+HasLoaderFinished = true

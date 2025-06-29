@@ -19,6 +19,7 @@ files {
     "functions/**/shared.lua",
     "translations.lua",
     "systems/*.lua",
+    "loader.lua",
 
     "javascript/index.html",
     "javascript/*.js",

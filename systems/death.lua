@@ -2,19 +2,30 @@ local systems = {
     {fileName = "wasabi_ambulance", variable = "wasabi_ambulance"}
 }
 
--- Check if the resource is already started, and if so, set it as active
 for i = 1, #systems do
-    if (GetResourceState(systems[i].fileName) == "started") then
+    local resState = GetResourceState(systems[i].fileName)
+
+    -- If the resource does exist but is not started yet, we need to wait for it
+    -- This is a more foolproof approach to avoid having exact resource starting sequences
+    if (
+        resState == "starting"
+        or resState == "stopping"
+        or resState == "stopped"
+    ) then
+        while (1) do
+            resState = GetResourceState(systems[i].fileName)
+             if (resState == "started") then Wait(50) break end
+
+            Functions.debug.internal("^1Waiting for " .. systems[i].fileName .. " to start...^7")
+            Wait(10)
+        end
+    end
+
+    -- If it's started, we use it
+    if (resState == "started") then
         DeathSystem = systems[i].variable
+        Functions.debug.internal("^2Using " .. systems[i].fileName .. " as death system^7")
 
         break
     end
-end
-
-for i = 1, #systems do
-    AddEventHandler("onResourceStart", function(resName)
-        if (resName == systems[i].fileName) then
-            DeathSystem = systems[i].variable
-        end
-    end)
 end
