@@ -45,6 +45,55 @@ Please be aware that heavily modified servers may cause our library to struggle 
 
 -   [ox_lib Progressbar & Skillcheck](https://github.com/overextended/ox_lib)
 
+## Loader
+
+This is an experimental approach to simplify the setup process for all of our products. Utilizing this loader, it is ensured that **all** dependenciesa are properly loaded before we allow the scripts to be started. This is essentially expanding on the default "dependency" fxmanifest.lua section that often fails due to timing issues in certain cases. This loader may be niche, but there are a lot of servers that will benefit from a simplified setup when installing our resources.
+
+Instead of specifying inside of client_scripts {...} and so on, we specify the path inside of loader {...}, where it automatically fetches the context or allows you to prefix with context:path.
+
+Unfortunately it seems that wildcards (using stars to start entire folders) are not suitible to be used at the moment.
+
+This is most likely going to be expanded on and simplified in the future, but is a working proof of concept that will be implemented into all of our resources to make installations easier.
+
+**Example from zyke_vending:**
+
+```lua
+shared_scripts {
+	-- We import our imports.lua file from zyke_lib, which will ensure our entire resource along with it's dependencies
+	"@zyke_lib/imports.lua",
+}
+
+files {
+	-- Not related to the loader, but we specify our translations here too
+	"locales/*.lua",
+
+	-- Specify our client-sided files so they can be found, required by Cfx
+	"shared/*.lua",
+	"client/*.lua",
+}
+
+-- Specify all of the files loading & their order
+loader {
+	"shared/config.lua",
+
+	"client/main.lua",
+	"client/debug.lua",
+
+	"server/main.lua",
+	"server/validate_items.lua"
+
+	-- This is not used in this particular resource, but we can specifically ensure context by doing this:
+	-- "shared:main.lua"
+	-- "server:main.lua"
+	-- "client:main.lua"
+}
+
+-- Specify all the dependencies we will be waiting for
+dependencies {
+	"zyke_lib"
+}
+```
+
 ## Credits
 
 -   Credits to the [Overextended team](https://github.com/overextended/ox_lib) for the module structure of importing and executing functions.
