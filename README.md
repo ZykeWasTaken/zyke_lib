@@ -97,3 +97,4 @@ dependencies {
 ## Credits
 
 -   Credits to the [Overextended team](https://github.com/overextended/ox_lib) for the module structure of importing and executing functions.
+-   Credits to all of the [contributors](https://github.com/ZykeWasTaken/zyke_lib/graphs/contributors) making pull requests & our amazing community that share snippets in our Discord for me to add here.
