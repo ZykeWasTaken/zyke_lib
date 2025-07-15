@@ -26,6 +26,8 @@ local function getImportName(filePath)
     end
 end
 
+local contexts = {"client", "server", "shared"}
+
 -- We allow a prefix of the <context>:x to be specified in the loader metadata
 -- This is just to allow any naming conventions to be used
 -- Goofy ahh code because regex didn't work for some reason, so we're using a simpler approach
@@ -35,58 +37,34 @@ local function extractMetadataDetails(filePath)
 	filePath = filePath:gsub('^"(.-)"$', '%1')
 	filePath = filePath:gsub('^[ \t]*(.-)[ \t\r]*$', '%1')
 
-    local ctx, rest = nil, nil
+    for i = 1, #contexts do
+        local context = nil
 
-    -- Check for context:path format
-    if (filePath:find("^client:")) then
-        ctx = "client"
-        rest = filePath:sub(8)
-    elseif (filePath:find("^server:")) then
-        ctx = "server"
-        rest = filePath:sub(8)
-    elseif (filePath:find("^shared:")) then
-        ctx = "shared"
-        rest = filePath:sub(8)
-    end
-
-    if (ctx and rest) then
-        local importName = getImportName(rest)
-        if (importName) then
-            rest = rest:sub(importName:len() + 2)
+        -- Check for context:path format
+        if (
+            filePath:find(("^%s:"):format(contexts[i])) -- Check for context:path format
+        ) then
+            context = contexts[i]
+            filePath = filePath:sub(context:len() + 2) -- Trim the context: from the file path
+        elseif (
+            filePath:find(("^%s/"):format(contexts[i])) -- Check for context/path format
+            or filePath:find(("/%s/"):format(contexts[i])) -- Check for /context/path format
+        ) then
+            context = contexts[i]
+        elseif (
+            filePath:find(("%s.lua"):format(contexts[i])) -- Check for context.lua format
+        ) then
+            context = contexts[i]
         end
 
-        return rest, ctx, importName
-    end
+        if (context and filePath) then
+            local importName = getImportName(filePath)
+            if (importName) then
+                filePath = filePath:sub(importName:len() + 2)
+            end
 
-    -- Check for context/path format
-    if (filePath:find("^client/")) then
-        ctx = "client"
-    elseif (filePath:find("^server/")) then
-        ctx = "server"
-    elseif (filePath:find("^shared/")) then
-        ctx = "shared"
-    end
-
-    if (ctx and filePath) then
-        local importName = getImportName(filePath)
-        if (importName) then
-            filePath = filePath:sub(importName:len() + 2)
+            return filePath, context, importName
         end
-
-        return filePath, ctx, importName
-    end
-
-    -- Check if the name is context.lua
-    if (filePath:find("client.lua")) then
-        ctx = "client"
-    elseif (filePath:find("server.lua")) then
-        ctx = "server"
-    elseif (filePath:find("shared.lua")) then
-        ctx = "shared"
-    end
-
-    if (ctx and filePath) then
-        return filePath, ctx, nil
     end
 
     -- If we are down here, warn that something is wrong
