@@ -136,12 +136,12 @@ for i = 1, #toLoad do
 
 	local chunk = LoadResourceFile(resourceName, fileName)
 	if (not chunk) then
-		error("Failed to load " .. files[i] .. " (" .. toLoad[i].fileName .. ")")
+		error("Failed to load " .. "(" .. toLoad[i].fileName .. ")")
 	end
 
 	local func = load(chunk, ("@@%s/%s"):format(resourceName, toLoad[i].fileName))
 	if (not func) then
-		error("Failed to load " .. files[i] .. " (" .. toLoad[i].fileName .. ")")
+		error("Failed to load " .. "(" .. toLoad[i].fileName .. ")")
 	end
 
 	func()
