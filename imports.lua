@@ -159,4 +159,6 @@ if (not loaderFunc or err) then
 end
 
 loaderFunc()
+
 HasLoaderFinished = true
+TriggerEvent("zyke_lib:OnLoaderFinished")
