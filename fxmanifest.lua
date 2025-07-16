@@ -9,6 +9,7 @@ ui_page "javascript/index.html"
 
 files {
     "imports.lua",
+    "config.lua",
     "formatting/**/shared.lua",
     "functions/**/client.lua",
     "functions/**/shared.lua",
