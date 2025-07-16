@@ -15,6 +15,24 @@ local fileCount = GetNumResourceMetadata(GetCurrentResourceName(), "loader")
 -- We keep this for backwards compatibility
 if (fileCount == 0) then return end
 
+-- We need to make sure that all of our dependencies are loaded before we start loading our files
+-- We also have to check if they are using our loader or not, to wait for the global state to be set
+-- If the resource is labeled a dependency, it will automatically start that resource so we don't have to do anything other than waiting
+-- For some reason you just can't check for "dependencies", you have to type out each dependency as "dependency" in the fxmanifest.lua and then check for it in here
+local dependencyCount = GetNumResourceMetadata(GetCurrentResourceName(), "dependency")
+for i = 1, dependencyCount do
+    local dependency = GetResourceMetadata(GetCurrentResourceName(), "dependency", i - 1)
+
+    -- Check if we are using our loader, and if so, wait for the global state
+    -- If we are not using it, just ignore
+    local isUsingLoader = GetResourceMetadata(dependency, "loader", 0) ~= nil
+    if (isUsingLoader) then
+        while (not GlobalState[dependency .. ":loader:serverLoaded"]) do
+            Wait(100)
+        end
+    end
+end
+
 -- Check for Cfx-styled imports of files, ex. @zyke_lib/imports.lua would use the zyke_lib resource
 ---@param filePath string
 ---@return string | nil
