@@ -5,6 +5,9 @@ Context = IsDuplicityVersion() and "server" or "client"
 ResName = GetCurrentResourceName()
 TrimmedResName = ResName:sub(6, #ResName) -- Removes zyke_
 
+-- Id/name for keymapping, to track if you are still holding the button
+HoldingKeys = {}
+
 local function empty() end
 
 -- Load the chunk & function
@@ -111,9 +114,6 @@ Functions.debug.internal("Loaded fuel", FuelSystem)
 
 loadSystem("death")
 Functions.debug.internal("Loaded death", DeathSystem)
-
--- Id/name for keymapping, to track if you are still holding the button
-HoldingKeys = {}
 
 -- ##### Force Loading ##### --
 
