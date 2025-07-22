@@ -31,7 +31,7 @@ if (language == nil) then
 end
 
 ---@param key string | table
----@param formatting table[]?
+---@param formatting string[]?
 ---@return string | table, string | nil
 function Translate(key, formatting)
     if (key == nil) then return "MISSING KEY" end
