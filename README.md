@@ -39,7 +39,7 @@ Please be aware that heavily modified servers may cause our library to struggle 
 
 -   ox_target
 -   qb-target
--   We also offer every script without target functionality
+-   We are now using a most-fitting approach for our releases, which means some features may require a target system if it fits the best
 
 ## Dependencies
 
