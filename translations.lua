@@ -31,7 +31,7 @@ if (language == nil) then
 end
 
 ---@param key string | table
----@param formatting string[]?
+---@param formatting string[] | string | nil @We may use a single string if we are only formatting one value
 ---@return string | table, string | nil
 function Translate(key, formatting)
     if (key == nil) then return "MISSING KEY" end
@@ -39,20 +39,30 @@ function Translate(key, formatting)
     local translation = translations[key]
     if (not translation) then return "MISSING TRANSLATION: " .. key end
 
-    local isTable = type(translation) == "table"
-    if (not isTable) then
-        if (formatting) then return translation:format(table.unpack(formatting)) end
+    local isNotification = type(translation) == "table"
+    if (isNotification) then
+        local msg = translation.msg
+        local notiType = translation.type
+
+        if (formatting) then
+            if (type(formatting) == "string" or type(formatting) == "number") then -- Single string/number
+                msg = msg:format(formatting)
+            elseif (type(formatting) == "table") then -- Array of strings/numbers
+                msg = msg:format(table.unpack(formatting))
+            end
+        end
+
+        return msg, notiType
+    else
+        -- If the translation is a single string
+        if (type(formatting) == "string" or type(formatting) == "number") then -- Single string/number
+            return translation:format(formatting)
+        elseif (type(formatting) == "table") then -- Array of strings/numbers
+            return translation:format(table.unpack(formatting))
+        end
+
         return translation
     end
-
-    local msg = translation.msg
-    local notiType = translation.type
-
-    if (formatting) then
-        msg = msg:format(table.unpack(formatting))
-    end
-
-    return msg, notiType
 end
 
 ---@param langCode string
