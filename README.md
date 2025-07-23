@@ -12,7 +12,7 @@ All of our resources are built on top of this library, and is a requirement to u
 
 ## Important
 
-Downloading an experimental & non-release version is **not recommended unless you know what you are doing**. We constantly update this repository to make the development of Zyke Resources' scripts easier, and we don't always test all functionality on different servers using different frameworks. **Head over to the release page for a stable release.**
+Downloading an experimental & non-release version is **not recommended unless you know what you are doing**. We constantly update this repository to make the development of Zyke Resources' scripts easier, and we don't always test all functionality on different servers using different frameworks. **[Head over to the release page for a stable release.](https://github.com/ZykeWasTaken/zyke_lib/releases/latest)**
 
 ## Modified Servers
 
@@ -43,7 +43,7 @@ Please be aware that heavily modified servers may cause our library to struggle 
 
 ## Dependencies
 
--   [ox_lib Progressbar & Skillcheck](https://github.com/overextended/ox_lib)
+-   [ox_lib (Progressbar & Skillcheck)](https://github.com/overextended/ox_lib)
 
 ## Loader
 
