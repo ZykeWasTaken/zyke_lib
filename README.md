@@ -45,6 +45,57 @@ Please be aware that heavily modified servers may cause our library to struggle 
 
 -   [ox_lib (Progressbar & Skillcheck)](https://github.com/overextended/ox_lib)
 
+## Adding Compatibility
+
+All interactions with outside dependencies, such as frameworks, progressbars and inventories can modified, and most of it in here.
+
+We use a modular approach, allowing you to add new compatibility, or custom behaviour, for specific functions.
+
+Below you will find all the files connected to a dependency.
+
+### Inventory
+
+Some inventories offer a lot of backwards-compatible functionality and you may not need to edit all of the files.
+
+-   `systems/inventory.lua`
+-   `formatting/formatItem/shared.lua`
+-   `functions/addItem/server.lua`
+-   `functions/canCarryItem/server.lua`
+-   `functions/getInventorySlot/server.lua`
+-   `functions/getPlyerItems/client.lua`
+-   `functions/getPlyerItems/server.lua`
+-   `functions/hasItem/server.lua`
+-   `functions/registerUsableItem/server.lua`
+-   `functions/removeFromSlot/server.lua`
+-   `functions/setItemMetadata/server.lua`
+-   `functions/stash/client.lua`
+-   `functions/stash/server.lua`
+-   `internals/events/client.lua`
+
+### Fuel
+
+-   `systems/fuel.lua`
+-   `functions/getFuel/client.lua`
+-   `functions/setFuel/client.lua`
+
+### Target
+
+-   `systems/target.lua`
+-   `functions/target/client.lua`
+
+### Death/Ambulance
+
+-   `systems/death.lua`
+-   `functions/isPlayerDead/client.lua`
+
+### Framework
+
+To add in a completely new framework, you would need to modify pretty much all files.
+
+### Gang
+
+Currently unused
+
 ## Loader
 
 This is an experimental approach to simplify the setup process for all of our products. Utilizing this loader, it is ensured that **all** dependenciesa are properly loaded before we allow the scripts to be started. This is essentially expanding on the default "dependency" fxmanifest.lua section that often fails due to timing issues in certain cases. This loader may be niche, but there are a lot of servers that will benefit from a simplified setup when installing our resources.
