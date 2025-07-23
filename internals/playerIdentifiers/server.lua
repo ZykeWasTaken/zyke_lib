@@ -48,24 +48,19 @@ AddEventHandler("zyke_lib:OnCharacterSelect", function(plyId, player)
     insertIntoIdentifiers(player)
 end)
 
-AddEventHandler("onResourceStart", function(resource)
-    if (ResName ~= resource) then return end
-
-    while (Framework == nil) do Wait(10) end
-
-    local players = Functions.getPlayers()
-    for i = 1, #players do
-        local player = Functions.getIdentifier(players[i])
-        if (not player) then goto continue end
-
-        insertIntoIdentifiers(player)
-
-        ::continue::
-    end
-end)
-
 ---@param identifier CharacterIdentifier
 ---@return PlayerIdentifiers | nil
 exports("GetPlayerIdentifiers", function(identifier)
     return playerIdentifiers[identifier] or {}
 end)
+
+while (Framework == nil) do Wait(10) end
+local players = Functions.getPlayers()
+for i = 1, #players do
+    local player = Functions.getIdentifier(players[i])
+    if (not player) then goto continue end
+
+    insertIntoIdentifiers(player)
+
+    ::continue::
+end
