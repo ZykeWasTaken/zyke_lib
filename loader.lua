@@ -140,7 +140,9 @@ for i = 1, #toLoad do
 		error("Failed to load " .. "(" .. toLoad[i].fileName .. ")")
 	end
 
-	func()
+    CreateThread(function()
+        func()
+    end)
 end
 
 if (Context == "server") then
