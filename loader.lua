@@ -8,13 +8,6 @@ AddEventHandler("onResourceStop", function(resName)
     GlobalState[ResName .. ":loader:serverLoaded"] = false
 end)
 
--- Fetch the total number of files specified in the "loader" metadata
-local fileCount = GetNumResourceMetadata(GetCurrentResourceName(), "loader")
-
--- If we don't have any loader files, just ignore
--- We keep this for backwards compatibility
-if (fileCount == 0) then return end
-
 -- We need to make sure that all of our dependencies are loaded before we start loading our files
 -- We also have to check if they are using our loader or not, to wait for the global state to be set
 -- If the resource is labeled a dependency, it will automatically start that resource so we don't have to do anything other than waiting
@@ -30,6 +23,17 @@ for i = 1, dependencyCount do
         while (not GlobalState[dependency .. ":loader:serverLoaded"]) do
             Wait(100)
         end
+    end
+end
+
+-- Fetch the total number of files specified in the "loader" metadata
+local fileCount = GetNumResourceMetadata(GetCurrentResourceName(), "loader")
+
+-- If we don't have any loader files, just ignore
+-- We keep this for backwards compatibility
+if (fileCount == 0) then
+    if (Context == "server") then
+        GlobalState[ResName .. ":loader:serverLoaded"] = true
     end
 end
 
