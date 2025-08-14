@@ -130,9 +130,9 @@ end
 -- Disables buttons, and executes functions on presses
 function scaleforms:handleButtons()
     for i = 1, #self.buttons do
-        local isMulti = type(self.buttons[i].key) == "table"
         if (self.buttons[i].inactive) then goto continue end
 
+        local isMulti = type(self.buttons[i].key) == "table"
         if (isMulti) then
             for j = 1, #self.buttons[i].key do
                 local keyCode = keys[self.buttons[i].key[j]].keyCode
