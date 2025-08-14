@@ -9,6 +9,7 @@ Functions.instructionalButtons = {}
 ---@field func fun(keyCode: integer, key: string, active: string?, disable: string?)
 ---@field inactive? boolean @Set by isInactive
 ---@field isInactive fun(): boolean @Function to check if the button should be set as inactive
+---@field hold? boolean @If enabled, we check and execute the function if you are holding the button, not just on press
 
 local keys = Functions.keys.getAll()
 
@@ -105,6 +106,26 @@ function scaleforms:render()
     DrawScaleformMovieFullscreen(self.scaleform, 0, 0, 0, 0, 0)
 end
 
+---@param buttonIdx integer
+---@param keyCode integer
+---@param multiIdx integer?
+function scaleforms:checkButtonPress(buttonIdx, keyCode, multiIdx)
+    if (IsDisabledControlJustPressed(0, keyCode)) then
+        ---@diagnostic disable-next-line: param-type-mismatch
+        self.buttons[buttonIdx].func(keyCode, multiIdx and self.buttons[buttonIdx].key[multiIdx] or self.buttons[buttonIdx].key, self.buttons[buttonIdx].activate, self.buttons[buttonIdx].disable)
+    end
+end
+
+---@param buttonIdx integer
+---@param keyCode integer
+---@param multiIdx integer?
+function scaleforms:checkButtonHold(buttonIdx, keyCode, multiIdx)
+    if (IsDisabledControlPressed(0, keyCode)) then
+        ---@diagnostic disable-next-line: param-type-mismatch
+        self.buttons[buttonIdx].func(keyCode, multiIdx and self.buttons[buttonIdx].key[multiIdx] or self.buttons[buttonIdx].key, self.buttons[buttonIdx].activate, self.buttons[buttonIdx].disable)
+    end
+end
+
 -- To be called in a thread
 -- Disables buttons, and executes functions on presses
 function scaleforms:handleButtons()
@@ -117,16 +138,20 @@ function scaleforms:handleButtons()
                 local keyCode = keys[self.buttons[i].key[j]].keyCode
 
                 DisableControlAction(0, keyCode, true)
-                if (IsDisabledControlJustPressed(0, keyCode)) then
-                    self.buttons[i].func(keyCode, self.buttons[i].key[j], self.buttons[i].activate, self.buttons[i].disable)
+                if (self.buttons[i].hold) then
+                    self:checkButtonHold(i, keyCode, j)
+                else
+                    self:checkButtonPress(i, keyCode, j)
                 end
             end
         else
             local keyCode = keys[self.buttons[i].key].keyCode
 
             DisableControlAction(0, keyCode, true)
-            if (IsDisabledControlJustPressed(0, keyCode)) then
-                self.buttons[i].func(keyCode, self.buttons[i].key, self.buttons[i].activate, self.buttons[i].disable)
+            if (self.buttons[i].hold) then
+                self:checkButtonHold(i, keyCode)
+            else
+                self:checkButtonPress(i, keyCode)
             end
         end
 
