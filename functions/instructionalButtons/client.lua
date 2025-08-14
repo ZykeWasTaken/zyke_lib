@@ -3,6 +3,7 @@ Functions.instructionalButtons = {}
 ---@class ButtonProps
 ---@field label string
 ---@field key string | string[]
+---@field hiddenKey? string | string[] @Working keys that are not displayed, ex. "RIGHTMOUSE" being hiddenKey whilst "ESC" / "BACKSPACE" is the shown option, or scrolling & arrows, meaning both work but doesn't clutter the UI
 ---@field activate? string @Key to enable this option
 ---@field disable? string @Key to disable this option
 ---@field forceRender? boolean @If pressed, forcefully re-register the buttons
@@ -109,50 +110,62 @@ end
 ---@param buttonIdx integer
 ---@param keyCode integer
 ---@param multiIdx integer?
-function scaleforms:checkButtonPress(buttonIdx, keyCode, multiIdx)
+---@param path "key" | "hiddenKey"
+function scaleforms:checkButtonPress(buttonIdx, keyCode, multiIdx, path)
     if (IsDisabledControlJustPressed(0, keyCode)) then
         ---@diagnostic disable-next-line: param-type-mismatch
-        self.buttons[buttonIdx].func(keyCode, multiIdx and self.buttons[buttonIdx].key[multiIdx] or self.buttons[buttonIdx].key, self.buttons[buttonIdx].activate, self.buttons[buttonIdx].disable)
+        self.buttons[buttonIdx].func(keyCode, multiIdx and self.buttons[buttonIdx][path][multiIdx] or self.buttons[buttonIdx][path], self.buttons[buttonIdx].activate, self.buttons[buttonIdx].disable)
     end
 end
 
 ---@param buttonIdx integer
 ---@param keyCode integer
 ---@param multiIdx integer?
-function scaleforms:checkButtonHold(buttonIdx, keyCode, multiIdx)
+---@param path "key" | "hiddenKey"
+function scaleforms:checkButtonHold(buttonIdx, keyCode, multiIdx, path)
     if (IsDisabledControlPressed(0, keyCode)) then
         ---@diagnostic disable-next-line: param-type-mismatch
-        self.buttons[buttonIdx].func(keyCode, multiIdx and self.buttons[buttonIdx].key[multiIdx] or self.buttons[buttonIdx].key, self.buttons[buttonIdx].activate, self.buttons[buttonIdx].disable)
+        self.buttons[buttonIdx].func(keyCode, multiIdx and self.buttons[buttonIdx][path][multiIdx] or self.buttons[buttonIdx][path], self.buttons[buttonIdx].activate, self.buttons[buttonIdx].disable)
     end
 end
 
 -- To be called in a thread
 -- Disables buttons, and executes functions on presses
 function scaleforms:handleButtons()
-    for i = 1, #self.buttons do
-        if (self.buttons[i].inactive) then goto continue end
-
-        local isMulti = type(self.buttons[i].key) == "table"
+    ---@param buttonIdx integer
+    ---@param path "key" | "hiddenKey"
+    local function checkButton(buttonIdx, path)
+        local isMulti = type(self.buttons[buttonIdx][path]) == "table"
         if (isMulti) then
-            for j = 1, #self.buttons[i].key do
-                local keyCode = keys[self.buttons[i].key[j]].keyCode
+            for j = 1, #self.buttons[buttonIdx][path] do
+                local keyCode = keys[self.buttons[buttonIdx][path][j]].keyCode
 
                 DisableControlAction(0, keyCode, true)
-                if (self.buttons[i].hold) then
-                    self:checkButtonHold(i, keyCode, j)
+                if (self.buttons[buttonIdx].hold) then
+                    self:checkButtonHold(buttonIdx, keyCode, j, path)
                 else
-                    self:checkButtonPress(i, keyCode, j)
+                    self:checkButtonPress(buttonIdx, keyCode, j, path)
                 end
             end
         else
-            local keyCode = keys[self.buttons[i].key].keyCode
+            local keyCode = keys[self.buttons[buttonIdx][path]].keyCode
 
             DisableControlAction(0, keyCode, true)
-            if (self.buttons[i].hold) then
-                self:checkButtonHold(i, keyCode)
+            if (self.buttons[buttonIdx].hold) then
+                self:checkButtonHold(buttonIdx, keyCode, nil, path)
             else
-                self:checkButtonPress(i, keyCode)
+                self:checkButtonPress(buttonIdx, keyCode, nil, path)
             end
+        end
+    end
+
+    for i = 1, #self.buttons do
+        if (self.buttons[i].inactive) then goto continue end
+
+        checkButton(i, "key")
+
+        if (self.buttons[i].hiddenKey) then
+            checkButton(i, "hiddenKey")
         end
 
         ::continue::
