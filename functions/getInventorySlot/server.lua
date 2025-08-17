@@ -15,6 +15,8 @@ function Functions.getInventorySlot(plyId, slot)
                 return playerItems[i]
             end
         end
+
+        return nil
     end
 
     -- QB default or fallback
