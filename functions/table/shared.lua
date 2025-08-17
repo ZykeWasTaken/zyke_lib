@@ -68,7 +68,7 @@ function Functions.table.contains(tbl, desiredString)
     end
 
     for i = 1, #tbl do
-        for j = i, #desiredString do
+        for j = 1, #desiredString do
             if (tbl[i] == desiredString[j]) then
                 return true, i
             end
