@@ -57,7 +57,7 @@ loadSystem("death")
 if (Context == "server") then
     local isOutdated, cVer, lVer = load(LoadResourceFile(LibName, ("versionchecker.lua")), ("@@%s/versionchecker.lua"):format(LibName))()
     if (type(isOutdated) == "number") then
-        return print(("Could not fetch zyke_lib version. Possibly rate limited. If this persists, contact discord.gg/zykeresources. (Error %s)"):format(isOutdated))
+        return print(("Could not fetch zyke_lib version, possibly rate limited. If this persists for more than a day, contact discord.gg/zykeresources. (Error %s)"):format(isOutdated))
     end
 
     if (isOutdated) then
