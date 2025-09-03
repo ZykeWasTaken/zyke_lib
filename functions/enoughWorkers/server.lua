@@ -1,4 +1,4 @@
----@param job string
+---@param job string | string[]
 ---@param requirement integer
 function Functions.enoughWorkers(job, requirement)
     local onJob = Functions.getPlayersOnJob(job)
