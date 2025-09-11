@@ -6,8 +6,8 @@ Functions.keys = {}
 ---@field label? string @We override some labels to fit them better in menus
 
 ---@class Key
----@field keyCode integer
----@field name string
+---@field keyCode integer | nil
+---@field name string | nil
 ---@field keyMapping KeyMapping
 
 -- Some keys don't strictly align, so we create a lookup table for the fastest way to get the other key name
@@ -99,6 +99,7 @@ local availableKeys = {
     ["K"] = {keyCode = 311, name = "~INPUT_REPLAY_SHOWHOTKEY~", keyMapping = {type = "keyboard", keyMappingKey = "K"}},
     ["ESC"] = {keyCode = 322, name = "~INPUT_REPLAY_TOGGLE_TIMELINE~", keyMapping = {type = "keyboard", keyMappingKey = "ESCAPE"}},
     ["LEFTCTRL"] = {keyCode = 326, name = "~INPUT_DUCK~", keyMapping = {type = "keyboard", keyMappingKey = "LCONTROL"}},
+    ["J"] = {keyCode = nil, name = nil, keyMapping = {type = "keyboard", keyMappingKey = "J"}}, -- Doesn't have a keycode
 }
 
 ---@class SpecialCharacter
