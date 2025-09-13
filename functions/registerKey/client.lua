@@ -7,7 +7,7 @@
 ---@param onRelease function?
 ---@param keyType string? @keyboard, mouse_button
 function Functions.registerKey(id, key, description, onPress, onRelease, keyType)
-    local _keyType = keyType or Functions.keys.get(key).keyMapping.type or "keyboard"
+    local _keyType = keyType or Functions.keys.get(key)?.keyMapping?.type or "keyboard"
 
     RegisterKeyMapping("+" .. id, description, _keyType, key)
 
