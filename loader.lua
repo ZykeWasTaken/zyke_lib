@@ -2,6 +2,8 @@
 -- To put it shortly, this allows our resources to be started wherever in the startup sequence since we wait for dependencies to be loaded properly
 -- This also ensures that the server side is always loaded before the client side
 
+Functions.debug.internal("Initializing loader...")
+
 AddEventHandler("onResourceStop", function(resName)
     if (resName ~= ResName) then return end
 
@@ -21,8 +23,12 @@ for i = 1, dependencyCount do
     local isUsingLoader = GetResourceMetadata(dependency, "loader", 0) ~= nil
     if (isUsingLoader) then
         while (not GlobalState[dependency .. ":loader:serverLoaded"]) do
+            Functions.debug.internal("Waiting for", dependency, "to load...")
+
             Wait(100)
         end
+
+        Functions.debug.internal(dependency, "has loaded!")
     end
 end
 
@@ -100,6 +106,7 @@ end
 
 local toLoad = {}
 
+Functions.debug.internal("Iterating", fileCount, "files...")
 for i = 1, #files do
 	local fileName, context, importName = extractMetadataDetails(files[i])
     if (fileName == nil) then goto continue end
@@ -124,12 +131,16 @@ for i = 1, #files do
 	::continue::
 end
 
+Functions.debug.internal("Finished iterating files!")
+
 if (Context == "client") then
     while (not GlobalState[ResName .. ":loader:serverLoaded"]) do
+        Functions.debug.internal("Waiting for server to finish loading...")
         Wait(10)
     end
 end
 
+Functions.debug.internal("Loading files...")
 for i = 1, #toLoad do
     local fileName = toLoad[i].fileName
     local resourceName = toLoad[i].importName or GetCurrentResourceName()
@@ -147,6 +158,10 @@ for i = 1, #toLoad do
     func()
 end
 
+Functions.debug.internal("Finished loading files!")
+
 if (Context == "server") then
     GlobalState[ResName .. ":loader:serverLoaded"] = true
 end
+
+Functions.debug.internal("Loader finished!")
