@@ -20,8 +20,9 @@ RegisterNetEvent(cbEvent:format(ResName), function(reqId, ...)
     return cb and cb(...)
 end)
 
----@diagnostic disable-next-line: duplicate-set-field
-function Functions.callback.await(event, ...)
+---@param event string
+---@param ... any @Arguments to be passed to the server
+local function triggerServerCallback(event, ...)
     local promise = promise.new()
     local reqId = getKey()
 
@@ -34,6 +35,13 @@ function Functions.callback.await(event, ...)
     TriggerServerEvent(cbEvent:format(event), ResName, reqId, ...)
 
     return table.unpack(Citizen.Await(promise))
+end
+
+---@param event string
+---@param ... any @Arguments to be passed to the server
+---@diagnostic disable-next-line: duplicate-set-field
+function Functions.callback.await(event, ...)
+    return triggerServerCallback(event, ...)
 end
 
 ---@diagnostic disable-next-line: duplicate-set-field
