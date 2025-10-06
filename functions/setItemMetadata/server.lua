@@ -13,6 +13,8 @@ function Functions.setItemMetadata(plyId, slot, metadata)
         return exports["tgiann-inventory"]:SetItemData(plyId, item.name, slot, metadata)
     elseif (Inventory == "CODEM") then
         return exports["codem-inventory"]:SetItemMetadata(plyId, slot, metadata)
+    elseif (Inventory == "C8RE") then
+        return exports["core_inventory"]:setMetadata(plyId, slot, metadata)
     end
 
     -- If we are not using ox_inventory, we will have to fetch the inventory, make the modifications ourselves and set the inventory
