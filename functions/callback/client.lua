@@ -55,7 +55,7 @@ local function triggerServerCallback(event, cbExtras, ...)
             end
         end
 
-        TriggerServerEvent(cbEvent:format(event), ResName, reqId, args and table.unpack(args))
+        TriggerServerEvent(cbEvent:format(event), ResName, reqId, table.unpack(args))
 
         if (
             cbExtras.retry and
