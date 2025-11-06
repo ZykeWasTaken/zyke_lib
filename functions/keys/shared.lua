@@ -228,7 +228,7 @@ end
 ---@return Key | Key[]
 function Functions.keys.get(key)
     if (type(key) == "string") then
-        return availableKeys[key]
+        return availableKeys[key] or availableKeys[keyMappingTranslation[key]]
     end
 
     local keys = {}
