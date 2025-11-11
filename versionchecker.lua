@@ -23,14 +23,12 @@ end
 ---@return table{version: string, code: number}
 local function getLatestVersion()
     local p = promise.new()
-    local username, repoName = "ZykeWasTaken", ResName
-    local endpoint = ("https://api.github.com/repos/%s/%s/releases/latest"):format(username, repoName)
+    local endpoint = ("https://api.zykeresources.com/projects/%s/mini"):format(ResName)
 
     PerformHttpRequest(endpoint, function(status, result)
-        if (status == 403 or status == 429) then p:resolve({code = status}) return end -- Rate limit
-        if (status ~= 200) then p:resolve({code = status}) return end -- Could not find repo
-
-        p:resolve({version = json.decode(result).tag_name:match("%d+%.%d+%.%d+")})
+        if (status == 200) then p:resolve({version = json.decode(result).version}) return end -- Success
+        if (status == 429) then p:resolve({code = status}) return end -- Rate limit
+        if (status == 404 or status == 500) then p:resolve({code = status}) return end -- Some form of error
     end, "GET")
 
     return Citizen.Await(p)
