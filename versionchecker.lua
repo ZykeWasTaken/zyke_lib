@@ -29,6 +29,9 @@ local function getLatestVersion()
         if (status == 200) then p:resolve({version = json.decode(result).version}) return end -- Success
         if (status == 429) then p:resolve({code = status}) return end -- Rate limit
         if (status == 404 or status == 500) then p:resolve({code = status}) return end -- Some form of error
+
+        -- All other cases of miscellaneous errors
+        p:resolve({code = status})
     end, "GET")
 
     return Citizen.Await(p)
