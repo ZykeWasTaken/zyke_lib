@@ -145,10 +145,14 @@ for i = 1, #toLoad do
     local fileName = toLoad[i].fileName
     local resourceName = toLoad[i].importName or GetCurrentResourceName()
 
+    Functions.debug.internal("Attempting to load", resourceName, fileName)
+
 	local chunk = LoadResourceFile(resourceName, fileName)
 	if (not chunk) then
 		error("Failed to load " .. "(" .. toLoad[i].fileName .. ")")
 	end
+
+    Functions.debug.internal("Loaded chunk! Attempting to execute function...")
 
 	local func = load(chunk, ("@@%s/%s"):format(resourceName, toLoad[i].fileName))
 	if (not func) then
@@ -156,6 +160,8 @@ for i = 1, #toLoad do
 	end
 
     func()
+
+    Functions.debug.internal("Function executed!")
 end
 
 Functions.debug.internal("Finished loading files!")
