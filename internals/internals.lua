@@ -51,20 +51,3 @@ loadSystem("target")
 loadSystem("gang")
 loadSystem("fuel")
 loadSystem("death")
-
--- ##### Verify Version ##### --
-
-if (Context == "server") then
-    local isOutdated, cVer, lVer = load(LoadResourceFile(LibName, ("versionchecker.lua")), ("@@%s/versionchecker.lua"):format(LibName))()
-    if (type(isOutdated) == "number") then
-        return print(("Could not fetch zyke_lib version, possibly rate limited. If this persists for more than a day, contact discord.gg/zykeresources. (Error %s)"):format(isOutdated))
-    end
-
-    if (isOutdated) then
-        print("^3====================================================")
-        print("Your zyke_lib is outdated! Please consider updating.\n")
-        print(("^1Current: %s"):format(cVer))
-        print(("^2Latest: %s"):format(lVer))
-        print("^3====================================================^7")
-    end
-end
