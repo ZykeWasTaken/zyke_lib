@@ -16,7 +16,12 @@ RegisterNetEvent("zyke_lib:MissingMetadata", function(slot)
     local item = Functions.getInventorySlot(source, slot)
     if (not item) then return end
 
-    local newMetadata = item.metadata or {}
+    local newMetadata = {}
+    if Inventory == "TGIANN" then
+        newMetadata = item.info or {}
+    else
+        newMetadata = item.metadata or {}
+    end
     local added = 0
 
     local desiredMetadata = ensuredMetadata[item.name]
@@ -27,7 +32,14 @@ RegisterNetEvent("zyke_lib:MissingMetadata", function(slot)
 
     ---@diagnostic disable-next-line: param-type-mismatch
     for metaKey, metaValue in pairs(desiredMetadata) do
-        local metadata = item.metadata[metaKey]
+        local metadata = nil
+
+        --Extra check for people using TGIANN Inventory (Consumables Hotfix, still does contain referencing errors, more indepth code modification will be needed)
+        if Inventory == "TGIANN" then
+            metadata = item.info[metaKey]
+        else
+            metadata = item.metadata[metaKey]
+        end
 
         local newVal
         if (metadata == nil) then
