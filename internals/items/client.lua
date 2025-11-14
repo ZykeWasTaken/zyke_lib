@@ -43,15 +43,28 @@ RegisterNetEvent("zyke_lib:InventoryUpdated", function(changes)
         if (modifySlots and not modifiedSlots[tostring(item.slot)]) then goto continue end
 
         local missingMetadata = false
-        if (item.metadata) then
-            for metaKey in pairs(ensuredMetadata[name]) do
-                if (item.metadata[metaKey] == nil) then
-                    missingMetadata = true
-                    break
+        if Inventory == "TGIANN" then
+            if (item.info) then
+                for metaKey in pairs(ensuredMetadata[name]) do
+                    if (item.info[metaKey] == nil) then
+                        missingMetadata = true
+                        break
+                    end
                 end
+            else
+                missingMetadata = true
             end
         else
-            missingMetadata = true
+            if (item.metadata) then
+                for metaKey in pairs(ensuredMetadata[name]) do
+                    if (item.metadata[metaKey] == nil) then
+                        missingMetadata = true
+                        break
+                    end
+                end
+            else
+                missingMetadata = true
+            end
         end
 
         if (missingMetadata) then

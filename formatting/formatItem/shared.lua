@@ -9,14 +9,27 @@
 ---@param item table
 ---@return Item
 function Formatting.formatItem(item)
-    local formatted = {
-        name = item.name or item.item,
-        label = item.label,
-        amount = item.amount or item.count or item.value or 1,
-        weight = item.weight,
-        metadata = item.metadata or item.info,
-        slot = item.slot
-    }
+    local formatted = {}
+    if Inventory == "TGIANN" then
+        formatted = {
+            name = item.name or item.item,
+            label = item.label,
+            amount = item.amount or item.count or item.value or 1,
+            weight = item.weight,
+            info = item.info or {},
+            metadata = item.metadata or item.info or {},
+            slot = item.slot
+        }
+    else
+        formatted = {
+            name = item.name or item.item,
+            label = item.label,
+            amount = item.amount or item.count or item.value or 1,
+            weight = item.weight,
+            metadata = item.metadata or item.info,
+            slot = item.slot
+        }
+    end
 
     -- TGIANN stores both metadata & info, we need to use info here for the correct data
     -- Also check if .info exists, because if it is an internal call we may have already translated it
