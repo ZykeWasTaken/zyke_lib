@@ -79,6 +79,8 @@ local function checkAndLog()
         print(("^2Latest: %s^7"):format(latest.version))
         print(("^5Download: %s^7"):format(latest.downloadUrl))
         print("^3====================================================^7")
+    else
+        print("^2Your version is up to date!^7")
     end
 
     return isOutdated
