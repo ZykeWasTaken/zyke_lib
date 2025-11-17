@@ -87,4 +87,6 @@ local function checkAndLog()
 end
 
 -- Execute the check and log
-checkAndLog()
+SetTimeout(1000, function()
+    checkAndLog()
+end)
