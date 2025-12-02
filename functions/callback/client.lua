@@ -21,7 +21,8 @@ RegisterNetEvent(cbEvent:format(ResName), function(reqId, ...)
 end)
 
 ---@class CallbackExtras
----@field retry number | false | nil @ms, 0/false/nil for no retry, how long before retrying the same callback, used primarily for possible timing issues, like script starts & grabbing data
+---@field retry number | false | nil @Number of retry attempts (0/false/nil for no retry)
+---@field timeout number | false | nil @ms, 0/false/nil for no timeout, how long to wait for each attempt before retrying/giving up
 ---@field cb function | nil @Callback to be called when the request is resolved, doesn't block flow of code
 
 ---@param event string
@@ -34,40 +35,63 @@ local function triggerServerCallback(event, cbExtras, ...)
     local p = cbExtras.cb and nil or promise.new()
     local prevKey = nil
     local done = false
+    local attemptsLeft = (cbExtras.retry and cbExtras.retry > 0) and cbExtras.retry or 0
 
     local function executeNewCallback()
-        if (prevKey) then
-            requests[prevKey] = nil
-        end
+        if (done) then return end
+        if (prevKey) then requests[prevKey] = nil end
 
         local reqId = getKey()
         prevKey = reqId
+        local attemptTimedOut = false
 
         requests[reqId] = function(res, _args)
+            if (done or attemptTimedOut) then
+                return
+            end
+
             res = { res, _args }
+            done = true
 
             if (cbExtras.cb) then
-                done = true
                 cbExtras.cb(table.unpack(res))
             else
-                done = true
                 p:resolve(res)
             end
         end
 
         TriggerServerEvent(cbEvent:format(event), ResName, reqId, table.unpack(args))
 
+        -- Timeout handler for this attempt
         if (
-            cbExtras.retry and
-            cbExtras.retry ~= false and
-            cbExtras.retry ~= nil and
-            cbExtras.retry ~= 0
+            cbExtras.timeout and
+            cbExtras.timeout ~= false and
+            cbExtras.timeout ~= nil and
+            cbExtras.timeout ~= 0
         ) then
-            SetTimeout(cbExtras.retry, function()
-                if (not done) then
-                    Z.debug.internal("^1Request still exists, retrying^7", reqId)
+            SetTimeout(cbExtras.timeout, function()
+                if (not done and not attemptTimedOut) then
+                    attemptTimedOut = true
 
-                    executeNewCallback()
+                    if (attemptsLeft > 0) then
+                        attemptsLeft = attemptsLeft - 1
+                        Z.debug.internal("^3Request timed out, retrying (" .. attemptsLeft .. " attempts left)^7", reqId)
+                        executeNewCallback()
+                    else
+                        done = true
+
+                        if (prevKey) then
+                            requests[prevKey] = nil
+                        end
+
+                        Z.debug.internal("^3Request timed out with no retries left^7", reqId)
+
+                        if (cbExtras.cb) then
+                            cbExtras.cb(nil)
+                        else
+                            p:resolve({ nil })
+                        end
+                    end
                 end
             end)
         end
