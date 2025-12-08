@@ -111,29 +111,56 @@ end
 ---@param keyCode integer
 ---@param multiIdx integer?
 ---@param path "key" | "hiddenKey"
+---@return boolean
 function scaleforms:checkButtonPress(buttonIdx, keyCode, multiIdx, path)
     if (IsDisabledControlJustPressed(0, keyCode)) then
         ---@diagnostic disable-next-line: param-type-mismatch
         self.buttons[buttonIdx].func(keyCode, multiIdx and self.buttons[buttonIdx][path][multiIdx] or self.buttons[buttonIdx][path], self.buttons[buttonIdx].activate, self.buttons[buttonIdx].disable)
+
+        return true
     end
+
+    return false
 end
 
 ---@param buttonIdx integer
 ---@param keyCode integer
 ---@param multiIdx integer?
 ---@param path "key" | "hiddenKey"
+---@return boolean
 function scaleforms:checkButtonHold(buttonIdx, keyCode, multiIdx, path)
     if (IsDisabledControlPressed(0, keyCode)) then
         ---@diagnostic disable-next-line: param-type-mismatch
         self.buttons[buttonIdx].func(keyCode, multiIdx and self.buttons[buttonIdx][path][multiIdx] or self.buttons[buttonIdx][path], self.buttons[buttonIdx].activate, self.buttons[buttonIdx].disable)
+
+        return true
+    end
+
+    return false
+end
+
+---@param pressedButtons integer[] | nil
+---@param buttonIdx integer
+---@return integer[] | nil
+local function insertPressedButton(pressedButtons, buttonIdx)
+    if (pressedButtons == nil) then
+        pressedButtons = {buttonIdx}
+
+        return pressedButtons -- When initializing, we need to return the table, as the reference is not linked otherwise
+    else
+        -- When our refearence exists, we don't need to return
+        pressedButtons[#pressedButtons+1] = buttonIdx
     end
 end
 
 -- To be called in a thread
 -- Disables buttons, and executes functions on presses
+-- Returns a list of the buttons pressed this tick, this allows easier side-effects, ex. processing something after a button is pressed
+---@return integer[] | nil
 function scaleforms:handleButtons()
     ---@param buttonIdx integer
     ---@param path "key" | "hiddenKey"
+    ---@return boolean
     local function checkButton(buttonIdx, path)
         local isMulti = type(self.buttons[buttonIdx][path]) == "table"
         if (isMulti) then
@@ -142,9 +169,9 @@ function scaleforms:handleButtons()
 
                 DisableControlAction(0, keyCode, true)
                 if (self.buttons[buttonIdx].hold) then
-                    self:checkButtonHold(buttonIdx, keyCode, j, path)
+                    return self:checkButtonHold(buttonIdx, keyCode, j, path)
                 else
-                    self:checkButtonPress(buttonIdx, keyCode, j, path)
+                    return self:checkButtonPress(buttonIdx, keyCode, j, path)
                 end
             end
         else
@@ -152,24 +179,37 @@ function scaleforms:handleButtons()
 
             DisableControlAction(0, keyCode, true)
             if (self.buttons[buttonIdx].hold) then
-                self:checkButtonHold(buttonIdx, keyCode, nil, path)
+                return self:checkButtonHold(buttonIdx, keyCode, nil, path)
             else
-                self:checkButtonPress(buttonIdx, keyCode, nil, path)
+                return self:checkButtonPress(buttonIdx, keyCode, nil, path)
             end
         end
     end
 
+    -- Don't initialize unless we need to, saves performance
+    ---@type integer[] | nil
+    local pressedButtons = nil
     for i = 1, #self.buttons do
         if (self.buttons[i].inactive) then goto continue end
 
-        checkButton(i, "key")
+        local hasPressedMain = checkButton(i, "key")
+        if (hasPressedMain == true) then
+            local newPressedButtons = insertPressedButton(pressedButtons, i)
+            if (newPressedButtons ~= nil) then pressedButtons = newPressedButtons end
+        end
 
         if (self.buttons[i].hiddenKey) then
-            checkButton(i, "hiddenKey")
+            local hasPressedHidden = checkButton(i, "hiddenKey")
+            if (hasPressedHidden == true) then
+                local newPressedButtons = insertPressedButton(pressedButtons, i)
+                if (newPressedButtons ~= nil) then pressedButtons = newPressedButtons end
+            end
         end
 
         ::continue::
     end
+
+    return pressedButtons
 end
 
 function Functions.instructionalButtons.create()
