@@ -2,6 +2,43 @@ Functions.debug.internal("Initializing loader...")
 
 -- Loading our basic dependencies to redirect dependency calls within the library / bridge
 
+-- Warning for extensive dependency loading time
+-- Usually warning about dependency loading would only happen if we have debug enabled
+--- But through testing it appears that quite a few servers keep scripts in their servers without starting them
+--- This would cause the dependency loader to get stuck indefinitely without any warnings
+local warnDependencyLoadingTime = 3
+
+---@param fileName string
+---@return "started" | "starting" | "stopping" | "stopped" | "missing" | "uninitialized" | "unknown"
+local function awaitSystemStarting(fileName)
+    local resState = GetResourceState(fileName)
+
+    -- If the resource does exist but is not started yet, we need to wait for it
+    -- This is a more foolproof approach to avoid having exact resource starting sequences
+    if (resState == "starting" or resState == "stopping" or resState == "stopped") then
+        local started = os.time()
+
+        while (1) do
+            resState = GetResourceState(fileName)
+            if (resState == "started") then Wait(50) return resState end
+
+            if (os.time() - started > warnDependencyLoadingTime) then
+                print("^1========== [WARNING] ==========^7")
+                print("^1> \"" .. fileName .. "\" is taking a long time to start...^7")
+                print("^1> If this warning persists & our resources are not behaving as expected, please visit:^7")
+                print("^1> https://docs.zykeresources.com/common-issues/zyke_lib-error#awaiting-dependencies-indefinitely^7")
+
+                Wait(5000)
+            end
+
+            Functions.debug.internal("^1Waiting for " .. fileName .. " to start...^7")
+            Wait(10)
+        end
+    end
+
+    return resState
+end
+
 ---@param fileName string
 ---@return function
 local function loadSystem(fileName)
@@ -12,7 +49,7 @@ local function loadSystem(fileName)
         error(err)
     end
 
-    return func()
+    return func(awaitSystemStarting)
 end
 
 loadSystem("framework")
