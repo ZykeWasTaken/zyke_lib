@@ -79,41 +79,30 @@ Formatting = setmetatable({
 -- Shorthand
 Z = Functions
 
--- ##### Dependencies ##### --
-
----@param fileName string
----@return function
-local function loadSystem(fileName)
-    local chunk = LoadResourceFile(LibName, ("systems/%s.lua"):format(fileName))
-    local func, err = load(chunk, ("@@%s/systems/%s.lua"):format(LibName, fileName))
-
-    if (not func or err) then
-        error(err)
-    end
-
-    return func()
-end
+-- ##### Basics ##### --
 
 LibConfig = load(LoadResourceFile(LibName, "config.lua"))()
 T, Translations = load(LoadResourceFile(LibName, "translations.lua"))()
 
-loadSystem("framework")
-Functions.debug.internal("Loaded framework", Framework)
+-- Verify UI build
+local hasUISrc = LoadResourceFile(GetCurrentResourceName(), "nui_source/index.html")
+local hasUIBuild = LoadResourceFile(GetCurrentResourceName(), "nui/index.html")
+if (hasUISrc and not hasUIBuild) then
+    while (1) do
+        print("^1UI source files found, but no UI build found. Please build the UI or download the build version from the GitHub repository.^7")
+        print("https://docs.zykeresources.com/common-issues/downloading-source-files")
 
-loadSystem("inventory")
-Functions.debug.internal("Loaded inventory", Inventory)
+        Wait(1000)
+    end
+end
 
-loadSystem("target")
-Functions.debug.internal("Loaded target", Target)
+local loaderChunk = LoadResourceFile(LibName, "loader.lua")
+local loaderFunc, err = load(loaderChunk, ("@@%s/loader.lua"):format(LibName))
+if (not loaderFunc or err) then
+    error(err)
+end
 
-loadSystem("gang")
-Functions.debug.internal("Loaded gang", GangSystem)
-
-loadSystem("fuel")
-Functions.debug.internal("Loaded fuel", FuelSystem)
-
-loadSystem("death")
-Functions.debug.internal("Loaded death", DeathSystem)
+loaderFunc()
 
 -- ##### Force Loading ##### --
 
@@ -139,26 +128,6 @@ for i = 1, #forceLoad do
 
     loadFunc("functions", Functions, name)
 end
-
--- Verify UI build
-local hasUISrc = LoadResourceFile(GetCurrentResourceName(), "nui_source/index.html")
-local hasUIBuild = LoadResourceFile(GetCurrentResourceName(), "nui/index.html")
-if (hasUISrc and not hasUIBuild) then
-    while (1) do
-        print("^1UI source files found, but no UI build found. Please build the UI or download the build version from the GitHub repository.^7")
-        print("https://docs.zykeresources.com/common-issues/downloading-source-files")
-
-        Wait(1000)
-    end
-end
-
-local loaderChunk = LoadResourceFile(LibName, "loader.lua")
-local loaderFunc, err = load(loaderChunk, ("@@%s/loader.lua"):format(LibName))
-if (not loaderFunc or err) then
-    error(err)
-end
-
-loaderFunc()
 
 HasLoaderFinished = true
 TriggerEvent("zyke_lib:OnLoaderFinished")

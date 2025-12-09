@@ -1,8 +1,42 @@
+Functions.debug.internal("Initializing loader...")
+
+-- Loading our basic dependencies to redirect dependency calls within the library / bridge
+
+---@param fileName string
+---@return function
+local function loadSystem(fileName)
+    local chunk = LoadResourceFile(LibName, ("systems/%s.lua"):format(fileName))
+    local func, err = load(chunk, ("@@%s/systems/%s.lua"):format(LibName, fileName))
+
+    if (not func or err) then
+        error(err)
+    end
+
+    return func()
+end
+
+loadSystem("framework")
+Functions.debug.internal("Loaded framework", Framework)
+
+loadSystem("inventory")
+Functions.debug.internal("Loaded inventory", Inventory)
+
+loadSystem("target")
+Functions.debug.internal("Loaded target", Target)
+
+loadSystem("gang")
+Functions.debug.internal("Loaded gang", GangSystem)
+
+loadSystem("fuel")
+Functions.debug.internal("Loaded fuel", FuelSystem)
+
+loadSystem("death")
+Functions.debug.internal("Loaded death", DeathSystem)
+
+-- EXPERIMENTAL LOADER
 -- An experimental custom loader to handle dependencies before loading any of the files
 -- To put it shortly, this allows our resources to be started wherever in the startup sequence since we wait for dependencies to be loaded properly
 -- This also ensures that the server side is always loaded before the client side
-
-Functions.debug.internal("Initializing loader...")
 
 AddEventHandler("onResourceStop", function(resName)
     if (resName ~= ResName) then return end
