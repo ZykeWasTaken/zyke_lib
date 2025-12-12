@@ -33,4 +33,8 @@ Z.callback.register(ResName .. ":CreateUniqueId", function(_, length, uppercase)
     return Functions.createUniqueId(length, uppercase)
 end)
 
+Z.callback.register(ResName .. ":GenerateSeed", function()
+    return math.random(1, 2^31 -1)
+end)
+
 return Functions.createUniqueId
