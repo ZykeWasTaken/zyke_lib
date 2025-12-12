@@ -1,4 +1,5 @@
 math.randomseed(os.time())
+math.random()
 
 -- Has to have a character in the first position, otherwise there will be database errors as it removes the first sequence of numbers for some reason
 -- Unsure as to what causes this issue, we will just ensure that a character is in the first position as it doesn't matter
