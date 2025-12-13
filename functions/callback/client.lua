@@ -3,6 +3,14 @@ local cbEvent = "zlib:cb:%s"
 
 Functions.callback = {}
 
+local function unpackPacked(t)
+    if (type(t) ~= "table") then
+        return t
+    end
+
+    return table.unpack(t, 1, t.n or #t)
+end
+
 local function getKey()
     local id
 
@@ -45,16 +53,16 @@ local function triggerServerCallback(event, cbExtras, ...)
         prevKey = reqId
         local attemptTimedOut = false
 
-        requests[reqId] = function(res, _args)
+        requests[reqId] = function(...)
             if (done or attemptTimedOut) then
                 return
             end
 
-            res = { res, _args }
+            local res = table.pack(...)
             done = true
 
             if (cbExtras.cb) then
-                cbExtras.cb(table.unpack(res))
+                cbExtras.cb(unpackPacked(res))
             else
                 p:resolve(res)
             end
@@ -89,7 +97,7 @@ local function triggerServerCallback(event, cbExtras, ...)
                         if (cbExtras.cb) then
                             cbExtras.cb(nil)
                         else
-                            p:resolve({ nil })
+                            p:resolve({ n = 1, nil })
                         end
                     end
                 end
@@ -100,7 +108,8 @@ local function triggerServerCallback(event, cbExtras, ...)
     executeNewCallback()
 
     if (not cbExtras.cb) then
-        return table.unpack(Citizen.Await(p))
+        local res = Citizen.Await(p)
+        return unpackPacked(res)
     end
 end
 
