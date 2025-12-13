@@ -11,6 +11,32 @@ local function unpackPacked(t)
     return table.unpack(t, 1, t.n or #t)
 end
 
+local function resolveTimeout(p, cbExtras, reqId)
+    if (cbExtras and cbExtras.status) then
+        local status = {
+            ok = false,
+            err = "timeout",
+            timedOut = true,
+        }
+
+        if (cbExtras.cb) then
+            cbExtras.cb(status)
+        elseif (p) then
+            p:resolve({ n = 1, status })
+        end
+    else
+        if (cbExtras and cbExtras.cb) then
+            cbExtras.cb(nil)
+        elseif (p) then
+            p:resolve({ n = 1, nil })
+        end
+    end
+
+    if (reqId) then
+        Z.debug.internal("^3Request timed out^7", reqId)
+    end
+end
+
 local function getKey()
     local id
 
@@ -31,6 +57,7 @@ end)
 ---@class CallbackExtras
 ---@field retry number | false | nil @Number of retry attempts (0/false/nil for no retry)
 ---@field timeout number | false | nil @ms, 0/false/nil for no timeout, how long to wait for each attempt before retrying/giving up
+---@field status boolean | nil @If true, prepends a status table as the first return value: `{ ok=true }` or `{ ok=false, err="timeout" }`
 ---@field cb function | nil @Callback to be called when the request is resolved, doesn't block flow of code
 
 ---@param plyId integer @Player ID to trigger callback on
@@ -64,7 +91,12 @@ local function triggerClientCallback(plyId, event, cbExtras, ...)
                 return
             end
 
-            local res = table.pack(...)
+            local res
+            if (cbExtras.status) then
+                res = table.pack({ ok = true }, ...)
+            else
+                res = table.pack(...)
+            end
             done = true
 
             if (cbExtras.cb) then
@@ -101,9 +133,9 @@ local function triggerClientCallback(plyId, event, cbExtras, ...)
                         Z.debug.internal("^3Request timed out with no retries left^7", reqId)
 
                         if (cbExtras.cb) then
-                            cbExtras.cb(nil)
+                            resolveTimeout(nil, cbExtras, reqId)
                         else
-                            p:resolve({ n = 1, nil })
+                            resolveTimeout(p, nil, reqId)
                         end
                     end
                 end
