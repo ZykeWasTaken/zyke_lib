@@ -2,6 +2,10 @@
 ---@param amount number
 ---@return boolean @success
 function Functions.paySociety(name, amount)
+    if (BankingSystem == "RENEWED_BANKING") then
+        return exports['Renewed-Banking']:addAccountMoney(name, amount)
+    end
+
     if (Framework == "QB") then
         -- An account is created if the target does not already exist
         exports["qb-banking"]:AddMoney(name, amount)

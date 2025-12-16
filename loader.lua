@@ -70,6 +70,9 @@ Functions.debug.internal("Loaded fuel", FuelSystem)
 loadSystem("death")
 Functions.debug.internal("Loaded death", DeathSystem)
 
+loadSystem("banking")
+Functions.debug.internal("Loaded banking", BankingSystem)
+
 -- EXPERIMENTAL LOADER
 -- An experimental custom loader to handle dependencies before loading any of the files
 -- To put it shortly, this allows our resources to be started wherever in the startup sequence since we wait for dependencies to be loaded properly
