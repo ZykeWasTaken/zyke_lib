@@ -1,0 +1,75 @@
+name: Post all commits to Discord
+
+on:
+    push:
+
+jobs:
+    notify:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Post commits to Discord
+              uses: actions/github-script@v7
+              env:
+                  DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+              with:
+                  script: |
+                      const base = context.payload.before;
+                      const head = context.payload.after;
+                      const owner = context.repo.owner;
+                      const repo  = context.repo.repo;
+                      const branch = context.ref.replace('refs/heads/', '');
+
+                      // Get EVERY commit in the push (handles >20 using compare API)
+                      const compare = await github.request(
+                        'GET /repos/{owner}/{repo}/compare/{base}...{head}',
+                        { owner, repo, base, head }
+                      );
+
+                      const commits = compare.data.commits || [];
+                      if (!commits.length) return;
+
+                      // Build nice, one-line entries per commit
+                      const lines = commits.map(c => {
+                        const sha = c.sha.slice(0, 7);
+                        const msgFirstLine = (c.commit.message || '').split('\n')[0];
+                        const author = (c.author && c.author.login) || c.commit.author.name || 'unknown';
+                        const url = c.html_url;
+                        return `[\`${sha}\`](${url}) ${msgFirstLine} — ${author}`;
+                      });
+
+                      // Discord limits: 2000 chars for content, 4096 for embed description.
+                      // We'll send multiple messages in chunks that fit safely.
+                      const webhook = process.env.DISCORD_WEBHOOK_URL;
+                      const header = `**${owner}/${repo}** on \`${branch}\` — ${lines.length} new commit(s)`;
+                      const chunkLimit = 3800; // safe under 4096 embed description cap
+
+                      let chunk = [];
+                      let size = 0;
+                      const sendChunk = async (title, body) => {
+                        const payload = {
+                          embeds: [{
+                            title,
+                            description: body,
+                            color: 3447003 // blue (decimal form of hex #3498DB)
+                          }]
+                        };
+                        await fetch(webhook, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify(payload)
+                        });
+                      };
+
+                      for (const line of lines) {
+                        // +1 for newline
+                        if (size + line.length + 1 > chunkLimit) {
+                          await sendChunk(header, chunk.join('\n'));
+                          chunk = [];
+                          size = 0;
+                        }
+                        chunk.push(line);
+                        size += line.length + 1;
+                      }
+                      if (chunk.length) {
+                        await sendChunk(header, chunk.join('\n'));
+                      }
