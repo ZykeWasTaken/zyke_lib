@@ -49,4 +49,11 @@ function Functions.debug.internal(...)
     print(formatDebug("DEBUG", ...))
 end
 
+-- Uses same debug formatting function, but lets you set the prefix & doesn't have an automatic check
+---@param prefix? string
+---@param ... string
+function Functions.debug.plain(prefix, ...)
+    print(formatDebug(prefix or "DEBUG", ...))
+end
+
 return Functions.debug
