@@ -13,8 +13,9 @@ local luaDebug = debug
     ^0 - White
 ]]
 
+---@param prefix string
 ---@param ... string
-local function formatDebug(...)
+local function formatDebug(prefix, ...)
     local str = ""
     for _, arg in pairs({...}) do
         str = str .. tostring(arg) .. " "
@@ -25,14 +26,14 @@ local function formatDebug(...)
     local src = info.short_src -- Source path, something like @zyke_status/server/register_statuses.lua
     local line = info.currentline
 
-    return "^4[Debug]: ^0" .. str:sub(1, #str - 1) .. (" ^6(%s:%d)^0"):format(src, line)
+    return "^4[" .. prefix .. "]: ^0" .. str:sub(1, #str - 1) .. (" ^6(%s:%d)^0"):format(src, line)
 end
 
 ---@param ... string
 local function debug(...)
     if (not Config.Settings.debug == true) then return end
 
-    print(formatDebug(...))
+    print(formatDebug("DEBUG", ...))
 end
 
 Functions.debug = setmetatable({}, {
@@ -45,7 +46,7 @@ Functions.debug = setmetatable({}, {
 function Functions.debug.internal(...)
     if (not LibConfig.debug == true) then return end
 
-    print(formatDebug(...))
+    print(formatDebug("DEBUG", ...))
 end
 
 return Functions.debug
