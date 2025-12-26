@@ -135,7 +135,7 @@ local function triggerClientCallback(plyId, event, cbExtras, ...)
                         if (cbExtras.cb) then
                             resolveTimeout(nil, cbExtras, reqId)
                         else
-                            resolveTimeout(p, nil, reqId)
+                            resolveTimeout(p, cbExtras, reqId)
                         end
                     end
                 end
