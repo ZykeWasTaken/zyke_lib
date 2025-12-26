@@ -33,15 +33,13 @@ Please be aware that heavily modified servers may cause our library to struggle 
 ## Inventory Support
 
 -   **BIG NOTE:** There may be changes for specific resources, view each resources' dependencies carefully
--   Regular ESX inventories (requires metadata)
-  	- Please see the big note.
 -   Regular QBCore inventories
   	- Variations like ps or ak47 may be incompatible. Please consult us in our [Discord](https://discord.zykeresources.com) before purchase if you are unsure.
 -   Full support for ox_inventory
 -   Full support for qs-inventory
--   Full support for TGIANN-inventory (> v2.0.51)
--   Full support for codem-inventory (> v2.0.51)
--   Full QBCore support for core_inventory (> v2.0.50)
+-   Full support for TGIANN-inventory
+-   Full support for codem-inventory
+-   Full QBCore support for core_inventory
 
 ## Target Support
 
