@@ -24,6 +24,12 @@ Please be aware that heavily modified servers may cause our library to struggle 
 -   [Discord Community](https://discord.zykeresources.com/)
 -   [Store](https://store.zykeresources.com/)
 
+## Framework Support
+
+- ESX
+- QBCore
+- Qbox
+
 ## Inventory Support
 
 -   **BIG NOTE:** There may be changes for specific resources, view each resources' dependencies carefully
