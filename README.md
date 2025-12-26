@@ -18,12 +18,6 @@ Downloading an experimental & non-release version is **not recommended unless yo
 
 Please be aware that heavily modified servers may cause our library to struggle without any adapting. Everything framework-dependant in our resources can be modified in our library, or in the unlocked files of the resource. If you are unsure if our resources will work for you, feel free to create a ticket in our Discord and we will assist you swiftly.
 
-## Links
-
--   [Documentation](https://docs.zykeresources.com/free-resources/zyke-lib)
--   [Discord Community](https://discord.zykeresources.com/)
--   [Store](https://store.zykeresources.com/)
-
 ## Framework Support
 
 - ESX
@@ -150,6 +144,12 @@ dependencies {
 	"zyke_lib"
 }
 ```
+
+## Links
+
+-   [Documentation](https://docs.zykeresources.com/free-resources/zyke-lib)
+-   [Discord Community](https://discord.zykeresources.com/)
+-   [Store](https://store.zykeresources.com/)
 
 ## Credits
 
