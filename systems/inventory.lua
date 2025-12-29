@@ -31,6 +31,17 @@ repeat
             items = exports["ox_inventory"]:Items()
         elseif (Inventory == "TGIANN") then
             items = exports["tgiann-inventory"]:Items()
+
+            -- We're forced to iterate all items and translate them because of a new stupid design choice breaking compatibility
+            for _, itemData in pairs(items) do
+                if (type(itemData.label) == "table") then
+                    itemData.label = itemData.label["en"]
+                end
+
+                if (type(itemData.description) == "table") then
+                    itemData.description = itemData.description["en"]
+                end
+            end
         elseif (Inventory == "CODEM") then
             items = exports["codem-inventory"]:GetItemList()
         elseif (Inventory == "QS") then
