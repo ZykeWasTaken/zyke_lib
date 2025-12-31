@@ -4,8 +4,10 @@
 function Functions.getVehicleByPlate(plate)
     local vehicles = GetAllVehicles()
 
+    plate = plate:gsub("%s+", "")
+
     for i = 1, #vehicles do
-        if (GetVehicleNumberPlateText(vehicles[i]) == plate) then
+        if (GetVehicleNumberPlateText(vehicles[i]):gsub("%s+", "") == plate) then
             return vehicles[i], NetworkGetNetworkIdFromEntity(vehicles[i])
         end
     end
