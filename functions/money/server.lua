@@ -46,6 +46,14 @@ function Functions.money.add(player, account, amount, details)
 
     account = translateAccount(account)
 
+    -- Hotfix for qbox servers because they don't carry the dirty cash feature??
+    if (
+        Inventory == "OX"
+        and (account == "black_money" or account == "dirty_cash")
+    ) then
+        return Functions.addItem(player, "black_money", amount)
+    end
+
     if (Framework == "ESX") then player.addAccountMoney(account, amount, details) return end
     if (Framework == "QB") then player.Functions.AddMoney(account, amount, details) return end
 end
@@ -60,6 +68,16 @@ function Functions.money.get(player, account)
     if (not account) then account = "cash" end
 
     account = translateAccount(account)
+
+    -- Hotfix for qbox servers because they don't carry the dirty cash feature??
+    if (
+        Inventory == "OX"
+        and (account == "black_money" or account == "dirty_cash")
+    ) then
+        local invItem = Functions.getPlayerItem(player, "black_money", false, true)[1]
+
+        return invItem?.amount or 0
+    end
 
     if (Framework == "ESX") then return player.getAccount(account).money end
     if (Framework == "QB") then return player.PlayerData.money[account] end
@@ -76,6 +94,14 @@ function Functions.money.remove(player, account, amount, details)
     if (not account) then account = "cash" end
 
     account = translateAccount(account)
+
+    -- Hotfix for qbox servers because they don't carry the dirty cash feature??
+    if (
+        Inventory == "OX"
+        and (account == "black_money" or account == "dirty_cash")
+    ) then
+        return Functions.removeItem(player, "black_money", amount)
+    end
 
     if (Framework == "ESX") then return player.removeAccountMoney(account, amount, details) end
     if (Framework == "QB") then return player.Functions.RemoveMoney(account, amount, details) end
