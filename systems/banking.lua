@@ -1,7 +1,8 @@
 local awaitSystemStarting = ...
 
 local systems = {
-    {fileName = "Renewed-Banking", variable = "RENEWED_BANKING"}
+    {fileName = "Renewed-Banking", variable = "RENEWED_BANKING"},
+    {fileName = "RxBanking", variable = "RX_BANKING"}
 }
 
 for i = 1, #systems do

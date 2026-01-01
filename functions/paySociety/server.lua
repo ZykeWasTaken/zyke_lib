@@ -4,6 +4,8 @@
 function Functions.paySociety(name, amount)
     if (BankingSystem == "RENEWED_BANKING") then
         return exports['Renewed-Banking']:addAccountMoney(name, amount)
+    elseif (BankingSystem == "RX_BANKING") then
+        return exports["RxBanking"]:AddSocietyMoney(name, amount, "payment", nil, nil)
     end
 
     if (Framework == "QB") then
