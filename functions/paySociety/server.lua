@@ -8,6 +8,10 @@ function Functions.paySociety(name, amount)
         return exports["RxBanking"]:AddSocietyMoney(name, amount, "payment", nil, nil)
     elseif (BankingSystem == "OKOK_BANKING") then
         return exports["okokBanking"]:AddMoney(name, amount)
+    elseif (BankingSystem == "BABLO_BANKING") then
+        local res = exports["bablo-banking"]:AddSocietyMoney(name, amount)
+
+        return res?.success == true
     end
 
     if (Framework == "QB") then
