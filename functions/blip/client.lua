@@ -11,6 +11,7 @@ Functions.blip = {}
 ---@field shortRange boolean?
 ---@field name string?
 ---@field alpha number?
+---@field category? integer
 
 local blips = {}
 
@@ -30,6 +31,10 @@ function Functions.blip.add(data)
     if (not blip) then Functions.debug.internal("No blip type was specified") return nil end
 
     local sprite = (data.type == "radius" and 9) or data.sprite or 1
+
+    if (data.category) then
+        SetBlipCategory(blip, data.category)
+    end
 
     SetBlipSprite(blip, sprite)
     SetBlipDisplay(blip, data.display or 6)
