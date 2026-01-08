@@ -52,3 +52,21 @@ CreateThread(function()
         Wait(500)
     end
 end)
+
+-- I feel like an ape for doing this, but I can't find a cheaper way to reliably grab the server id from an entity on the server
+CreateThread(function()
+    while (LocalPlayer.state["z:hasLoaded"] ~= true) do Wait(500) end
+
+    local prevEntityId = nil
+
+    while (1) do
+        local newEntityId = PlayerPedId()
+        if (prevEntityId ~= newEntityId) then
+            prevEntityId = newEntityId
+
+            Entity(newEntityId).state:set("z:serverId", GetPlayerServerId(PlayerId()), true)
+        end
+
+        Wait(1000)
+    end
+end)
