@@ -12,7 +12,11 @@ CreateThread(function()
         local players = GetPlayers()
         for i = 1, #players do
             local bucketId = GetPlayerRoutingBucket(players[i])
-            Player(players[i]).state:set("routingBucket", bucketId, true)
+            local prev = Player(players[i]).state["routingBucket"]
+
+            if (prev ~= bucketId) then
+                Player(players[i]).state:set("routingBucket", bucketId, true)
+            end
         end
 
         Wait(500)
