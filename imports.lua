@@ -22,12 +22,40 @@ local function loadFunc(path, self, index)
 
     if (chunk) then
         local func, err = load(chunk, ("@@%s/%s/%s/%s.lua"):format(LibName, path, index, _context))
-
-        if (not func or err) then
-            return error(err)
-        end
+        if (not func or err) then return error(err) end
 
         local res = func()
+
+        -- Check if this is a cached function
+        if (type(res) == "table" and res.cached == true and res.fetch and res.get) then
+            -- If we're in zyke_lib itself, register the fetcher with central cache
+            if (ResName == LibName and RegisterCachedFunction) then
+                RegisterCachedFunction(index, res.fetch)
+            end
+
+            -- Create a wrapper that fetches from cache once, then uses local cache
+            local cacheKey = "_zykeCache_" .. index
+            local getFunc = res.get
+
+            local function cachedWrapper(...)
+                local localCache = rawget(_G, cacheKey)
+                if (localCache == nil) then
+                    -- First call in this resource: fetch from central cache via export
+                    localCache = exports[LibName]:getCachedData(index)
+                    rawset(_G, cacheKey, localCache or false) -- false to mark "attempted but nil"
+                end
+
+                -- If cache is false (nil result), return nil
+                if (localCache == false) then return nil end
+
+                return getFunc(localCache, ...)
+            end
+
+            self[index] = cachedWrapper
+
+            return cachedWrapper
+        end
+
         self[index] = res or empty
 
         return self[index]
@@ -119,7 +147,9 @@ local forceLoad = {
     "getAccountIdentifier/server.lua",
     "getJobs/server.lua",
     "getPlayers/server.lua",
-    "getPlayersInArea/server.lua"
+    "getPlayersInArea/server.lua",
+    "getVehicleClass/server.lua",
+    "getModelMaxSeats/server.lua",
 }
 
 for i = 1, #forceLoad do
