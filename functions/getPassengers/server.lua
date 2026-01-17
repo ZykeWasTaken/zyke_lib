@@ -2,7 +2,7 @@
 -- Ignores non-player entities
 
 ---@param veh Vehicle
----@return Entity[] | nil
+---@return {entity: Entity, seat: number}[] | nil
 function Functions.getPassengers(veh)
 	if (not DoesEntityExist(veh)) then return nil end
 
@@ -16,7 +16,7 @@ function Functions.getPassengers(veh)
 
 		-- Ensure valid player
 		if (pedInSeat and DoesEntityExist(pedInSeat) and IsPedAPlayer(pedInSeat)) then
-			passengers[#passengers+1] = pedInSeat
+			passengers[#passengers+1] = {entity = pedInSeat, seat = seatIdx}
 		end
 	end
 
