@@ -160,7 +160,7 @@ end
 function scaleforms:handleButtons()
     ---@param buttonIdx integer
     ---@param path "key" | "hiddenKey"
-    ---@return boolean
+    ---@return boolean?
     local function checkButton(buttonIdx, path)
         local isMulti = type(self.buttons[buttonIdx][path]) == "table"
         if (isMulti) then
@@ -169,9 +169,13 @@ function scaleforms:handleButtons()
 
                 DisableControlAction(0, keyCode, true)
                 if (self.buttons[buttonIdx].hold) then
-                    return self:checkButtonHold(buttonIdx, keyCode, j, path)
+                    if (self:checkButtonHold(buttonIdx, keyCode, j, path) == true) then
+                        return true
+                    end
                 else
-                    return self:checkButtonPress(buttonIdx, keyCode, j, path)
+                    if (self:checkButtonPress(buttonIdx, keyCode, j, path)) then
+                        return true
+                    end
                 end
             end
         else
@@ -179,9 +183,13 @@ function scaleforms:handleButtons()
 
             DisableControlAction(0, keyCode, true)
             if (self.buttons[buttonIdx].hold) then
-                return self:checkButtonHold(buttonIdx, keyCode, nil, path)
+                if (self:checkButtonHold(buttonIdx, keyCode, nil, path)) then
+                    return true
+                end
             else
-                return self:checkButtonPress(buttonIdx, keyCode, nil, path)
+                if (self:checkButtonPress(buttonIdx, keyCode, nil, path)) then
+                    return true
+                end
             end
         end
     end
