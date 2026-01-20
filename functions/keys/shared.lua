@@ -4,6 +4,7 @@ Functions.keys = {}
 ---@field type "keyboard" | "mouse_button" | "mouse_wheel"
 ---@field keyMappingKey string
 ---@field label? string @We override some labels to fit them better in menus
+---@field minimalLabel? string @ Just like the label, but even more minimal, for example: "A.Right" -> ">"
 
 ---@class Key
 ---@field keyCode integer | nil
@@ -35,7 +36,7 @@ local availableKeys = {
     ["PAGEDOWN"] = {keyCode = 11, name = "~INPUT_SCRIPTED_FLY_ZDOWN~", keyMapping = {type = "keyboard", keyMappingKey = "PAGEDOWN",}},
     ["SCROLLDOWN"] = {keyCode = 14, name = "~INPUT_WEAPON_WHEEL_NEXT~", keyMapping = {type = "mouse_wheel", keyMappingKey = "IOM_WHEEL_DOWN", label = "S.Down"}},
     ["SCROLLUP"] = {keyCode = 15, name = "~INPUT_WEAPON_WHEEL_PREV~", keyMapping = {type = "mouse_wheel", keyMappingKey = "IOM_WHEEL_UP", label = "S.Up"}},
-    ["ENTER"] = {keyCode = 201, name = "~INPUT_FRONTEND_ACCEPT~", keyMapping = {type = "keyboard", keyMappingKey = "RETURN"}},
+    ["ENTER"] = {keyCode = 201, name = "~INPUT_FRONTEND_ACCEPT~", keyMapping = {type = "keyboard", keyMappingKey = "RETURN", label = "Enter", minimalLabel = "⤶"}},
     ["LEFTALT"] = {keyCode = 19, name = "~INPUT_CHARACTER_WHEE~", keyMapping = {type = "keyboard", keyMappingKey = "LMENU"}},
     ["Z"] = {keyCode = 20, name = "~INPUT_MULTIPLAYER_INFO~", keyMapping = {type = "keyboard", keyMappingKey = "Z"}},
     ["LEFTSHIFT"] = {keyCode = 21, name = "~INPUT_SPRINT~", keyMapping = {type = "keyboard", keyMappingKey = "LSHIFT"}},
@@ -79,14 +80,14 @@ local availableKeys = {
     ["F7"] = {keyCode = 168, name = "~INPUT_SELECT_CHARACTER_TREVOR~", keyMapping = {type = "keyboard", keyMappingKey = "F7"}},
     ["F8"] = {keyCode = 169, name = "~INPUT_SELECT_CHARACTER_MULTIPLAYER~", keyMapping = {type = "keyboard", keyMappingKey = "F8"}},
     ["F3"] = {keyCode = 170, name = "~INPUT_SAVE_REPLAY_CLIP~", keyMapping = {type = "keyboard", keyMappingKey = "F3"}},
-    ["UP"] = {keyCode = 172, name = "~INPUT_CELLPHONE_UP~", keyMapping = {type = "keyboard", keyMappingKey = "UP", label = "A.Up"}},
-    ["DOWN"] = {keyCode = 173, name = "~INPUT_CELLPHONE_DOWN~", keyMapping = {type = "keyboard", keyMappingKey = "DOWN", label = "A.Down"}},
-    ["LEFT"] = {keyCode = 174, name = "~INPUT_CELLPHONE_LEFT~", keyMapping = {type = "keyboard", keyMappingKey = "LEFT", label = "A.Left"}},
-    ["RIGHT"] = {keyCode = 175, name = "~INPUT_CELLPHONE_RIGHT~", keyMapping = {type = "keyboard", keyMappingKey = "RIGHT", label = "A.Right"}},
+    ["UP"] = {keyCode = 172, name = "~INPUT_CELLPHONE_UP~", keyMapping = {type = "keyboard", keyMappingKey = "UP", label = "A.Up", minimalLabel = "^"}},
+    ["DOWN"] = {keyCode = 173, name = "~INPUT_CELLPHONE_DOWN~", keyMapping = {type = "keyboard", keyMappingKey = "DOWN", label = "A.Down", minimalLabel = "v"}},
+    ["LEFT"] = {keyCode = 174, name = "~INPUT_CELLPHONE_LEFT~", keyMapping = {type = "keyboard", keyMappingKey = "LEFT", label = "A.Left", minimalLabel = "<"}},
+    ["RIGHT"] = {keyCode = 175, name = "~INPUT_CELLPHONE_RIGHT~", keyMapping = {type = "keyboard", keyMappingKey = "RIGHT", label = "A.Right", minimalLabel = ">"}},
     ["CANCEL"] = {keyCode = 177, name = "~INPUT_CELLPHONE_CANCEL~", keyMapping = {type = "keyboard", keyMappingKey = "BACK"}}, -- BACKSPACE / ESC / RIGHT MOUSE BUTTON
     ["DELETE"] = {keyCode = 178, name = "~INPUT_CELLPHONE_OPTION~", keyMapping = {type = "keyboard", keyMappingKey = "DELETE"}},
     ["L"] = {keyCode = 182, name = "~INPUT_CELLPHONE_CAMERA_FOCUS_LOCK~", keyMapping = {type = "keyboard", keyMappingKey = "L"}},
-    ["BACKSPACE"] = {keyCode = 202, name = "~INPUT_FRONTEND_CANCEL~", keyMapping = {type = "keyboard", keyMappingKey = "CANCEL"}},
+    ["BACKSPACE"] = {keyCode = 202, name = "~INPUT_FRONTEND_CANCEL~", keyMapping = {type = "keyboard", keyMappingKey = "CANCEL", label = "Backspace", minimalLabel = "⟵"}},
     ["HOME"] = {keyCode = 213, name = "~INPUT_FRONTEND_SOCIAL_CLUB_SECONDARY~", keyMapping = {type = "keyboard", keyMappingKey = "HOME"}},
     ["~"] = {keyCode = 243, name = "~INPUT_ENTER_CHEAT_CODE~", keyMapping = {type = "keyboard", keyMappingKey = "UNUSED"}},
     ["M"] = {keyCode = 244, name = "~INPUT_INTERACTION_MENU~", keyMapping = {type = "keyboard", keyMappingKey = "M"}},
