@@ -70,3 +70,22 @@ CreateThread(function()
         Wait(1000)
     end
 end)
+
+-- Set the weapon you are currently holding, this avoids us similar loops in several resources
+CreateThread(function()
+    local prevWeapon = nil
+    local unarmedHash = `WEAPON_UNARMED`
+
+    while (true) do
+        local _, weapon = GetCurrentPedWeapon(PlayerPedId(), true)
+
+        if (prevWeapon ~= weapon) then
+            local hasWeapon = weapon ~= unarmedHash
+            LocalPlayer.state:set("currentWeapon", hasWeapon and weapon or nil, false)
+
+            prevWeapon = weapon
+        end
+
+        Wait(250)
+    end
+end)
