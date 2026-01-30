@@ -1,9 +1,10 @@
 -- Vehicle max seats lookup, uses centralized caching
+-- Note that we use the auto-refetch if the key is not found, you should double check if the model is valid before calling this function
+-- This is a safety measure to prevent our cache from getting stale in case people add new vehicles to the server
 
 return {
     cached = true,
 
-    -- Fetcher: runs once globally in zyke_lib's context
     fetch = function()
         local timeout = 3000
         local timeoutAdd = 500
@@ -24,8 +25,8 @@ return {
         return maxSeats
     end,
 
-    -- Getter: runs in the calling resource with local cache
-    get = function(cache, model)
-        return cache and cache[model]
-    end,
+    -- Uses getCachedValue export which auto-refetches if key not found
+    get = function(_, model)
+        return exports.zyke_lib:getCachedValue("getModelMaxSeats", model)
+    end
 }
