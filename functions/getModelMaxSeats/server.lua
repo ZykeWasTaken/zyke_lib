@@ -27,6 +27,10 @@ return {
 
     -- Uses getCachedValue export which auto-refetches if key not found
     get = function(_, model)
+        -- Convert string model names to hashes since the cache uses hashes as keys
+        -- Use tonumber first to handle string hashes like "418536135"
+        model = tonumber(model) or joaat(model)
+
         return exports.zyke_lib:getCachedValue("getModelMaxSeats", model)
     end
 }
