@@ -150,6 +150,7 @@ local forceLoad = {
     "getPlayersInArea/server.lua",
     "getVehicleClass/server.lua",
     "getModelMaxSeats/server.lua",
+    "getModelLabel/server.lua",
 }
 
 for i = 1, #forceLoad do
