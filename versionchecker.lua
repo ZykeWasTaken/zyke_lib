@@ -20,19 +20,19 @@ local function isVersionOutdated(v1, v2)
     return false
 end
 
--- Grabs your public license token (NOT LICENSE KEY) from the info.json endpoint
--- This is **not** sensitive information & is publicly accessible, it's just a reliable unique identifier
--- This can already be grabbed from our own backend, but we prefer to locally prepare it here for quicker lookups
-local function getLicenseToken()
-    local url = "http://127.0.0.1:30120/info.json"
+-- Parses the unique server address from the Nucleus-assigned web_baseUrl convar
+-- ex. "zyke-hijfdc.users.cfx.re" -> "hijfdc"
+---@return string | nil
+local function getServerAddress()
+    -- Get the web_baseUrl convar, returning something along the lines of "zyke-hijfdc.users.cfx.re", with your Cfx username tied to the license key & server address
+    local baseUrl = GetConvar("web_baseUrl", "")
+    if (baseUrl == "") then return nil end
 
-    local errorCode, resultData, resultHeaders, errorData = PerformHttpRequestAwait(url, "GET", "", {})
-    if (errorCode ~= 200) then return nil end
+    -- Strip the known suffix
+    local stripped = baseUrl:gsub("%.users%.cfx%.re$", "")
 
-    local decoded = resultData and json.decode(resultData)
-    if (not decoded or not decoded.vars) then return nil end
-
-    return decoded.vars.sv_licenseKeyToken
+    -- Grab everything after the last dash
+    return stripped:match(".*%-(.+)$")
 end
 
 -- Complete response from the API for the "mini" endpoint
@@ -87,7 +87,7 @@ local function getLatestVersion(currVersion)
     end, "GET", "", {
         -- Submit version analytics, this just helps us to see how many people are using our scripts & their versions
         ["X-Client-Version"] = currVersion,
-        ["X-License-Token"] = getLicenseToken()
+        ["X-Server-Address"] = getServerAddress()
     })
 
     return Citizen.Await(p)
