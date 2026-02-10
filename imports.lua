@@ -160,5 +160,47 @@ for i = 1, #forceLoad do
     loadFunc("functions", Functions, name)
 end
 
+-- Automatically version checking with support for legacy system where we individually imported this
+if (Context == "server") then
+    ---@param metadataKey string
+    ---@param idx integer
+    ---@return boolean
+    local function isScriptVersionChecker(metadataKey, idx)
+        local script = GetResourceMetadata(GetCurrentResourceName(), metadataKey, idx)
+
+        return script:find("@zyke_lib/versionchecker.lua") ~= nil
+    end
+
+    -- Legacy support for resources that import the versionchecker in their fxmanifest
+    local shouldSkip = false
+    local serverScripts = GetNumResourceMetadata(GetCurrentResourceName(), "server_script")
+    for i = 1, serverScripts do
+        if (isScriptVersionChecker("server_script", i - 1)) then
+            shouldSkip = true
+            break
+        end
+    end
+
+    if (not shouldSkip) then
+        local loaderScripts = GetNumResourceMetadata(GetCurrentResourceName(), "loader")
+        for i = 1, loaderScripts do
+            if (isScriptVersionChecker("loader", i - 1)) then
+                shouldSkip = true
+                break
+            end
+        end
+    end
+
+    if (not shouldSkip) then
+        local versionChunk = LoadResourceFile(LibName, "versionchecker.lua")
+        local versionFunc, err = load(versionChunk, ("@@%s/versionchecker.lua"):format(LibName))
+        if (not versionFunc or err) then
+            error(err)
+        end
+
+        versionFunc()
+    end
+end
+
 HasLoaderFinished = true
 TriggerEvent("zyke_lib:OnLoaderFinished")
