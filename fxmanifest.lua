@@ -24,7 +24,6 @@ files {
 
 loader {
     "@ox_lib/init.lua", -- Progressbar & skillcheck
-    "server:@zyke_lib/versionchecker.lua",
     "shared:config.lua",
     "shared:internals/internals.lua",
 
