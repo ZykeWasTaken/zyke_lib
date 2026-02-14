@@ -1,5 +1,8 @@
 local isWindows = os.getenv("OS") == "Windows"
-local multiplier = isWindows and 1 or 10
+local multiplier = isWindows and 1 or 10 -- Unreliable conversion, some Linux systems will use a ~30x multiplier
+
+-- Highly unreliable, as it can differ based on your operating system, will be pahsed out & removed soon
+-- Use GetGameTimer() instead, which I guess has been added for the server-side at some point
 
 ---Returns os.clock() with platform-specific correction for Linux systems, it seems that Linux systems returns ~0.1s every 1s
 ---@return number
