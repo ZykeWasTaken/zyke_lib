@@ -37,6 +37,8 @@ function Formatting.formatItem(item)
         formatted.metadata = item.info
     end
 
+    formatted.description = item.description
+
     return formatted
 end
 
