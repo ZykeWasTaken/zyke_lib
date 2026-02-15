@@ -1,24 +1,31 @@
----@param toInclude string[] | nil @List of items to include
+-- Flattening containers is not possible on the client-side, use the server-sided version instead
+
+---@param toInclude string[] | string | nil @List of items to include
 ---@return Item[]
 ---@diagnostic disable-next-line: duplicate-set-field
 function Functions.getPlayerItems(toInclude)
-    local player = Functions.getPlayerData()
-    if (not player) then return {} end
+    if (type(toInclude) == "string") then toInclude = {toInclude} end
+
+    local _inv = Inventory
 
     local inventory = {}
-    if (not player) then return {} end
 
-    if (Inventory == "QS") then
+    if (_inv == "QS") then
         inventory = exports['qs-inventory']:getUserInventory() or {}
-    elseif (Inventory == "TGIANN") then
+    elseif (_inv == "TGIANN") then
         inventory = exports["tgiann-inventory"]:GetPlayerItems() or {}
-    elseif (Inventory == "CODEM") then
+    elseif (_inv == "CODEM") then
         inventory = exports["codem-inventory"]:GetClientPlayerInventory() or {}
+    elseif (_inv == "OX") then
+        inventory = exports["ox_inventory"]:GetPlayerItems() or {}
     else
+        local player = Functions.getPlayerData()
+        if (not player) then return inventory end
+
         if (Framework == "ESX") then
-            inventory = player.inventory or {}
+            inventory = player?.inventory or {}
         elseif (Framework == "QB") then
-            inventory = player.items or {}
+            inventory = player?.items or {}
         end
     end
 
@@ -34,9 +41,7 @@ function Functions.getPlayerItems(toInclude)
     for _, _item in pairs(inventory) do
         local item = Formatting.formatItem(_item)
 
-        if (toInclude) then
-            if (not _toInclude[item.name]) then goto continue end
-        end
+        if (toInclude and not _toInclude[item.name]) then goto continue end
 
         formattedInventory[#formattedInventory+1] = item
 
