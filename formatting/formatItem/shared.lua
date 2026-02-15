@@ -6,6 +6,11 @@
 ---@field metadata table<string, any> | nil
 ---@field slot integer
 
+-- Store the id of the container the item is present in, only populate if we specifically search for it in an external container
+-- This is a manual key we attach to track which container the item originated from
+---@class PlayerContainerItem
+---@field containerId string
+
 ---@param item table
 ---@return Item
 function Formatting.formatItem(item)

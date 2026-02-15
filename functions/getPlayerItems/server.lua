@@ -1,22 +1,30 @@
 ---@param player Character | CharacterIdentifier | PlayerId
 ---@param toInclude string[] | string | nil @List of items to include
+---@param options? {flattenContainers?: boolean}
 ---@return Item[]
 ---@diagnostic disable-next-line: duplicate-set-field
-function Functions.getPlayerItems(player, toInclude)
+function Functions.getPlayerItems(player, toInclude, options)
     if (type(toInclude) == "string") then toInclude = {toInclude} end
+
+    local _inv = Inventory
 
     local inventory = {}
 
-    local player = Functions.getPlayerData(player)
-    if (not player) then return inventory end
+    local plyId = Z.getPlayerId(player)
+    if (not plyId) then return inventory end
 
-    if (Inventory == "QS") then
-        inventory = exports['qs-inventory']:GetInventory(Z.getPlayerId(player)) or {}
-    elseif (Inventory == "TGIANN") then
-        inventory = exports["tgiann-inventory"]:GetPlayerItems(Z.getPlayerId(player)) or {}
-    elseif (Inventory == "CODEM") then
-        inventory = exports["codem-inventory"]:GetInventory(nil, Z.getPlayerId(player)) or {}
+    if (_inv == "QS") then
+        inventory = exports['qs-inventory']:GetInventory(plyId) or {}
+    elseif (_inv == "TGIANN") then
+        inventory = exports["tgiann-inventory"]:GetPlayerItems(plyId) or {}
+    elseif (_inv == "CODEM") then
+        inventory = exports["codem-inventory"]:GetInventory(nil, plyId) or {}
+    elseif (_inv == "OX") then
+        inventory = exports["ox_inventory"]:GetInventory(plyId)?.items or {}
     else
+        local player = Functions.getPlayerData(player)
+        if (not player) then return inventory end
+
         if (Framework == "ESX") then
             inventory = player?.inventory or {}
         elseif (Framework == "QB") then
@@ -32,16 +40,47 @@ function Functions.getPlayerItems(player, toInclude)
         end
     end
 
-    local formattedInventory = {}
-    for _, _item in pairs(inventory) do
-        local item = Formatting.formatItem(_item)
+    local flattenContainers = options?.flattenContainers or false
 
-        if (toInclude and not _toInclude[item.name]) then goto continue end
+    ---@param inv table
+    ---@param newInv Item[] | PlayerContainerItem[]
+    ---@param currContainerId? string
+    local function iterateInventory(inv, newInv, currContainerId)
+        for _, _item in pairs(inv) do
+            local item = Formatting.formatItem(_item)
 
-        formattedInventory[#formattedInventory+1] = item
+            if (flattenContainers) then
 
-        ::continue::
+                -- Possible future implementation for other inventory systems
+                if (_inv == "OX") then
+                    local containerId = item?.metadata?.container
+
+                    if (containerId ~= nil) then
+                        -- Might be able to grab it from the GetInventory export, but it didn't work from testing
+                        local container = exports["ox_inventory"]:GetContainerFromSlot(plyId, item.slot)
+
+                        if (container?.items and #container.items > 0) then
+                            iterateInventory(container?.items, newInv, containerId)
+                        end
+                    end
+                end
+            end
+
+            if (toInclude and not _toInclude[item.name]) then goto continue end
+
+            if (currContainerId) then
+                item.containerId = currContainerId
+            end
+
+            newInv[#newInv+1] = item
+
+            ::continue::
+        end
     end
+
+    local formattedInventory = {}
+
+    iterateInventory(inventory, formattedInventory)
 
     return formattedInventory
 end
