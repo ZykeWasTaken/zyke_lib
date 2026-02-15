@@ -1,6 +1,6 @@
 ---@param player Character | CharacterIdentifier | PlayerId
 ---@param toInclude string[] | string | nil @List of items to include
----@param options? {flattenContainers?: boolean}
+---@param options? {flattenContainers?: boolean, firstOnly?: boolean, bundle?: boolean, metadata?: MetadataRequirement[]}
 ---@return Item[]
 ---@diagnostic disable-next-line: duplicate-set-field
 function Functions.getPlayerItems(player, toInclude, options)
@@ -41,6 +41,9 @@ function Functions.getPlayerItems(player, toInclude, options)
     end
 
     local flattenContainers = options?.flattenContainers or false
+    local firstOnly = options?.firstOnly or false
+    local bundle = options?.bundle or false
+    local metadata = options?.metadata
 
     ---@param inv table
     ---@param newInv Item[] | PlayerContainerItem[]
@@ -68,11 +71,36 @@ function Functions.getPlayerItems(player, toInclude, options)
 
             if (toInclude and not _toInclude[item.name]) then goto continue end
 
+            if (metadata ~= nil) then
+                local hasAllMetadata = true
+
+                for j = 1, #metadata do
+                    local itemVal = item.metadata[metadata[j].name]
+                    if (not itemVal) then hasAllMetadata = false break end
+
+                    if (metadata[j].match ~= nil) then
+                        if (metadata[j].match ~= itemVal) then hasAllMetadata = false break end
+                    elseif (metadata[j].exclude ~= nil) then
+                        if (metadata[j].exclude == itemVal) then hasAllMetadata = false break end
+                    else
+                        error("Missing metadata search type.")
+                    end
+                end
+
+                if (not hasAllMetadata) then goto continue end
+            end
+
             if (currContainerId) then
                 item.containerId = currContainerId
             end
 
-            newInv[#newInv+1] = item
+            if (firstOnly) then return item end
+
+            if (bundle and #newInv > 0) then
+                newInv[1].amount += item.amount
+            else
+                newInv[#newInv+1] = item
+            end
 
             ::continue::
         end
@@ -80,7 +108,8 @@ function Functions.getPlayerItems(player, toInclude, options)
 
     local formattedInventory = {}
 
-    iterateInventory(inventory, formattedInventory)
+    local result = iterateInventory(inventory, formattedInventory)
+    if (firstOnly and result) then return result end
 
     return formattedInventory
 end

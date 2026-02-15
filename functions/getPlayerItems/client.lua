@@ -1,9 +1,10 @@
 -- Flattening containers is not possible on the client-side, use the server-sided version instead
 
 ---@param toInclude string[] | string | nil @List of items to include
+---@param options? {firstOnly?: boolean, bundle?: boolean, metadata?: MetadataRequirement[]}
 ---@return Item[]
 ---@diagnostic disable-next-line: duplicate-set-field
-function Functions.getPlayerItems(toInclude)
+function Functions.getPlayerItems(toInclude, options)
     if (type(toInclude) == "string") then toInclude = {toInclude} end
 
     local _inv = Inventory
@@ -37,13 +38,42 @@ function Functions.getPlayerItems(toInclude)
         end
     end
 
+    local firstOnly = options?.firstOnly or false
+    local bundle = options?.bundle or false
+    local metadata = options?.metadata
+
     local formattedInventory = {}
     for _, _item in pairs(inventory) do
         local item = Formatting.formatItem(_item)
 
         if (toInclude and not _toInclude[item.name]) then goto continue end
 
-        formattedInventory[#formattedInventory+1] = item
+        if (metadata ~= nil) then
+            local hasAllMetadata = true
+
+            for j = 1, #metadata do
+                local itemVal = item.metadata[metadata[j].name]
+                if (not itemVal) then hasAllMetadata = false break end
+
+                if (metadata[j].match ~= nil) then
+                    if (metadata[j].match ~= itemVal) then hasAllMetadata = false break end
+                elseif (metadata[j].exclude ~= nil) then
+                    if (metadata[j].exclude == itemVal) then hasAllMetadata = false break end
+                else
+                    error("Missing metadata search type.")
+                end
+            end
+
+            if (not hasAllMetadata) then goto continue end
+        end
+
+        if (firstOnly) then return item end
+
+        if (bundle and #formattedInventory > 0) then
+            formattedInventory[1].amount += item.amount
+        else
+            formattedInventory[#formattedInventory+1] = item
+        end
 
         ::continue::
     end
