@@ -1,7 +1,7 @@
 fx_version "cerulean"
 game "gta5"
 lua54 "yes"
-version "2.3.13"
+version "2.3.14"
 
 shared_script "imports.lua"
 
