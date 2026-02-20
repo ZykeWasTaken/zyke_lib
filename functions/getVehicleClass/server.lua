@@ -26,6 +26,10 @@ return {
 
     -- Getter: runs in the calling resource with local cache
     get = function(cache, model)
-        return cache and cache[model]
+        -- Convert string model names to hashes since the cache uses hashes as keys
+        -- Use tonumber first to handle string hashes like "418536135"
+        model = tonumber(model) or joaat(model)
+
+        return exports["zyke_lib"]:getCachedValue("getVehicleClass", model)
     end,
 }
