@@ -18,12 +18,21 @@ end
 
 if (not dirExists()) then return nil end
 
+local selectedLanguage = LibConfig.language
 local language = LibConfig.language
 local baseLanguage = "en"
 local translations = {}
 
 local function notFound()
-    print(("^1[ERROR] Translation \"%s\" not found. (locales/%s.lua)^1"):format(language, language))
+    print(("^1[ERROR] Translation (locales/%s.lua) could not be loaded.^7"):format(language))
+end
+
+local function notFoundDefault()
+    print("^1[ERROR] Could not find fallback translation (locales/en.lua) CRITICAL!!!^7")
+end
+
+local function notFoundSelected()
+    print(("^1[WARNING] Translation (locales/%s.lua) not found, using fallback (locales/en.lua).^7"):format(selectedLanguage))
 end
 
 if (language == nil) then
@@ -72,13 +81,13 @@ end
 
 local foundTranslations = loadTranslation(language)
 if (not foundTranslations) then
-    notFound()
-
     -- Attempt to run the base language instead
     language = baseLanguage
     foundTranslations = loadTranslation(language)
-    if (not foundTranslations) then
-        return notFound()
+    if (foundTranslations) then
+        notFoundSelected()
+    else
+        return notFoundDefault()
     end
 end
 
