@@ -10,15 +10,11 @@ return {
 
         local status, vehClasses
         repeat
-            -- This requires a player to be online
-            local allPlys = GetPlayers()
-            if (#allPlys == 0) then break end
+            local plyId = Functions.getRandomSpawner()
+            if (not plyId) then break end
 
-            local plyId = math.tointeger(allPlys[math.random(1, #allPlys)])
-            if (plyId) then
-                status, vehClasses = Z.callback.request(plyId, "zyke_lib:GetVehicleClasses", {status = true, timeout = timeout})
-                timeout = timeout + timeoutAdd
-            end
+            status, vehClasses = Z.callback.request(plyId, "zyke_lib:GetVehicleClasses", {status = true, timeout = timeout})
+            timeout = timeout + timeoutAdd
         until (status and status.ok == true)
 
         return vehClasses

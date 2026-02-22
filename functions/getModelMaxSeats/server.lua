@@ -11,15 +11,11 @@ return {
 
         local status, maxSeats
         repeat
-            -- This requires a player to be online
-            local allPlys = GetPlayers()
-            if (#allPlys == 0) then break end
+            local plyId = Functions.getRandomSpawner()
+            if (not plyId) then break end
 
-            local plyId = math.tointeger(allPlys[math.random(1, #allPlys)])
-            if (plyId) then
-                status, maxSeats = Z.callback.request(plyId, "zyke_lib:GetVehicleMaxSeats", {status = true, timeout = timeout})
-                timeout = timeout + timeoutAdd
-            end
+            status, maxSeats = Z.callback.request(plyId, "zyke_lib:GetVehicleMaxSeats", {status = true, timeout = timeout})
+            timeout = timeout + timeoutAdd
         until (status and status.ok == true)
 
         return maxSeats

@@ -6,6 +6,12 @@
 -- If we fail to wait for this, a player can "ghost" spawn entities that will cause
 -- various issues with existing whilst not at the same time
 
+-- SHORTCOMINGS
+-- Triggering this repeatedly whilst looping and having your own validation may
+-- cause you to get the same player over and over that passes in here, but fails in your validation
+-- If you intend to loop something and have your own validation on top of this,
+-- you should grab the server player list & randomize it yourself instead of using this method
+
 ---@param spawnPos? vector3 | Vector3Table | Vector4Table @ Required when maxDst is provided, to compare
 ---@param maxDst? number @ Maximum distance to spawn position, for certain actions you must be under the entity "render" limit at 424
 ---@param desiredRoutingBucket? integer @ The routing bucket the spawner should be in, since you can't spawn entities in a different routing bucket
